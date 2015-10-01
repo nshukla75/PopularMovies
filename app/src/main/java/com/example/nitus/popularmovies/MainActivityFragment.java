@@ -109,7 +109,6 @@ public class MainActivityFragment extends Fragment {
                 final String QUERY_PARAM = "sort_by";
                 final String APIKEY_PARAM = "api_key";
 
-
                 Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                         .appendQueryParameter(QUERY_PARAM, params[0])
                         .appendQueryParameter(APIKEY_PARAM, apiKeyStr)
