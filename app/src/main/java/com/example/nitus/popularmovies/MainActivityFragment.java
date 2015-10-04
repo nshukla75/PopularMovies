@@ -1,8 +1,10 @@
 package com.example.nitus.popularmovies;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.format.Time;
@@ -62,11 +64,11 @@ public class MainActivityFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_popularity) {
-           updateMovie("popularity.desc");
+           updateMovie();
             return true;
         }
         if (id == R.id.action_rating) {
-            updateMovie("vote_average.desc");
+            updateMovie();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -80,12 +82,19 @@ public class MainActivityFragment extends Fragment {
         mMovieAdapter = new MovieAdapter(getActivity());
         GridView listView = (GridView) rootView.findViewById(R.id.gridview_movie);
         listView.setAdapter(mMovieAdapter);
-        updateMovie("popularity.desc");
         return rootView;
     }
 
-    private void updateMovie(String sortBy) {
+    @Override
+    public void onStart(){
+        super.onStart();
+        updateMovie();
+    }
+
+    private void updateMovie() {
         FetchMovieTask movieTask = new FetchMovieTask();
+        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortBy= prefs.getString("sync_frequency","popularity.desc");
         movieTask.execute(sortBy);
     }
 
