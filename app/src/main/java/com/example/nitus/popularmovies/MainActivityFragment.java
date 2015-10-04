@@ -68,10 +68,10 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String forecast = mMovieAdapter.getItem(position);
-                Toast.makeText(getActivity(),forecast,Toast.LENGTH_SHORT).show();
-                /*Intent intent = new Intent(getActivity(), DetailActivity.class)
+                //Toast.makeText(getActivity(),forecast,Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
                         .putExtra(Intent.EXTRA_TEXT, forecast);
-                startActivity(intent);*/
+                startActivity(intent);
             }
         });
         return rootView;
