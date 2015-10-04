@@ -169,7 +169,7 @@ public class MainActivityFragment extends Fragment {
                 throws JSONException {
             JSONObject movieJson = new JSONObject(movieJsonStr);
             JSONArray movieArray = movieJson.getJSONArray("results");
-            List<String> urls = new ArrayList<>();
+            List<String> urls = new ArrayList<String>();
             for (int i = 0; i < movieArray.length(); i++) {
                 JSONObject movie = movieArray.getJSONObject(i);
                 urls.add("http://image.tmdb.org/t/p/w185" + movie.getString("poster_path"));
