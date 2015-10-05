@@ -3,6 +3,7 @@ package com.example.nitus.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Movie;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -36,31 +38,33 @@ import java.util.List;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
-    String[] movieId, movieTitle, movieOverview,movieReleaseDate, moviePosterPath, movieVoteAverage;
     MovieAdapter mMovieAdapter;
+   /* DBHandler handler;
+    NetworkUtils utils;*/
     public MainActivityFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //utils = new NetworkUtils(getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //handler = new DBHandler(getActivity());
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
         mMovieAdapter = new MovieAdapter(getActivity());
         GridView listView = (GridView) rootView.findViewById(R.id.gridview_movie);
         listView.setAdapter(mMovieAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                String forecast = mMovieAdapter.getItem(position);
+                MovieData movie = mMovieAdapter.getItem(position);
                 //Toast.makeText(getActivity(),forecast,Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, forecast);
+                        .putExtra(Intent.EXTRA_TEXT, movie);
                 startActivity(intent);
             }
         });
@@ -70,22 +74,23 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        updateMovie();
+        //if (utils.isConnectingToInternet())
+            updateMovie();
     }
 
     private void updateMovie() {
         FetchMovieTask movieTask = new FetchMovieTask();
         SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortBy= prefs.getString("sync_frequency","popularity.desc");
+        Toast.makeText(getActivity(), "Loading Please Wait..", Toast.LENGTH_SHORT).show();
         movieTask.execute(sortBy);
     }
 
-
-    public class FetchMovieTask extends AsyncTask<String, Void,  List<String>> {
+    public class FetchMovieTask extends AsyncTask<String, Void,  List<MovieData>> {
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
         @Override
-        protected List<String> doInBackground(String... params) {
+        protected List<MovieData> doInBackground(String... params) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
@@ -156,29 +161,56 @@ public class MainActivityFragment extends Fragment {
             return null;
         }
 
-        private List<String> getMovieDataFromJson(String movieJsonStr)
+        private List<MovieData> getMovieDataFromJson(String movieJsonStr)
                 throws JSONException {
-            JSONObject movieJson = new JSONObject(movieJsonStr);
-            JSONArray movieArray = movieJson.getJSONArray("results");
-            List<String> urls = new ArrayList<String>();
-            for (int i = 0; i < movieArray.length(); i++) {
-                JSONObject movie = movieArray.getJSONObject(i);
-                urls.add("http://image.tmdb.org/t/p/w185" + movie.getString("poster_path"));
+            try {
+                JSONObject movieJson = new JSONObject(movieJsonStr);
+                JSONArray movieArray = movieJson.getJSONArray("results");
+                //List<String> urls = new ArrayList<>();
+                List<MovieData> movies = new ArrayList<MovieData>();
+                for (int i = 0; i < movieArray.length(); i++) {
+                    JSONObject movie = movieArray.getJSONObject(i);
+                    //urls.add("http://image.tmdb.org/t/p/w185" + movie.getString("poster_path"));
+                    String movieId = movie.getString("id");
+                    String movieTitle = movie.getString("original_title");
+                    String moviePosterPath = "http://image.tmdb.org/t/p/w185" + movie.getString("poster_path");
+                    String movieOverview = movie.getString("overview");
+                    String movieVoteAverage = movie.getString("vote_average");
+                    String movieReleaseDate = movie.getString("release_date");
+                    String movieVoteCount=movie.getString("vote_count");
+
+                    MovieData movieData = new MovieData();
+                    movieData.setMovie_id(movieId);
+                    movieData.setTitle(movieTitle);
+                    movieData.setPoster_path(moviePosterPath);
+                    movieData.setOverview(movieOverview);
+                    movieData.setVote_average(movieVoteAverage);
+                    movieData.setRelease_date(movieReleaseDate);
+                    movieData.setVote_count(movieVoteCount);
+                    movies.add(movieData);
+                    //handler.addMovieData(movieData);// Inserting into DB
+                }
+
+                return movies;
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            return urls;
+            //Json Parsing code end
+            return null;
         }
 
         @Override
-        protected void onPostExecute(List<String> result) {
+        protected void onPostExecute(List<MovieData> result) {
                 mMovieAdapter.replace(result);
-            }
-        }
 
+        }
+    }
 
     class MovieAdapter extends BaseAdapter {
         private final String LOG_TAG = MovieAdapter.class.getSimpleName();
         private final Context context;
-        private final List<String> urls = new ArrayList<String>();
+        //private final List<String> urls = new ArrayList<>();
+        private final List<MovieData> movies = new ArrayList<>();
 
         public MovieAdapter(Context context) {
             this.context = context;
@@ -191,34 +223,33 @@ public class MainActivityFragment extends Fragment {
                 convertView = new ImageView(context);
             }
             ImageView imageView = (ImageView) convertView;
-
-
-            String url = getItem(position);
-
-            Log.e(LOG_TAG," URL "+url);
-
+            MovieData movie = getItem(position);
+            String url =movie.getPoster_path();
+            Log.v(LOG_TAG," URL "+url);
             Picasso.with(context).load(url).into(imageView);
-
             return convertView;
         }
 
         @Override
         public int getCount() {
-            return urls.size();
+            return movies.size();
         }
 
         @Override
-        public String getItem(int position) {
-            return urls.get(position);
+        public MovieData getItem(int position) {
+            return movies.get(position);
         }
 
         @Override
         public long getItemId(int position) {
             return position;
         }
-        public void replace(List<String> urls) {
-            this.urls.clear();
-            this.urls.addAll(urls);
+
+        public void replace(List<MovieData> moviesData) {
+            //this.urls.clear();
+            this.movies.clear();
+            //this.urls.addAll(urls);
+            this.movies.addAll(moviesData);
             notifyDataSetChanged();
         }
     }

@@ -81,8 +81,9 @@ public class DetailActivity extends ActionBarActivity {
             View rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
             if (intent != null && intent.hasExtra(intent.EXTRA_TEXT))
             {
-                mMovieStr = intent.getStringExtra(intent.EXTRA_TEXT);
-            ((TextView)rootView.findViewById(R.id.detail_text))
+                MovieData movie = (MovieData)intent.getSerializableExtra(intent.EXTRA_TEXT);
+                mMovieStr = movie.getTitle();
+                ((TextView)rootView.findViewById(R.id.detail_text))
                     .setText(mMovieStr);
             }
             return rootView;
