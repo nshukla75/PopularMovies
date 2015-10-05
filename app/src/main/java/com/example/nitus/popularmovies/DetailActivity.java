@@ -14,7 +14,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends ActionBarActivity {
 
@@ -82,9 +85,24 @@ public class DetailActivity extends ActionBarActivity {
             if (intent != null && intent.hasExtra(intent.EXTRA_TEXT))
             {
                 MovieData movie = (MovieData)intent.getSerializableExtra(intent.EXTRA_TEXT);
-                mMovieStr = movie.getTitle();
-                ((TextView)rootView.findViewById(R.id.detail_text))
-                    .setText(mMovieStr);
+                String mMovieTitle = movie.getTitle();
+                ((TextView)rootView.findViewById(R.id.title_text))
+                    .setText(mMovieTitle);
+                String url =movie.getPoster_path();
+                Picasso.with(getActivity()).load(url).into((ImageView) rootView.findViewById(R.id.imageView));
+                String mMovieVoteCount = "( "+ movie.getVote_count()+" Votes)";
+                ((TextView)rootView.findViewById(R.id.votecount_text))
+                        .setText(mMovieVoteCount);
+                String mMovieVoteAverage = movie.getVote_average();
+                ((TextView)rootView.findViewById(R.id.voteaverage_text))
+                        .setText(mMovieVoteAverage);
+                String mMovieReleaseDate = movie.getRelease_date();
+                ((TextView)rootView.findViewById(R.id.release_text))
+                        .setText(mMovieReleaseDate);
+                String mMovieOverview = movie.getOverview();
+                ((TextView)rootView.findViewById(R.id.overview_text))
+                        .setText(mMovieOverview);
+
             }
             return rootView;
         }
