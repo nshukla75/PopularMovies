@@ -1,14 +1,13 @@
-package com.example.nitus.popularmovies;
+package com.example.nitu.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Movie;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,21 +38,15 @@ import java.util.List;
  */
 public class MainActivityFragment extends Fragment {
     MovieAdapter mMovieAdapter;
-   /* DBHandler handler;
-    NetworkUtils utils;*/
+    //NetworkUtils utils;
     public MainActivityFragment() {
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         //utils = new NetworkUtils(getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //handler = new DBHandler(getActivity());
+        //return inflater.inflate(R.layout.fragment_main, container, false);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mMovieAdapter = new MovieAdapter(getActivity());
         GridView listView = (GridView) rootView.findViewById(R.id.gridview_movie);
@@ -72,21 +65,24 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
-    public void onStart(){
+    public void onStart()
+    {
         super.onStart();
-        //if (utils.isConnectingToInternet())
-            updateMovie();
+        updateMovie();
     }
-
     private void updateMovie() {
         FetchMovieTask movieTask = new FetchMovieTask();
-        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortBy= prefs.getString("sync_frequency","popularity.desc");
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortBy = prefs.getString("sync_frequency","popularity.desc");
         Toast.makeText(getActivity(), "Loading Please Wait..", Toast.LENGTH_SHORT).show();
-        movieTask.execute(sortBy);
+        //if (utils.isConnectingToInternet())
+            movieTask.execute(sortBy);
+        //else
+            //Toast.makeText(getActivity(), "Network Issue", Toast.LENGTH_LONG).show();
     }
 
-    public class FetchMovieTask extends AsyncTask<String, Void,  List<MovieData>> {
+    public class FetchMovieTask extends AsyncTask<String,Void,List<MovieData>>
+    {
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
         @Override
@@ -201,11 +197,10 @@ public class MainActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<MovieData> result) {
-                mMovieAdapter.replace(result);
+            mMovieAdapter.replace(result);
 
         }
     }
-
     class MovieAdapter extends BaseAdapter {
         private final String LOG_TAG = MovieAdapter.class.getSimpleName();
         private final Context context;
@@ -225,7 +220,7 @@ public class MainActivityFragment extends Fragment {
             ImageView imageView = (ImageView) convertView;
             MovieData movie = getItem(position);
             String url =movie.getPoster_path();
-            Log.v(LOG_TAG," URL "+url);
+            Log.v(LOG_TAG, " URL " + url);
             Picasso.with(context).load(url).into(imageView);
             return convertView;
         }
@@ -253,5 +248,4 @@ public class MainActivityFragment extends Fragment {
             notifyDataSetChanged();
         }
     }
-
 }
