@@ -3,31 +3,30 @@ package com.example.nitu.popularmovies;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 /**
  * Created by nitus on 10/4/2015.
  */
 public class NetworkUtils {
 
-    private Context context;
-    public NetworkUtils(Context context){
-        this.context = context;
+    private static NetworkUtils instance = new NetworkUtils();
+    static Context context;
+    ConnectivityManager connectivityManager;
+    NetworkInfo wifiInfo, mobileInfo;
+    boolean connected = false;
+
+    public static NetworkUtils getInstance(Context ctx) {
+        context = ctx.getApplicationContext();
+        return instance;
+    }
+    public boolean isOnline() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return (activeNetworkInfo != null && activeNetworkInfo.isConnected());
     }
 
-    public boolean isConnectingToInternet(){
-        ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivity != null)
-        {
-            NetworkInfo[] info = connectivity.getAllNetworkInfo();
-            if (info != null)
-                for (int i = 0; i < info.length; i++)
-                    if (info[i].getState() == NetworkInfo.State.CONNECTED)
-                    {
-                        return true;
-                    }
 
-        }
-        return false;
-    }
 }
+
 
