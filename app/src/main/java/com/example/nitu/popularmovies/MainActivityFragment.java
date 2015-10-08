@@ -38,9 +38,8 @@ import java.util.List;
  */
 public class MainActivityFragment extends Fragment {
     MovieAdapter mMovieAdapter;
-    //NetworkUtils utils;
     public MainActivityFragment() {
-        //utils = new NetworkUtils(getActivity());
+
     }
 
     @Override
@@ -75,10 +74,10 @@ public class MainActivityFragment extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortBy = prefs.getString("sync_frequency","popularity.desc");
         Toast.makeText(getActivity(), "Loading Please Wait..", Toast.LENGTH_SHORT).show();
-        //if (utils.isConnectingToInternet())
+        if (NetworkUtils.getInstance(getContext()).isOnline())
             movieTask.execute(sortBy);
-        //else
-            //Toast.makeText(getActivity(), "Network Issue", Toast.LENGTH_LONG).show();
+        else
+            Toast.makeText(getActivity(), "Network is not available", Toast.LENGTH_LONG).show();
     }
 
     public class FetchMovieTask extends AsyncTask<String,Void,List<MovieData>>
@@ -186,19 +185,21 @@ public class MainActivityFragment extends Fragment {
                     movies.add(movieData);
                     //handler.addMovieData(movieData);// Inserting into DB
                 }
-
                 return movies;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             //Json Parsing code end
+
             return null;
         }
 
         @Override
         protected void onPostExecute(List<MovieData> result) {
-            mMovieAdapter.replace(result);
-
+            if (result!=null)
+                mMovieAdapter.replace(result);
+            else
+                Toast.makeText(getActivity(), "Data is not available", Toast.LENGTH_LONG).show();
         }
     }
     class MovieAdapter extends BaseAdapter {
