@@ -9,20 +9,13 @@
     tools:showIn="@layout/activity_detail"
     tools:context="com.example.nitu.popularmovies.DetailActivityFragment">
 
-    <TextView android:text="Movie Title"
-        android:id="@+id/title_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"/>
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageView"
-        android:layout_below="@+id/title_text"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="28dp" />
+        android:layout_marginTop="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -30,19 +23,17 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="0.0"
         android:id="@+id/voteaverage_text"
-        android:layout_below="@+id/title_text"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="28dp"/>
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="(0000 votes)"
         android:id="@+id/votecount_text"
-        android:layout_below="@+id/title_text"
         android:layout_toRightOf="@+id/voteaverage_text"
         android:layout_toEndOf="@+id/voteaverage_text"
-        android:layout_marginTop="35dp"/>
+        android:layout_marginTop="17dp"/>
 
     <TextView
         android:layout_width="wrap_content"
