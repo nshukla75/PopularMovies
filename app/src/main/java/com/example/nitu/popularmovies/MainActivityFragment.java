@@ -1,7 +1,6 @@
 package com.example.nitu.popularmovies;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,12 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.Toast;
-
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -108,8 +103,8 @@ public class MainActivityFragment extends Fragment {
             String movieJsonStr = null;
 
             // Please Enter the key below
-            String apiKeyStr ="[YOUR API KEY]";
-
+            //String apiKeyStr ="[YOUR API KEY]";
+            String apiKeyStr = "7537b743615a000671a98c32d354df39";
             try {
                 final String FORECAST_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
                 final String QUERY_PARAM = "sort_by";
@@ -225,51 +220,5 @@ public class MainActivityFragment extends Fragment {
             }
         }
     }
-    class MovieAdapter extends BaseAdapter {
-        private final String LOG_TAG = MovieAdapter.class.getSimpleName();
-        private final Context context;
-        //private final List<String> urls = new ArrayList<>();
-        private final List<MovieData> movies = new ArrayList<>();
 
-        public MovieAdapter(Context context) {
-            this.context = context;
-            //Collections.addAll(urls, moviePosterPath);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = new ImageView(context);
-            }
-            ImageView imageView = (ImageView) convertView;
-            MovieData movie = getItem(position);
-            String url =movie.getPoster_path();
-            Log.v(LOG_TAG, " URL " + url);
-            Picasso.with(context).load(url).into(imageView);
-            return convertView;
-        }
-
-        @Override
-        public int getCount() {
-            return movies.size();
-        }
-
-        @Override
-        public MovieData getItem(int position) {
-            return movies.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        public void replace(List<MovieData> moviesData) {
-            //this.urls.clear();
-            this.movies.clear();
-            //this.urls.addAll(urls);
-            this.movies.addAll(moviesData);
-            notifyDataSetChanged();
-        }
-    }
 }
