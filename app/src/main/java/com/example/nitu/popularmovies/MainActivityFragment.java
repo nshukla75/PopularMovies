@@ -1,6 +1,8 @@
 package com.example.nitu.popularmovies;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -76,8 +78,19 @@ public class MainActivityFragment extends Fragment {
         Toast.makeText(getActivity(), "Loading Please Wait..", Toast.LENGTH_SHORT).show();
         if (NetworkUtils.getInstance(getContext()).isOnline())
             movieTask.execute(sortBy);
-        else
-            Toast.makeText(getActivity(), "Network is not available", Toast.LENGTH_LONG).show();
+        else {
+            //Toast.makeText(getActivity(), "Network is not available", Toast.LENGTH_LONG).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Network is not available");
+            builder.setPositiveButton(R.string.action_exit, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    getActivity().finish();
+                }
+            });
+
+            builder.create();
+            builder.show();
+        }
     }
 
     public class FetchMovieTask extends AsyncTask<String,Void,List<MovieData>>
@@ -198,8 +211,18 @@ public class MainActivityFragment extends Fragment {
         protected void onPostExecute(List<MovieData> result) {
             if (result!=null)
                 mMovieAdapter.replace(result);
-            else
-                Toast.makeText(getActivity(), "Data is not available", Toast.LENGTH_LONG).show();
+            else {
+                //Toast.makeText(getActivity(), "Data is not available", Toast.LENGTH_LONG).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Data is not available");
+                builder.setPositiveButton(R.string.action_exit, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        getActivity().finish();
+                    }
+                });
+                builder.create();
+                builder.show();
+            }
         }
     }
     class MovieAdapter extends BaseAdapter {
