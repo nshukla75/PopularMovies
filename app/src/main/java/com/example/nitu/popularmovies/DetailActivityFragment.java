@@ -29,8 +29,8 @@ public class DetailActivityFragment extends Fragment {
         {
             MovieData movie = (MovieData)intent.getSerializableExtra(intent.EXTRA_TEXT);
             String mMovieTitle = movie.getTitle();
-            ((TextView)rootView.findViewById(R.id.title_text))
-                    .setText(mMovieTitle);
+            //((TextView)rootView.findViewById(R.id.title_text)).setText(mMovieTitle);
+            getActivity().setTitle(mMovieTitle);
             String url =movie.getPoster_path();
             Picasso.with(getActivity()).load(url).into((ImageView) rootView.findViewById(R.id.imageView));
             String mMovieVoteCount = " ("+ movie.getVote_count()+" Votes)";
