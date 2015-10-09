@@ -54,6 +54,7 @@
         android:layout_alignLeft="@+id/voteaverage_text"
         android:layout_alignStart="@+id/voteaverage_text"
         />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -63,6 +64,7 @@
         android:layout_alignBottom="@+id/imageView"
         android:layout_alignLeft="@+id/textrelease"
         android:layout_alignStart="@+id/textrelease" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -73,15 +75,21 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="10dp" />
-    <TextView
+
+    <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Detail"
-        android:id="@+id/overview_text"
         android:layout_below="@+id/textoverview"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="5dp" />
+        android:layout_marginTop="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Detail"
+            android:id="@+id/overview_text"
+             />
+    </ScrollView>
 
 </RelativeLayout>
