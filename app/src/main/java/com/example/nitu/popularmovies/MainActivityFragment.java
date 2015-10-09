@@ -74,7 +74,7 @@ public class MainActivityFragment extends Fragment {
     private void updateMovie() {
         FetchMovieTask movieTask = new FetchMovieTask();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortBy = prefs.getString("sync_frequency","popularity.desc");
+        String sortBy = prefs.getString("sort_order","popularity.desc");
         Toast.makeText(getActivity(), "Loading Please Wait..", Toast.LENGTH_SHORT).show();
         if (NetworkUtils.getInstance(getContext()).isOnline())
             movieTask.execute(sortBy);
