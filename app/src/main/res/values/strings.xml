@@ -7,12 +7,12 @@
     <string name="action_exit">Exit</string>
 
     <!-- Example settings for Data & Sync -->
-    <string name="pref_title_sync_frequency">Sort order of the movies by:</string>
-    <string-array name="pref_sync_frequency_titles">
+    <string name="pref_title_sort_order">Sort order of the movies by:</string>
+    <string-array name="pref_sort_order_titles">
         <item>Most Popular</item>
         <item>Highest Rated</item>
     </string-array>
-    <string-array name="pref_sync_frequency_values">
+    <string-array name="pref_sort_order_values">
         <item>popularity.desc</item>
         <item>vote_average.desc</item>
     </string-array>
