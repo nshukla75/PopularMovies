@@ -106,7 +106,9 @@ public class MainActivityFragment extends Fragment {
             // Will contain the raw JSON response as a string.
             // Will contain the raw JSON response as a string.
             String movieJsonStr = null;
-            String apiKeyStr = "7537b743615a000671a98c32d354df39";
+
+            // Please Enter the key below
+            String apiKeyStr ="[YOUR API KEY]";
 
             try {
                 final String FORECAST_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
@@ -118,8 +120,6 @@ public class MainActivityFragment extends Fragment {
                         .appendQueryParameter(APIKEY_PARAM, apiKeyStr)
                         .build();
                 URL url = new URL(builtUri.toString());
-
-                //URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=7537b743615a000671a98c32d354df39");
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
