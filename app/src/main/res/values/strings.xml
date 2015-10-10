@@ -5,6 +5,8 @@
     <string name="title_activity_settings">Settings</string>
     <string name="action_share">Share</string>
     <string name="action_exit">Exit</string>
+    <string name="label_release">Release:</string>
+    <string name="label_Overview">Overview:</string>
 
     <!-- Example settings for Data & Sync -->
     <string name="pref_title_sort_order">Sort order of the movies by:</string>
