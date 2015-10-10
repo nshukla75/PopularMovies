@@ -1,11 +1,12 @@
 package com.example.nitu.popularmovies;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by nitus on 10/6/2015.
  */
-public class MovieData implements Serializable {
+public class MovieData implements Parcelable {
     private int id;
     private String movie_id;
     private String original_title;
@@ -95,5 +96,40 @@ public class MovieData implements Serializable {
     public void setVote_count(String vote_count) {
         this.vote_count = vote_count;
     }
+
+    public int describeContents() {
+        return 0;
+    }
+
+    private MovieData(Parcel in){
+        movie_id = in.readString();
+        original_title = in.readString();
+        poster_path = in.readString();
+        overview = in.readString();
+        release_date = in.readString();
+        vote_average = in.readString();
+        vote_count = in.readString();
+    }
+
+    public void writeToParcel(Parcel out,int flags){
+        out.writeString(movie_id);
+        out.writeString(original_title);
+        out.writeString(poster_path);
+        out.writeString(overview);
+        out.writeString(release_date);
+        out.writeString(vote_average);
+        out.writeString(vote_count);
+    }
+
+    public static final Parcelable.Creator<MovieData> CREATOR = new Parcelable.Creator<MovieData>() {
+        public MovieData createFromParcel(Parcel in) {
+            return new MovieData(in);
+        }
+
+        public MovieData[] newArray(int size) {
+            return new MovieData[size];
+        }
+    };
+
 }
 
