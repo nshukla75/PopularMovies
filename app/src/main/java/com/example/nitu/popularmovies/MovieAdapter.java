@@ -1,6 +1,7 @@
 package com.example.nitu.popularmovies;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +18,37 @@ import java.util.List;
  */
 public class MovieAdapter extends BaseAdapter {
     private final String LOG_TAG = MovieAdapter.class.getSimpleName();
+    private static final String KEY_ADAPTER_STATE = "MovieAdapter.KEY_ADAPTER_STATE";
     private final Context context;
-    //private final List<String> urls = new ArrayList<>();
     private final List<MovieData> movies = new ArrayList<>();
 
     public MovieAdapter(Context context) {
         this.context = context;
-        //Collections.addAll(urls, moviePosterPath);
+    }
+
+    public void onSaveInstanceState(Bundle outState) {
+             outState.putParcelableArrayList(KEY_ADAPTER_STATE, getAllItems());
+           }
+
+    public ArrayList<MovieData> getAllItems(){
+        ArrayList<MovieData> objects = new ArrayList<MovieData>(getCount());
+        for (int i = 0; i < getCount(); i++) {
+            objects.add(getItem(i));
+        }
+        return objects;
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState.containsKey(KEY_ADAPTER_STATE)) {
+            ArrayList<MovieData> objects = savedInstanceState
+                    .getParcelableArrayList(KEY_ADAPTER_STATE);
+            setItems(objects);
+        }
+    }
+
+    public void setItems(ArrayList<MovieData> items){
+        this.movies.clear();
+        this.movies.addAll(items);
     }
 
     @Override
@@ -55,9 +80,7 @@ public class MovieAdapter extends BaseAdapter {
     }
 
     public void replace(List<MovieData> moviesData) {
-        //this.urls.clear();
         this.movies.clear();
-        //this.urls.addAll(urls);
         this.movies.addAll(moviesData);
         notifyDataSetChanged();
     }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -34,24 +36,40 @@ import java.util.List;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
-    MovieAdapter mMovieAdapter;
-    public MainActivityFragment() {
+    private MovieAdapter mMovieAdapter;
 
+    public MainActivityFragment() {}
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mMovieAdapter.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            mMovieAdapter = new MovieAdapter(getActivity());
+            mMovieAdapter.onRestoreInstanceState(savedInstanceState);
+        }
+        else {
+            updateMovie();
+            mMovieAdapter = new MovieAdapter(getActivity());
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //return inflater.inflate(R.layout.fragment_main, container, false);
+
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        mMovieAdapter = new MovieAdapter(getActivity());
         GridView listView = (GridView) rootView.findViewById(R.id.gridview_movie);
         listView.setAdapter(mMovieAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 MovieData movie = mMovieAdapter.getItem(position);
-                //Toast.makeText(getActivity(),forecast,Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
                         .putExtra(Intent.EXTRA_TEXT, movie);
                 startActivity(intent);
@@ -60,12 +78,6 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
-    @Override
-    public void onStart()
-    {
-        super.onStart();
-        updateMovie();
-    }
     private void updateMovie() {
         FetchMovieTask movieTask = new FetchMovieTask();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -74,7 +86,6 @@ public class MainActivityFragment extends Fragment {
         if (NetworkUtils.getInstance(getContext()).isOnline())
             movieTask.execute(sortBy);
         else {
-            //Toast.makeText(getActivity(), "Network is not available", Toast.LENGTH_LONG).show();
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("Network is not available");
             builder.setPositiveButton(R.string.action_exit, new DialogInterface.OnClickListener() {
@@ -82,7 +93,6 @@ public class MainActivityFragment extends Fragment {
                     getActivity().finish();
                 }
             });
-
             builder.create();
             builder.show();
         }
@@ -191,7 +201,6 @@ public class MainActivityFragment extends Fragment {
                     movieData.setRelease_date(movieReleaseDate);
                     movieData.setVote_count(movieVoteCount);
                     movies.add(movieData);
-                    //handler.addMovieData(movieData);// Inserting into DB
                 }
                 return movies;
             } catch (JSONException e) {
@@ -204,7 +213,12 @@ public class MainActivityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<MovieData> result) {
-            if (result!=null)
+            if (result != null){
+                mMovieAdapter.replace(result);
+                /*listOfMovies.clear();
+                listOfMovies.addAll(result);*/
+            }
+           /* if (result!=null)
                 mMovieAdapter.replace(result);
             else {
                 //Toast.makeText(getActivity(), "Data is not available", Toast.LENGTH_LONG).show();
@@ -217,7 +231,7 @@ public class MainActivityFragment extends Fragment {
                 });
                 builder.create();
                 builder.show();
-            }
+            }*/
         }
     }
 
