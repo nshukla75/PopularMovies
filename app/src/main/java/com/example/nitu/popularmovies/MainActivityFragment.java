@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Parcelable;
+
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ListView;
+
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -126,6 +126,8 @@ public class MainActivityFragment extends Fragment {
                         .build();
                 URL url = new URL(builtUri.toString());
 
+                Log.v(LOG_TAG,"Getting Data from :   " + url);
+
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -179,11 +181,9 @@ public class MainActivityFragment extends Fragment {
             try {
                 JSONObject movieJson = new JSONObject(movieJsonStr);
                 JSONArray movieArray = movieJson.getJSONArray("results");
-                //List<String> urls = new ArrayList<>();
                 List<MovieData> movies = new ArrayList<MovieData>();
                 for (int i = 0; i < movieArray.length(); i++) {
                     JSONObject movie = movieArray.getJSONObject(i);
-                    //urls.add("http://image.tmdb.org/t/p/w185" + movie.getString("poster_path"));
                     String movieId = movie.getString("id");
                     String movieTitle = movie.getString("original_title");
                     String moviePosterPath = "http://image.tmdb.org/t/p/w185" + movie.getString("poster_path");
@@ -215,23 +215,7 @@ public class MainActivityFragment extends Fragment {
         protected void onPostExecute(List<MovieData> result) {
             if (result != null){
                 mMovieAdapter.replace(result);
-                /*listOfMovies.clear();
-                listOfMovies.addAll(result);*/
             }
-           /* if (result!=null)
-                mMovieAdapter.replace(result);
-            else {
-                //Toast.makeText(getActivity(), "Data is not available", Toast.LENGTH_LONG).show();
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Data is not available");
-                builder.setPositiveButton(R.string.action_exit, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        getActivity().finish();
-                    }
-                });
-                builder.create();
-                builder.show();
-            }*/
         }
     }
 
