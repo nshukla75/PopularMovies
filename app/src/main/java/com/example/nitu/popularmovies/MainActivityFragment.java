@@ -188,7 +188,7 @@ public class MainActivityFragment extends Fragment {
                     String movieTitle = movie.getString("original_title");
                     String moviePosterPath = "http://image.tmdb.org/t/p/w185" + movie.getString("poster_path");
                     String movieOverview = movie.getString("overview");
-                    String movieVoteAverage = movie.getString("vote_average");
+                    String movieVoteAverage = movie.getString("vote_average")+"/10";
                     String movieReleaseDate = movie.getString("release_date");
                     String movieVoteCount=movie.getString("vote_count");
 

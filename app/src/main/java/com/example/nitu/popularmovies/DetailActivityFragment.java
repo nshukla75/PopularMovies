@@ -30,14 +30,14 @@ public class DetailActivityFragment extends Fragment {
         {
             MovieData movie = (MovieData)intent.getParcelableExtra(intent.EXTRA_TEXT);
             String mMovieTitle = movie.getTitle();
-            //((TextView)rootView.findViewById(R.id.title_text)).setText(mMovieTitle);
-            getActivity().setTitle(mMovieTitle);
+            ((TextView)rootView.findViewById(R.id.title_text)).setText(mMovieTitle);
+            //getActivity().setTitle(mMovieTitle);
             String url =movie.getPoster_path();
             if (Patterns.WEB_URL.matcher(url).matches())
                 Picasso.with(getActivity()).load(url).into((ImageView) rootView.findViewById(R.id.imageView));
-            String mMovieVoteCount = " ("+ movie.getVote_count()+" Votes)";
+           /* String mMovieVoteCount = " ("+ movie.getVote_count()+" Votes)";
             ((TextView)rootView.findViewById(R.id.votecount_text))
-                    .setText(mMovieVoteCount);
+                    .setText(mMovieVoteCount);*/
             String mMovieVoteAverage = movie.getVote_average();
             ((TextView)rootView.findViewById(R.id.voteaverage_text))
                     .setText(mMovieVoteAverage);

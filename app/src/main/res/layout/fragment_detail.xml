@@ -8,11 +8,17 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:showIn="@layout/activity_detail"
     tools:context="com.example.nitu.popularmovies.DetailActivityFragment">
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/title_text"
+        android:layout_centerHorizontal="true" />
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageView"
+        android:layout_below="@id/title_text"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="10dp" />
@@ -23,17 +29,18 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="0.0"
         android:id="@+id/voteaverage_text"
+        android:layout_below="@id/title_text"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"/>
 
-    <TextView
+    <!--<TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="(0000 votes)"
         android:id="@+id/votecount_text"
         android:layout_toRightOf="@+id/voteaverage_text"
         android:layout_toEndOf="@+id/voteaverage_text"
-        android:layout_marginTop="17dp"/>
+        android:layout_marginTop="17dp"/>-->
 
     <TextView
         android:layout_width="wrap_content"
@@ -41,7 +48,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/label_release"
         android:id = "@+id/textrelease"
-        android:layout_above="@+id/release_text"
+        android:layout_below="@+id/voteaverage_text"
         android:layout_alignLeft="@+id/voteaverage_text"
         android:layout_alignStart="@+id/voteaverage_text"
         />
@@ -52,11 +59,11 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="2015-01-01"
         android:id="@+id/release_text"
-        android:layout_alignBottom="@+id/imageView"
+        android:layout_below="@+id/textrelease"
         android:layout_alignLeft="@+id/textrelease"
         android:layout_alignStart="@+id/textrelease" />
 
-    <TextView
+   <!-- <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -65,12 +72,12 @@
         android:layout_below="@+id/imageView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp" />-->
 
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textoverview"
+        android:layout_below="@+id/imageView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="5dp">
