@@ -1,93 +1,96 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:showIn="@layout/activity_detail"
     tools:context="com.example.nitu.popularmovies.DetailActivityFragment">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/title_text"
-        android:layout_centerHorizontal="true" />
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:layout_below="@id/title_text"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp" />
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        tools:showIn="@layout/activity_detail"
+        tools:context="com.example.nitu.popularmovies.DetailActivityFragment">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/title_text"
+            android:layout_centerHorizontal="true"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:layout_below="@id/title_text"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="10dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="0.0"
-        android:id="@+id/voteaverage_text"
-        android:layout_below="@id/title_text"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="0.0"
+            android:id="@+id/voteaverage_text"
+            android:layout_below="@id/title_text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"/>
 
-    <!--<TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="(0000 votes)"
-        android:id="@+id/votecount_text"
-        android:layout_toRightOf="@+id/voteaverage_text"
-        android:layout_toEndOf="@+id/voteaverage_text"
-        android:layout_marginTop="17dp"/>-->
+        <!--<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(0000 votes)"
+            android:id="@+id/votecount_text"
+            android:layout_toRightOf="@+id/voteaverage_text"
+            android:layout_toEndOf="@+id/voteaverage_text"
+            android:layout_marginTop="17dp"/>-->
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/label_release"
-        android:id = "@+id/textrelease"
-        android:layout_below="@+id/voteaverage_text"
-        android:layout_alignLeft="@+id/voteaverage_text"
-        android:layout_alignStart="@+id/voteaverage_text"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="2015-01-01"
-        android:id="@+id/release_text"
-        android:layout_below="@+id/textrelease"
-        android:layout_alignLeft="@+id/textrelease"
-        android:layout_alignStart="@+id/textrelease" />
-
-   <!-- <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/label_Overview"
-        android:id="@+id/textoverview"
-        android:layout_below="@+id/imageView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp" />-->
-
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="5dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Detail"
-            android:id="@+id/overview_text"
-             />
-    </ScrollView>
+            android:text="@string/label_release"
+            android:id = "@+id/textrelease"
+            android:layout_below="@+id/voteaverage_text"
+            android:layout_alignLeft="@+id/voteaverage_text"
+            android:layout_alignStart="@+id/voteaverage_text"
+            />
 
-</RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="2015-01-01"
+            android:id="@+id/release_text"
+            android:layout_below="@+id/textrelease"
+            android:layout_alignLeft="@+id/textrelease"
+            android:layout_alignStart="@+id/textrelease" />
+
+        <!-- <TextView
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textAppearance="?android:attr/textAppearanceLarge"
+             android:text="@string/label_Overview"
+             android:id="@+id/textoverview"
+             android:layout_below="@+id/imageView"
+             android:layout_alignParentLeft="true"
+             android:layout_alignParentStart="true"
+             android:layout_marginTop="10dp" />-->
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Detail"
+                android:id="@+id/overview_text"
+                android:layout_below="@+id/imageView"/>
+
+
+    </RelativeLayout>
+
+</ScrollView>
