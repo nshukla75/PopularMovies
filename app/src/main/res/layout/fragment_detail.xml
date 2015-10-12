@@ -15,7 +15,7 @@
         tools:showIn="@layout/activity_detail"
         tools:context="com.example.nitu.popularmovies.DetailActivityFragment">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/title_text"
@@ -27,17 +27,36 @@
             android:layout_below="@id/title_text"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="20dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="2015-01-01"
+            android:id="@+id/release_text"
+            android:layout_below="@+id/title_text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="0.0"
+            android:text="0.0/10"
             android:id="@+id/voteaverage_text"
-            android:layout_below="@id/title_text"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"/>
+            android:layout_below="@id/release_text"
+            android:layout_alignLeft="@+id/release_text"
+            android:layout_alignStart="@+id/release_text"/>
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="10"
+            android:stepSize="1.0"
+            android:rating="2.0"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_alignLeft="@+id/release_text"
+            android:layout_below="@id/voteaverage_text"/>
 
         <!--<TextView
             android:layout_width="wrap_content"
@@ -46,7 +65,7 @@
             android:id="@+id/votecount_text"
             android:layout_toRightOf="@+id/voteaverage_text"
             android:layout_toEndOf="@+id/voteaverage_text"
-            android:layout_marginTop="17dp"/>-->
+            android:layout_marginTop="17dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -57,17 +76,9 @@
             android:layout_below="@+id/voteaverage_text"
             android:layout_alignLeft="@+id/voteaverage_text"
             android:layout_alignStart="@+id/voteaverage_text"
-            />
+            />-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="2015-01-01"
-            android:id="@+id/release_text"
-            android:layout_below="@+id/textrelease"
-            android:layout_alignLeft="@+id/textrelease"
-            android:layout_alignStart="@+id/textrelease" />
+
 
         <!-- <TextView
              android:layout_width="wrap_content"
@@ -88,7 +99,8 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Detail"
                 android:id="@+id/overview_text"
-                android:layout_below="@+id/imageView"/>
+                android:layout_below="@+id/imageView"
+                android:layout_marginTop="10dp"/>
 
 
     </RelativeLayout>

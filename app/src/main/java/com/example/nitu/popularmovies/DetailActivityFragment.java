@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -40,7 +41,9 @@ public class DetailActivityFragment extends Fragment {
                     .setText(mMovieVoteCount);*/
             String mMovieVoteAverage = movie.getVote_average();
             ((TextView)rootView.findViewById(R.id.voteaverage_text))
-                    .setText(mMovieVoteAverage);
+                    .setText(mMovieVoteAverage +"/10");
+            Float f= Float.parseFloat(mMovieVoteAverage);
+            ((RatingBar)rootView.findViewById(R.id.ratingBar)).setRating(f);
             String mMovieReleaseDate = movie.getRelease_date();
             ((TextView)rootView.findViewById(R.id.release_text))
                     .setText(mMovieReleaseDate);
