@@ -12,7 +12,7 @@ import java.sql.Blob;
  * Created by nitus on 10/15/2015.
  */
 public class MovieContract {
-    public static final String CONTENT_AUTHORITY = "com.example.nitu.popularmovies.data";
+    public static final String CONTENT_AUTHORITY = "com.example.nitu.popularmovies";
     public static final Uri BASE_CONTENT_URI= Uri.parse("content://"+CONTENT_AUTHORITY);
 
     public static final String PATH_REVIEW = "review";
@@ -53,29 +53,28 @@ public class MovieContract {
         public static Uri buildMovieUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
-
-        /*public static long getReleaseDateFromUri(Uri uri) {
-            String dateString = uri.getQueryParameter(COLUMN_RELEASE_DATE);
-            if (null != dateString && dateString.length() > 0)
-                return Long.parseLong(dateString);
-            else
-                return 0;
+        public static Uri buildMovie(String movieSetting) {
+            return CONTENT_URI.buildUpon().appendPath(movieSetting).build();
+        }
+        public static String getMovieSettingFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
         }
 
-
-        //get movie based on popularity
-        public static String getPopularMoviesFromUri(Uri uri) {
-            return uri.getPathSegments().get(2);
+        public static Uri buildPopularMovie() {
+            return CONTENT_URI.buildUpon().appendPath("popularity").build();
         }
-        //get movie based on rating
-        public static String getTopRatedMoviesFromUri(Uri uri) {
-            return uri.getPathSegments().get(3);
+        public static Uri buildTopratedMovie() {
+            return CONTENT_URI.buildUpon().appendPath("rating").build();
         }
-        //get movie based on Favourite
-        public static String getFavouriteMoviesFromUri(Uri uri) {
-            return uri.getPathSegments().get(4);
-        }*/
-
+        public static Uri buildFavouriteMovie() {
+            return CONTENT_URI.buildUpon().appendPath("favourite").build();
+        }
+        public static Uri buildComingSoonMovie() {
+            return CONTENT_URI.buildUpon().appendPath("comingsoon").build();
+        }
+        public static Uri buildPlayingNowMovie() {
+            return CONTENT_URI.buildUpon().appendPath("playingnow").build();
+        }
     }
 
     /* Inner class that defines the table contents of the Trailer table */
@@ -84,8 +83,8 @@ public class MovieContract {
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRAILER).build();
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILER;
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILER;
+       /* public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILER;*/
 
         public static final String TABLE_NAME = "trailer";
 
@@ -116,8 +115,8 @@ public class MovieContract {
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_REVIEW).build();
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
+       /* public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;*/
 
         public static final String TABLE_NAME = "review";
 

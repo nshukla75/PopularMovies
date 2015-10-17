@@ -37,6 +37,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.nitu.popularmovies.MainActivity" />
         </activity>
+        <provider
+            android:authorities="com.example.nitu.popularmovies"
+            android:name=".data.MovieProvider"/>
     </application>
 
 </manifest>

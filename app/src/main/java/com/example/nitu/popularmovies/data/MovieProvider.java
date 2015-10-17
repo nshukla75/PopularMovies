@@ -23,22 +23,27 @@ public class MovieProvider extends ContentProvider {
 
     static final int TRAILER = 100;
     static final int TRAILER_WITH_MOVIE = 101;
-    static final int MOVIE = 300;
-    static final int MOVIE_BY_POPULARITY = 301;
-    static final int MOVIE_BY_RATING = 302;
-    static final int MOVIE_BY_FAVOURITE = 303;
-    static final int MOVIE_BY_COMINGSOON = 304;
-    static final int MOVIE_BY_PLAYINGNOW = 305;
 
     static final int REVIEW = 200;
     static final int REVIEW_WITH_MOVIE = 201;
 
+    static final int MOVIE = 300;
+    static final int MOVIE_WITH_KEY = 301;
+    static final int MOVIE_BY_POPULARITY = 302;
+    static final int MOVIE_BY_RATING = 303;
+    static final int MOVIE_BY_FAVOURITE = 304;
+    static final int MOVIE_BY_COMINGSOON = 305;
+    static final int MOVIE_BY_PLAYINGNOW = 306;
+
+
     private static final SQLiteQueryBuilder sTrailerByMovieSettingQueryBuilder;
     private static final SQLiteQueryBuilder sReviewByMovieSettingQueryBuilder;
+    private static final SQLiteQueryBuilder sMovieSettingQueryBuilder;
 
     static{
         sTrailerByMovieSettingQueryBuilder = new SQLiteQueryBuilder();
         sReviewByMovieSettingQueryBuilder = new SQLiteQueryBuilder();
+        sMovieSettingQueryBuilder = new SQLiteQueryBuilder();
         //This is an inner join which looks like
         //weather INNER JOIN location ON weather.location_id = location._id
         sTrailerByMovieSettingQueryBuilder.setTables(
@@ -56,6 +61,8 @@ public class MovieProvider extends ContentProvider {
             "." + MovieContract.ReviewEntry.COLUMN_MOV_KEY +
             " = " + MovieContract.MovieEntry.TABLE_NAME +
           "." + MovieContract.MovieEntry._ID);
+
+        sMovieSettingQueryBuilder.setTables(MovieContract.MovieEntry.TABLE_NAME);
     }
 
     //movie.movieid = ?
@@ -72,17 +79,18 @@ public class MovieProvider extends ContentProvider {
     private static final String sComingSoonWithReleaseDateSelection =
             MovieContract.MovieEntry.COLUMN_RELEASE_DATE + " >= ? " ;
 
-    //movie.releaseDate >= ?
+    //movie.Favourite == 1
     private static final String sFavouriteSelection =
             MovieContract.MovieEntry.COLUMN_FAVOURITE + " = ? " ;
 
-    private Cursor getFavouriteMovie(Uri uri, String[] projection, String sortOrder) {
-        int yes = 1;
+    //gets trailers by movie
+    private Cursor getTrailerByMovieSetting(Uri uri, String[] projection, String sortOrder) {
+        String movieSetting = MovieContract.TrailerEntry.getMovieSettingFromUri(uri);
         String[] selectionArgs;
         String selection;
 
-        selectionArgs = new String[]{Integer.toString(yes)};
-        selection = sFavouriteSelection;
+        selection = sMovieSettingSelection;
+        selectionArgs = new String[]{movieSetting};
 
         return sTrailerByMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
@@ -93,6 +101,85 @@ public class MovieProvider extends ContentProvider {
                 sortOrder
         );
     }
+    //gets reviews by movie
+    private Cursor getReviewByMovieSetting(Uri uri, String[] projection, String sortOrder) {
+        String movieSetting = MovieContract.ReviewEntry.getMovieSettingFromUri(uri);
+        String[] selectionArgs;
+        String selection;
+
+        selection = sMovieSettingSelection;
+        selectionArgs = new String[]{movieSetting};
+
+        return sReviewByMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+    // get Movie
+    private Cursor getMovieByMovieSetting(Uri uri, String[] projection, String sortOrder) {
+        String movieSetting = MovieContract.MovieEntry.getMovieSettingFromUri(uri);
+        String[] selectionArgs;
+        String selection;
+
+        selection = sMovieSettingSelection;
+        selectionArgs = new String[]{movieSetting};
+
+        return sMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+    // get favourite Movies
+    private Cursor getPopularMovie(Uri uri, String[] projection, String sortOrder) {
+        sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY +" [DESC]";
+        return sMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                null,
+                null,
+                null,
+                null,
+                sortOrder
+        );
+    }
+    // get favourite Movies
+    private Cursor getTopRatedMovie(Uri uri, String[] projection, String sortOrder) {
+        sortOrder = MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE +" [DESC]";
+        return sMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                null,
+                null,
+                null,
+                null,
+                sortOrder
+        );
+    }
+    // get favourite Movies
+    private Cursor getFavouriteMovie(Uri uri, String[] projection, String sortOrder) {
+        int yes = 1;
+        String[] selectionArgs;
+        String selection;
+
+        selectionArgs = new String[]{Integer.toString(yes)};
+        selection = sFavouriteSelection;
+
+        return sMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+    // get now Playing Movies
     private Cursor getPlayingNowMovie(Uri uri, String[] projection, String sortOrder) {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date()); // Now use today date.
@@ -117,6 +204,7 @@ public class MovieProvider extends ContentProvider {
                 sortOrder
         );
     }
+    // get coming soon Movies
     private Cursor getComingSoonMovie(Uri uri, String[] projection, String sortOrder) {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
@@ -138,41 +226,8 @@ public class MovieProvider extends ContentProvider {
                 sortOrder
         );
     }
-    private Cursor getTrailerByMovieSetting(Uri uri, String[] projection, String sortOrder) {
-        String movieSetting = MovieContract.TrailerEntry.getMovieSettingFromUri(uri);
-        String[] selectionArgs;
-        String selection;
+    // get Trailer links by Movies
 
-        selection = sMovieSettingSelection;
-        selectionArgs = new String[]{movieSetting};
-
-        return sTrailerByMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder
-        );
-    }
-
-    private Cursor getReviewByMovieSetting(Uri uri, String[] projection, String sortOrder) {
-        String movieSetting = MovieContract.ReviewEntry.getMovieSettingFromUri(uri);
-        String[] selectionArgs;
-        String selection;
-
-        selection = sMovieSettingSelection;
-        selectionArgs = new String[]{movieSetting};
-
-        return sReviewByMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder
-        );
-    }
 
     static UriMatcher buildUriMatcher() {
         // 1) The code passed into the constructor represents the code to return for the root
@@ -185,15 +240,18 @@ public class MovieProvider extends ContentProvider {
         matcher.addURI(authority, MovieContract.PATH_TRAILER, TRAILER);
         matcher.addURI(authority,  MovieContract.PATH_TRAILER + "/*", TRAILER_WITH_MOVIE);
 
-        matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
-        matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE_BY_POPULARITY);
-        matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE_BY_RATING);
-        matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE_BY_FAVOURITE);
-        matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE_BY_COMINGSOON);
-        matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE_BY_PLAYINGNOW);
-
         matcher.addURI(authority, MovieContract.PATH_REVIEW, REVIEW);
         matcher.addURI(authority,  MovieContract.PATH_REVIEW + "/*", REVIEW_WITH_MOVIE);
+
+        matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
+        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE_WITH_KEY);
+        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/popularity", MOVIE_BY_POPULARITY);
+        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/rating", MOVIE_BY_RATING);
+        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/favourite", MOVIE_BY_FAVOURITE);
+        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/comingsoon", MOVIE_BY_COMINGSOON);
+        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/playingnow", MOVIE_BY_PLAYINGNOW);
+
+
         // 3) Return the new matcher!
         return matcher;
     }
@@ -212,13 +270,17 @@ public class MovieProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
 
         switch (match) {
-            case REVIEW_WITH_MOVIE:
-                return MovieContract.ReviewEntry.CONTENT_TYPE;
-            case TRAILER_WITH_MOVIE:
-                return MovieContract.TrailerEntry.CONTENT_TYPE;
             case TRAILER:
                 return MovieContract.TrailerEntry.CONTENT_TYPE;
+            case TRAILER_WITH_MOVIE:
+                return MovieContract.TrailerEntry.CONTENT_TYPE;
+            case REVIEW:
+                return MovieContract.ReviewEntry.CONTENT_TYPE;
+            case REVIEW_WITH_MOVIE:
+                return MovieContract.ReviewEntry.CONTENT_TYPE;
             case MOVIE:
+                return MovieContract.MovieEntry.CONTENT_TYPE;
+            case MOVIE_WITH_KEY:
                 return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
             case MOVIE_BY_POPULARITY:
                 return MovieContract.MovieEntry.CONTENT_TYPE;
@@ -242,9 +304,22 @@ public class MovieProvider extends ContentProvider {
         // and query the database accordingly.
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
-            // "review/*"
-            case REVIEW_WITH_MOVIE: {
-                retCursor = getReviewByMovieSetting(uri, projection, sortOrder);
+            // "trailer"
+            case TRAILER: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.TrailerEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            // "trailer/*"
+            case TRAILER_WITH_MOVIE: {
+                retCursor = getTrailerByMovieSetting(uri, projection, sortOrder);
                 break;
             }
             // "review"
@@ -260,22 +335,9 @@ public class MovieProvider extends ContentProvider {
                 );
                 break;
             }
-            // "trailer/*"
-            case TRAILER_WITH_MOVIE: {
-                retCursor = getTrailerByMovieSetting(uri, projection, sortOrder);
-                break;
-            }
-            // "trailer"
-            case TRAILER: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        MovieContract.TrailerEntry.TABLE_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
+            // "review/*"
+            case REVIEW_WITH_MOVIE: {
+                retCursor = getReviewByMovieSetting(uri, projection, sortOrder);
                 break;
             }
             // "movie"
@@ -291,45 +353,32 @@ public class MovieProvider extends ContentProvider {
                 );
                 break;
             }
-            // "movie"
+            // "movie/*"
+            case MOVIE_WITH_KEY: {
+                retCursor = getMovieByMovieSetting(uri, projection, sortOrder);
+                break;
+            }
+            // "movie/popularity"
             case MOVIE_BY_POPULARITY: {
-                sortOrder= MovieContract.MovieEntry.COLUMN_POPULARITY + " [DESC]";
-                retCursor =  mOpenHelper.getReadableDatabase().query(
-                        MovieContract.MovieEntry.TABLE_NAME,
-                        projection,
-                        null,
-                        null,
-                        null,
-                        null,
-                        sortOrder
-                );
+                retCursor = getPopularMovie(uri, projection, sortOrder);
                 break;
             }
-            // "movie"
+            // "movie/rating"
             case MOVIE_BY_RATING: {
-                sortOrder= MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE + " [DESC]";
-                retCursor =  mOpenHelper.getReadableDatabase().query(
-                        MovieContract.MovieEntry.TABLE_NAME,
-                        projection,
-                        null,
-                        null,
-                        null,
-                        null,
-                        sortOrder
-                );
+                retCursor =  getTopRatedMovie(uri, projection, sortOrder);
                 break;
             }
-            // "movie"
+            // "movie/favourite"
             case MOVIE_BY_FAVOURITE: {
                 retCursor =  getFavouriteMovie(uri, projection, sortOrder);
                 break;
             }
-            // "movie"
+            // "movie/comingsoon"
             case MOVIE_BY_COMINGSOON: {
                 retCursor =  getComingSoonMovie(uri, projection, sortOrder);
                 break;
             }
-            // "movie"
+            // "movie/playingnow"
             case MOVIE_BY_PLAYINGNOW: {
                 retCursor =  getPlayingNowMovie(uri, projection, sortOrder);
                 break;
@@ -341,9 +390,6 @@ public class MovieProvider extends ContentProvider {
         return retCursor;
     }
 
-    /*
-        Student: Add the ability to insert Locations to the implementation of this function.
-     */
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
@@ -352,7 +398,6 @@ public class MovieProvider extends ContentProvider {
 
         switch (match) {
             case TRAILER: {
-                normalizeDate(values);
                 long _id = db.insert(MovieContract.TrailerEntry.TABLE_NAME, null, values);
                 if ( _id > 0 )
                     returnUri = MovieContract.TrailerEntry.buildTrailerUri(_id);
@@ -361,7 +406,6 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
             case REVIEW: {
-                normalizeDate(values);
                 long _id = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, values);
                 if ( _id > 0 )
                     returnUri = MovieContract.ReviewEntry.buildReviewUri(_id);
@@ -370,6 +414,7 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
             case MOVIE: {
+                normalizeDate(values);
                 long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, values);
                 if ( _id > 0 )
                     returnUri = MovieContract.MovieEntry.buildMovieUri(_id);
@@ -497,9 +542,6 @@ public class MovieProvider extends ContentProvider {
         }
     }
 
-    // You do not need to call this method. This is a method specifically to assist the testing
-    // framework in running smoothly. You can read more at:
-    // http://developer.android.com/reference/android/content/ContentProvider.html#shutdown()
     @Override
     public void shutdown() {
         mOpenHelper.close();

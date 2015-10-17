@@ -19,7 +19,7 @@ import java.util.Set;
  * Created by nitus on 10/15/2015.
  */
 public class TestUtilities extends AndroidTestCase {
-    static final String TEST_LOCATION = "99705";
+    static final String TEST_MOVIE = "135397";
     static final long TEST_DATE = 1419033600L;  // December 20th, 2014
 
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
@@ -88,7 +88,6 @@ public class TestUtilities extends AndroidTestCase {
 
         return movieRowId;
     }
-
 
     static class TestContentObserver extends ContentObserver {
         final HandlerThread mHT;
