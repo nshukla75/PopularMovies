@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 import java.util.Date;
 import java.util.Calendar;
@@ -139,7 +140,7 @@ public class MovieProvider extends ContentProvider {
     }
     // get favourite Movies
     private Cursor getPopularMovie(Uri uri, String[] projection, String sortOrder) {
-        sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY +" [DESC]";
+        sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY +" DESC";
         return sMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 null,
@@ -502,10 +503,29 @@ public class MovieProvider extends ContentProvider {
     public int bulkInsert(Uri uri, ContentValues[] values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
+        int returnCount = 0;
         switch (match) {
+            case MOVIE:
+                db.beginTransaction();
+                returnCount = 0;
+                try {
+                    for (ContentValues value : values) {
+                        normalizeDate(value);
+                        long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
+                        if (_id != -1) {
+                            returnCount++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                Log.e("Movie Provider","Bulk Inserted in Movie");
+                context.getContentResolver().notifyChange(uri, null);
+                return returnCount;
             case TRAILER:
                 db.beginTransaction();
-                int returnCount = 0;
+                returnCount = 0;
                 try {
                     for (ContentValues value : values) {
                         normalizeDate(value);
@@ -522,13 +542,13 @@ public class MovieProvider extends ContentProvider {
                 return returnCount;
             case REVIEW:
                 db.beginTransaction();
-                int returnCount1 = 0;
+                returnCount = 0;
                 try {
                     for (ContentValues value : values) {
                         normalizeDate(value);
                         long _id = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, value);
                         if (_id != -1) {
-                            returnCount1++;
+                            returnCount++;
                         }
                     }
                     db.setTransactionSuccessful();
@@ -536,7 +556,7 @@ public class MovieProvider extends ContentProvider {
                     db.endTransaction();
                 }
                 context.getContentResolver().notifyChange(uri, null);
-                return returnCount1;
+                return returnCount;
             default:
                 return super.bulkInsert(uri, values);
         }
