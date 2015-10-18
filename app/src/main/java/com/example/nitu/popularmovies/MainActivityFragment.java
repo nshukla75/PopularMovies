@@ -3,12 +3,8 @@ package com.example.nitu.popularmovies;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
-
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -18,11 +14,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.nitu.popularmovies.data.MovieContract;
+import com.example.nitu.popularmovies.data.MovieProvider;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -75,17 +74,18 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         GridView listView = (GridView) rootView.findViewById(R.id.gridview_movie);
         listView.setAdapter(mMovieAdapter);
         Log.e("Create View", "in Create View...............");
-       /* listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-                if(cursor != null) {
+                if (cursor != null) {
+                    String sortBy=Utility.getPreferences(getActivity());
                     Intent intent = new Intent(getActivity(), DetailActivity.class)
                             .setData(MovieContract.MovieEntry.buildMovie(cursor.getString(COL_MOVIE_ID)));
                     startActivity(intent);
                 }
             }
-        });*/
+        });
         return rootView;
     }
 
@@ -99,10 +99,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         updateMovie();
         getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
     }
+
     private void updateMovie() {
         FetchMovieTask movieTask = new FetchMovieTask(getActivity());
-       /* SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortBy = prefs.getString("sort_order","popularity.desc");*/
         String sortBy=Utility.getPreferences(getActivity());
         Toast.makeText(getActivity(), "Getting data for" + sortBy, Toast.LENGTH_LONG).show();
         if (NetworkUtils.getInstance(getContext()).isOnline())
@@ -139,7 +138,15 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        mMovieAdapter.swapCursor(cursor);
+        cursor.setNotificationUri(getContext().getContentResolver(), MovieContract.MovieEntry.CONTENT_URI);
+        if (null == mMovieAdapter)
+            mMovieAdapter = new MovieAdapter(getActivity(),null,0);
+        //gv is a GridView
+        GridView listView = (GridView) getActivity().findViewById(R.id.gridview_movie);
+        if (listView.getAdapter() != mMovieAdapter)
+            listView.setAdapter(mMovieAdapter);
+        if (mMovieAdapter.getCursor() != cursor)
+            mMovieAdapter.swapCursor(cursor);
     }
 
     @Override
