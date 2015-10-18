@@ -152,7 +152,7 @@ public class MovieProvider extends ContentProvider {
     }
     // get favourite Movies
     private Cursor getTopRatedMovie(Uri uri, String[] projection, String sortOrder) {
-        sortOrder = MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE +" [DESC]";
+        sortOrder = MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE +" DESC";
         return sMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 null,
@@ -415,7 +415,7 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
             case MOVIE: {
-                normalizeDate(values);
+                //normalizeDate(values);
                 long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, values);
                 if ( _id > 0 )
                     returnUri = MovieContract.MovieEntry.buildMovieUri(_id);
@@ -477,12 +477,10 @@ public class MovieProvider extends ContentProvider {
 
         switch (match) {
             case TRAILER: {
-                normalizeDate(values);
                 rowsUpdated = db.update(MovieContract.TrailerEntry.TABLE_NAME, values,selection, selectionArgs);
                 break;
             }
             case REVIEW: {
-                normalizeDate(values);
                 rowsUpdated = db.update(MovieContract.ReviewEntry.TABLE_NAME, values,selection, selectionArgs);
                 break;
             }
@@ -510,7 +508,7 @@ public class MovieProvider extends ContentProvider {
                 returnCount = 0;
                 try {
                     for (ContentValues value : values) {
-                        normalizeDate(value);
+                        //normalizeDate(value);
                         long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
                         if (_id != -1) {
                             returnCount++;
@@ -528,7 +526,6 @@ public class MovieProvider extends ContentProvider {
                 returnCount = 0;
                 try {
                     for (ContentValues value : values) {
-                        normalizeDate(value);
                         long _id = db.insert(MovieContract.TrailerEntry.TABLE_NAME, null, value);
                         if (_id != -1) {
                             returnCount++;
@@ -545,7 +542,6 @@ public class MovieProvider extends ContentProvider {
                 returnCount = 0;
                 try {
                     for (ContentValues value : values) {
-                        normalizeDate(value);
                         long _id = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, value);
                         if (_id != -1) {
                             returnCount++;

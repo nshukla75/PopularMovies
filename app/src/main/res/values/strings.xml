@@ -9,6 +9,8 @@
     <string name="label_Overview">Overview:</string>
 
     <!-- Example settings for Data & Sync -->
+    <string name="pref_sort_key">sort_order:</string>
+    <string name="pref_sort_default">popularity.desc</string>
     <string name="pref_title_sort_order">Sort order of the movies by:</string>
     <string-array name="pref_sort_order_titles">
         <item>Most Popular</item>

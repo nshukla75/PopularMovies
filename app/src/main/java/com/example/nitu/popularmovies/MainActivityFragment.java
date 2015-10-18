@@ -104,7 +104,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
        /* SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortBy = prefs.getString("sort_order","popularity.desc");*/
         String sortBy=Utility.getPreferences(getActivity());
-        Toast.makeText(getActivity(), "Loading Please Wait..", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "Getting data for" + sortBy, Toast.LENGTH_LONG).show();
         if (NetworkUtils.getInstance(getContext()).isOnline())
             movieTask.execute(sortBy);
         else {
@@ -124,11 +124,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public Loader<Cursor> onCreateLoader(int i, Bundle args) {
         String sortBy = Utility.getPreferences(getActivity());
         Uri movieUri;
-        if (sortBy == "vote_average.desc")
+        if (sortBy.equals("vote_average.desc"))
             movieUri = MovieContract.MovieEntry.buildTopratedMovie();
         else
             movieUri = MovieContract.MovieEntry.buildPopularMovie();
-
+        Toast.makeText(getActivity(), "Loading data for" + sortBy, Toast.LENGTH_LONG).show();
         return new CursorLoader(getActivity(),
                 movieUri,
                 MOVIE_COLUMNS,

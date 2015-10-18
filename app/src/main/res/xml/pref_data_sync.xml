@@ -4,11 +4,11 @@
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
     <ListPreference
-        android:key="sort_order"
+        android:key="@string/pref_sort_key"
         android:title="@string/pref_title_sort_order"
         android:entries="@array/pref_sort_order_titles"
         android:entryValues="@array/pref_sort_order_values"
-        android:defaultValue="popularity.desc"
+        android:defaultValue="@string/pref_sort_default"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 

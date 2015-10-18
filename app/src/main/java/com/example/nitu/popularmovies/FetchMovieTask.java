@@ -47,6 +47,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         if (mHttpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
             entity = mHttpResponse.getEntity();
         }
+        if (entity == null) return null;
         return EntityUtils.toByteArray(entity);
     }
 
@@ -85,32 +86,35 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
             for (int i = 0; i < movieArray.length(); i++) {
                 JSONObject movie = movieArray.getJSONObject(i);
-                String movieId = movie.getString("id");
-                String movieTitle = movie.getString("original_title");
-                String moviePosterPath = "http://image.tmdb.org/t/p/w185" + movie.getString("poster_path");
-                String movieOverview = movie.getString("overview");
-                String movieVoteAverage = movie.getString("vote_average");
-                String movieReleaseDate = movie.getString("release_date").substring(0, 4);
-                String movieVoteCount=movie.getString("vote_count");
-                String moviePopularity=movie.getString("popularity");
-                byte[] movieImage = null;
-                try {
-                    movieImage = urlToImageBLOB(moviePosterPath);
+                String moviePoster = movie.getString("poster_path");
+                String movieReleaseDate = movie.getString("release_date");
+                //String moviePosterPath = null;
+                if ((moviePoster !=null) &&(movieReleaseDate!=null)) {
+                    String movieId = movie.getString("id");
+                    String movieTitle = movie.getString("original_title");
+                    String moviePosterPath = "http://image.tmdb.org/t/p/w185" + moviePoster;
+                    String movieOverview = movie.getString("overview");
+                    String movieVoteAverage = movie.getString("vote_average");
+                    String movieVoteCount = movie.getString("vote_count");
+                    String moviePopularity = movie.getString("popularity");
+                    byte[] movieImage = null;
+                    try {
+                        movieImage = urlToImageBLOB(moviePosterPath);
+                    } catch (java.io.IOException e) {
+                        movieImage = null;
+                    }
+                    Log.e("trying to put image--", moviePosterPath + i);
+                    ContentValues movieValues = new ContentValues();
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movieId);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY, moviePopularity);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movieVoteAverage);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, 0);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, movieTitle);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movieOverview);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movieReleaseDate);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER, movieImage);
+                    cVVector.add(movieValues);
                 }
-                catch (java.io.IOException e){
-                    movieImage = null;
-                }
-                Log.e("trying to put image--",moviePosterPath + i);
-                ContentValues movieValues = new ContentValues();
-                movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movieId);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY, moviePopularity);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movieVoteAverage);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, 0);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, movieTitle);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movieOverview);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movieReleaseDate);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER, movieImage);
-                cVVector.add(movieValues);
             }
             Log.e("Moive JSON","Data into Content Values...............");
             int inserted = 0;
