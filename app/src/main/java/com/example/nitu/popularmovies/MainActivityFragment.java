@@ -17,11 +17,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.nitu.popularmovies.data.MovieContract;
-import com.example.nitu.popularmovies.data.MovieProvider;
+
 
 /**
  * A placeholder fragment containing a simple view.
@@ -29,6 +28,7 @@ import com.example.nitu.popularmovies.data.MovieProvider;
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     final int MOVIE_LOADER=0;
     private MovieAdapter mMovieAdapter;
+    private String msortBy;
     private static final String[] MOVIE_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
             // the content provider joins the location & weather tables in the background
@@ -62,14 +62,28 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public MainActivityFragment() {}
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
+        msortBy=Utility.getPreferences(getActivity());
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
+        }
+        else {
+            mMovieAdapter=new MovieAdapter(getActivity(),null,0);
+            updateMovie();
+            getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mMovieAdapter=new MovieAdapter(getActivity(),null,0);
+
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         GridView listView = (GridView) rootView.findViewById(R.id.gridview_movie);
         listView.setAdapter(mMovieAdapter);
@@ -79,7 +93,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
-                    String sortBy=Utility.getPreferences(getActivity());
+                    String sortBy = Utility.getPreferences(getActivity());
                     Intent intent = new Intent(getActivity(), DetailActivity.class)
                             .setData(MovieContract.MovieEntry.buildMovie(cursor.getString(COL_MOVIE_ID)));
                     startActivity(intent);
@@ -90,14 +104,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    void onPreferenceChanged( ) {
-        updateMovie();
-        getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
+    public void onResume() {
+        super.onResume();
+        String sortBy = Utility.getPreferences(getActivity());
+        if (sortBy != null && !sortBy.equals(msortBy)) {
+            updateMovie();
+            getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
+        }
+        msortBy = sortBy;
     }
 
     private void updateMovie() {
