@@ -133,7 +133,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         ((RatingBar)getView().findViewById(R.id.ratingBar)).setRating(f);
 
         ((TextView)getView().findViewById(R.id.release_text))
-                .setText(Utility.formatDate(data.getLong(COL_MOVIE_RELEASE_DATE)));
+                .setText(data.getString(COL_MOVIE_RELEASE_DATE));
 
         ((TextView)getView().findViewById(R.id.overview_text))
                 .setText(data.getString(COL_MOVIE_OVERVIEW));
