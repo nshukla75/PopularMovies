@@ -125,7 +125,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             builder.setMessage("Network is not available");
             builder.setPositiveButton(R.string.action_exit, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    getActivity().finish();
+                   // getActivity().finish();
                 }
             });
             builder.create();
