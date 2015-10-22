@@ -39,7 +39,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 TrailerEntry.COLUMN_MOV_KEY + ") ON CONFLICT REPLACE);";
 
         final String SQL_CREATE_REVIEW_TABLE = "CREATE TABLE " + ReviewEntry.TABLE_NAME + " (" +
-                TrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ReviewEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 
                 // the ID of the movie entry associated with this trailer data
                 ReviewEntry.COLUMN_MOV_KEY + " TEXT NOT NULL, " +

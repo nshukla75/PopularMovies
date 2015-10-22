@@ -6,8 +6,8 @@
     <string name="action_share">Share</string>
     <string name="action_exit">Exit</string>
     <string name="label_release">Release Date:</string>
-    <string name="label_Overview">Overview:</string>
-
+    <string name="label_review">Review:</string>
+    <string name="label_trailer">Trailer:</string>
     <!-- Example settings for Data & Sync -->
     <string name="pref_sort_key">sort_order:</string>
     <string name="pref_sort_default">popularity.desc</string>

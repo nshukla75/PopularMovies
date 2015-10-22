@@ -98,6 +98,7 @@ public class MovieContract {
 
         public static Uri buildTrailerUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+
         }
 
         public static Uri buildTrailerMovie(String movieSetting) {
