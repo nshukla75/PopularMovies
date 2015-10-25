@@ -97,6 +97,9 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                     String movieVoteAverage = movie.getString("vote_average");
                     String movieVoteCount = movie.getString("vote_count");
                     String moviePopularity = movie.getString("popularity");
+                    float f = Float.parseFloat(moviePopularity);
+                    int d = (int) Math.ceil(f);
+                    moviePopularity = Float.toString(d);
                     byte[] movieImage = null;
                     try {
                         movieImage = urlToImageBLOB(moviePosterPath);

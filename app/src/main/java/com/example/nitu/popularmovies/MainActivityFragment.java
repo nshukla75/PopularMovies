@@ -90,10 +90,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
-                    updateReview(cursor.getString(COL_MOVIE_KEY),cursor.getString(COL_MOVIEID));
-                    updateTrailer(cursor.getString(COL_MOVIE_KEY), cursor.getString(COL_MOVIEID));
+                    updateReview(cursor.getString(COL_MOVIE_KEY));
+                    updateTrailer(cursor.getString(COL_MOVIE_KEY));
                     Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .setData(MovieContract.MovieEntry.buildMovie(cursor.getString(COL_MOVIEID)));
+                            .setData(MovieContract.MovieEntry.buildMovie(cursor.getString(COL_MOVIE_KEY)));
                     startActivity(intent);
                 }
             }
@@ -101,26 +101,26 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         return rootView;
     }
 
-    private void updateReview(String movieKey,String movieId){
+    private void updateReview(String movieKey){
         Log.e(LOG_TAG,"In update Review");
         FetchReviewTask fetchReviewTask = new FetchReviewTask(getActivity());
         if (NetworkUtils.getInstance(getContext()).isOnline()) {
             Log.e("In update Review", "getting data for Review ");
             Log.e(LOG_TAG,"going to fetch review data for "+ movieKey);
-            fetchReviewTask.execute(movieKey,movieId);
+            fetchReviewTask.execute(movieKey);
         } else {
             Toast.makeText(getActivity(),"Network is not Available",Toast.LENGTH_LONG).show();
         }
         Log.e(LOG_TAG, "OUT update Review");
     }
 
-    private void updateTrailer(String movieKey,String movieId){
+    private void updateTrailer(String movieKey){
         Log.e(LOG_TAG,"In update Trailer");
         FetchTrailerTask fetchTrailerTask = new FetchTrailerTask(getActivity());
         if (NetworkUtils.getInstance(getContext()).isOnline()) {
             Log.e("In update Trailer", "getting data for Trailer ");
             Log.e(LOG_TAG,"going to fetch trailer data for "+ movieKey);
-            fetchTrailerTask.execute(movieKey,movieId);
+            fetchTrailerTask.execute(movieKey);
         } else {
             Toast.makeText(getActivity(), "Network is not Available", Toast.LENGTH_LONG).show();
         }

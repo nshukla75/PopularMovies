@@ -173,7 +173,7 @@ public class TestProvider extends AndroidTestCase {
         long movieRowId = TestUtilities.insertMovieValues(mContext);
 
         // Fantastic.  Now that we have a movie, add some trailers!
-        ContentValues trailerValues = TestUtilities.createTrailerValues(movieRowId);
+        ContentValues trailerValues = TestUtilities.createTrailerValues(TestUtilities.TEST_MOVIE);
 
         long trailerRowId = db.insert(MovieContract.TrailerEntry.TABLE_NAME, null, trailerValues);
         assertTrue("Unable to Insert TrailerEntry into the Database", trailerRowId != -1);
@@ -201,7 +201,7 @@ public class TestProvider extends AndroidTestCase {
         long movieRowId = TestUtilities.insertMovieValues(mContext);
 
         // Fantastic.  Now that we have a movie, add some trailers!
-        ContentValues reviewValues = TestUtilities.createReviewValues(movieRowId);
+        ContentValues reviewValues = TestUtilities.createReviewValues(TestUtilities.TEST_MOVIE);
 
         long reviewRowId = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, reviewValues);
         assertTrue("Unable to Insert reviewEntry into the Database", reviewRowId != -1);
@@ -343,7 +343,7 @@ public class TestProvider extends AndroidTestCase {
                 cursor, testValues);
 
         // --------------------Fantastic.  Now that we have a movie, add some trailer!
-        ContentValues trailerValues = TestUtilities.createTrailerValues(movieRowId);
+        ContentValues trailerValues = TestUtilities.createTrailerValues(TestUtilities.TEST_MOVIE);
         // The TestContentObserver is a one-shot class
         tco = TestUtilities.getTestContentObserver();
 
@@ -368,14 +368,14 @@ public class TestProvider extends AndroidTestCase {
                 null // columns to group by
         );
 
-        TestUtilities.validateCursor("testInsertReadProvider. Error validating TailerEntry insert.",
+        TestUtilities.validateCursor("testInsertReadProvider. Error validating TrailerEntry insert.",
                 trailerCursor, trailerValues);
 
         // Add the location values in with the weather data so that we can make
         // sure that the join worked and we actually get all the values back
         trailerValues.putAll(testValues);
 
-        // Get the joined Weather and Location data
+        // Get the joined Trailer and Movie data
         trailerCursor = mContext.getContentResolver().query(
                 MovieContract.TrailerEntry.buildTrailerMovie(TestUtilities.TEST_MOVIE),
                 null, // leaving "columns" null just returns all the columns.
@@ -383,11 +383,11 @@ public class TestProvider extends AndroidTestCase {
                 null, // values for "where" clause
                 null  // sort order
         );
-        TestUtilities.validateCursor("testInsertReadProvider.  Error validating joined Weather and Location Data.",
+        TestUtilities.validateCursor("testInsertReadProvider.  Error validating joined Trailer and Movie Data.",
                 trailerCursor, testValues);
 
         // -------------Fantastic.  Now that we have a movie, add some Review!
-        ContentValues reviewValues = TestUtilities.createReviewValues(movieRowId);
+        ContentValues reviewValues = TestUtilities.createReviewValues(TestUtilities.TEST_MOVIE);
         // The TestContentObserver is a one-shot class
         tco = TestUtilities.getTestContentObserver();
 
@@ -427,7 +427,7 @@ public class TestProvider extends AndroidTestCase {
                 null, // values for "where" clause
                 null  // sort order
         );
-        TestUtilities.validateCursor("testInsertReadProvider.  Error validating joined Weather and Location Data.",
+        TestUtilities.validateCursor("testInsertReadProvider.  Error validating joined Review and Movie Data.",
                 reviewCursor, testValues);
     }
 
@@ -464,11 +464,11 @@ public class TestProvider extends AndroidTestCase {
 
 
     static private final int BULK_INSERT_RECORDS_TO_INSERT = 5;
-    static ContentValues[] createBulkInsertTrailerValues(long movieRowId) {
+    static ContentValues[] createBulkInsertTrailerValues(String movieKey) {
         ContentValues[] returnContentValues = new ContentValues[BULK_INSERT_RECORDS_TO_INSERT];
         for ( int i = 0; i < BULK_INSERT_RECORDS_TO_INSERT; i++ ) {
             ContentValues trailerValues = new ContentValues();
-            trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOV_ID, movieRowId);
+            trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOV_KEY, movieKey);
             trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_KEY, "5576eac192514111e4001b0"+i);
             trailerValues.put(MovieContract.TrailerEntry.COLUMN_KEY, "lP-sUUUfamw");
             trailerValues.put(MovieContract.TrailerEntry.COLUMN_SIZE, 720);
@@ -504,7 +504,7 @@ public class TestProvider extends AndroidTestCase {
         // Now we can bulkInsert some weather.  In fact, we only implement BulkInsert for weather
         // entries.  With ContentProviders, you really only have to implement the features you
         // use, after all.
-        ContentValues[] bulkInsertContentValues = createBulkInsertTrailerValues(movieRowId);
+        ContentValues[] bulkInsertContentValues = createBulkInsertTrailerValues(TestUtilities.TEST_MOVIE);
 
         // Register a content observer for our bulk insert.
         TestUtilities.TestContentObserver trailerObserver = TestUtilities.getTestContentObserver();

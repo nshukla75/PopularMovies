@@ -32,7 +32,7 @@ public class FetchReviewTask extends AsyncTask<String, Void, Void> {
     }
     private boolean DEBUG = true;
 
-    private void getReviewDataFromJson(String reviewJsonStr, Long movieRowId)
+    private void getReviewDataFromJson(String reviewJsonStr, String movieStr)
             throws JSONException {
         final String OWM_RESULTS = "results";
         try {
@@ -48,7 +48,7 @@ public class FetchReviewTask extends AsyncTask<String, Void, Void> {
                 String reviewContent = movie.getString("content");
 
                 ContentValues reviewValues = new ContentValues();
-                reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOV_ID, movieRowId);
+                reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOV_KEY, movieStr);
                 reviewValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_KEY, reviewId);
                 reviewValues.put(MovieContract.ReviewEntry.COLUMN_AUTHOR, reviewAuthor);
                 reviewValues.put(MovieContract.ReviewEntry.COLUMN_CONTENT, reviewContent);
@@ -62,7 +62,7 @@ public class FetchReviewTask extends AsyncTask<String, Void, Void> {
                 cVVector.toArray(cvArray);
                 inserted = mContext.getContentResolver().bulkInsert(MovieContract.ReviewEntry.CONTENT_URI, cvArray);
             }
-            Log.e(LOG_TAG, movieRowId +"FetchReviewTask Complete "+ inserted + " Inserted");
+            Log.e(LOG_TAG, movieStr +"FetchReviewTask Complete "+ inserted + " Inserted");
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
@@ -129,7 +129,7 @@ public class FetchReviewTask extends AsyncTask<String, Void, Void> {
             return null;
         }
         String movieStr = params[0];
-        long movieRowId= Long.parseLong(params[1]);
+        //long movieRowId= Long.parseLong(params[1]);
 
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
@@ -151,7 +151,7 @@ public class FetchReviewTask extends AsyncTask<String, Void, Void> {
             URL url = new URL(builtUri.toString());
             reviewJsonStr = getJsonfromURL(url);
             Log.e(LOG_TAG,"Do In Background GOT Review JSON Here .........");
-            getReviewDataFromJson(reviewJsonStr,movieRowId);
+            getReviewDataFromJson(reviewJsonStr,movieStr);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attemping

@@ -48,7 +48,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         static final int COL_MOVIE_RELEASE_DATE = 7;
         static final int COL_MOVIE_POSTER = 8;
     }
-    private long movieRowId=0;
+    private String movieStr;
     public DetailActivityFragment() {}
 
     @Override
@@ -97,7 +97,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         if (!data.moveToFirst()) {
             return;
         }
-        movieRowId = data.getLong(MovieQuery.COL_MOVIEID);
+        movieStr = data.getString(MovieQuery.COL_MOVIE_KEY);
         ((TextView) getView().findViewById(R.id.title_text)).setText(data.getString(MovieQuery.COL_MOVIE_ORIGINAL_TITLE));
 
         ImageView imageView = (ImageView) getView().findViewById(R.id.imageView);
@@ -117,14 +117,23 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         ((TextView) getView().findViewById(R.id.overview_text))
                 .setText(data.getString(MovieQuery.COL_MOVIE_OVERVIEW));
        Log.e(LOG_TAG, "going to start Review Fragment");
-        if (movieRowId != 0) {
+        if (movieStr != null) {
             FragmentManager childFragMan = getChildFragmentManager();
             FragmentTransaction childFragTrans = childFragMan.beginTransaction();
-            ReviewFragment mReviewFragment = ReviewFragment.newInstance(movieRowId);
+            ReviewFragment mReviewFragment = ReviewFragment.newInstance(movieStr);
             if (childFragMan.findFragmentById(R.id.review_movie)==null) {
                 childFragTrans.add(R.id.content_parent, mReviewFragment);
                 childFragTrans.addToBackStack("Review");
                 childFragTrans.commit();
+            }
+
+            FragmentManager trailerFragMan = getChildFragmentManager();
+            FragmentTransaction trailerFragTrans = trailerFragMan.beginTransaction();
+            TrailerFragment mTrailerFragment = TrailerFragment.newInstance(movieStr);
+            if (trailerFragMan.findFragmentById(R.id.trailer_movie)==null) {
+                trailerFragTrans.add(R.id.trailerkey_parent, mTrailerFragment);
+                trailerFragTrans.addToBackStack("Trailer");
+                trailerFragTrans.commit();
             }
         }
     }

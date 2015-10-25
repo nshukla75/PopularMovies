@@ -32,7 +32,7 @@ public class FetchTrailerTask extends AsyncTask<String, Void, Void> {
     }
     private boolean DEBUG = true;
 
-    private void getTrailerDataFromJson(String trailerJsonStr, String movieStr)
+    private void getTrailerDataFromJson(String trailerJsonStr,String movieStr)
             throws JSONException {
         final String OWM_RESULTS = "results";
         try {
@@ -44,13 +44,12 @@ public class FetchTrailerTask extends AsyncTask<String, Void, Void> {
             for (int i = 0; i < trailerArray.length(); i++) {
                 JSONObject movie = trailerArray.getJSONObject(i);
                 String trailerKey = movie.getString("key");
-
-                if (trailerKey !=null) {
+                String site=movie.getString("site");
+                if ((trailerKey !=null)&&(site.equals("YouTube"))){
                     String trailerId = movie.getString("id");
                     String trailerSize = movie.getString("size");
-
                     ContentValues trailerValues = new ContentValues();
-                    trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOV_ID, movieStr);
+                    trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOV_KEY, movieStr);
                     trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_KEY, trailerId);
                     trailerValues.put(MovieContract.TrailerEntry.COLUMN_KEY, trailerKey);
                     trailerValues.put(MovieContract.TrailerEntry.COLUMN_SIZE, trailerSize);
@@ -132,6 +131,7 @@ public class FetchTrailerTask extends AsyncTask<String, Void, Void> {
             return null;
         }
         String movieStr = params[0];
+        //long movieRowId= Long.parseLong(params[1]);
 
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
@@ -139,7 +139,6 @@ public class FetchTrailerTask extends AsyncTask<String, Void, Void> {
 
         // Will contain the raw JSON response as a string.
         String trailerJsonStr = null;
-        String reviewJsonStr = null;
 
         String format = "json";
         String apiKeyStr = "7537b743615a000671a98c32d354df39";

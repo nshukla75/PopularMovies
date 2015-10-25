@@ -124,7 +124,7 @@ public class TestDb extends AndroidTestCase {
         MovieDbHelper dbHelper = new MovieDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         // Create ContentValues of what you want to insert
-        ContentValues testValues = TestUtilities.createTrailerValues(movieRowId);
+        ContentValues testValues = TestUtilities.createTrailerValues(TestUtilities.TEST_MOVIE);
         // Insert ContentValues into database and get a row ID back
         long trailerRowId = db.insert(MovieContract.TrailerEntry.TABLE_NAME,null,testValues);
         assertTrue(trailerRowId != -1);
@@ -155,7 +155,7 @@ public class TestDb extends AndroidTestCase {
         MovieDbHelper dbHelper = new MovieDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         // Create ContentValues of what you want to insert
-        ContentValues testValues = TestUtilities.createReviewValues(movieRowId);
+        ContentValues testValues = TestUtilities.createReviewValues(TestUtilities.TEST_MOVIE);
         // Insert ContentValues into database and get a row ID back
         long reviewRowId = db.insert(MovieContract.ReviewEntry.TABLE_NAME,null,testValues);
         assertTrue(reviewRowId != -1);

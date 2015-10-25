@@ -41,18 +41,18 @@ public class TestUtilities extends AndroidTestCase {
         }
     }
 
-    static ContentValues createReviewValues(long movieRowId) {
+    static ContentValues createReviewValues(String movieKey) {
         ContentValues reviewValues = new ContentValues();
-        reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOV_ID, movieRowId);
+        reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOV_KEY, movieKey);
         reviewValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_KEY, "55910381c3a36807f900065d");
         reviewValues.put(MovieContract.ReviewEntry.COLUMN_AUTHOR, "jonlikesmoviesthatdontsuck");
         reviewValues.put(MovieContract.ReviewEntry.COLUMN_CONTENT, "Overall action packed movie... But there should be more puzzles in the climax... But I really love the movie....Excellent...");
         return reviewValues;
     }
 
-    static ContentValues createTrailerValues(long movieRowId) {
+    static ContentValues createTrailerValues(String movieKey) {
         ContentValues trailerValues = new ContentValues();
-        trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOV_ID, movieRowId);
+        trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOV_KEY, movieKey);
         trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_KEY, "5576eac192514111e4001b03");
         trailerValues.put(MovieContract.TrailerEntry.COLUMN_KEY, "lP-sUUUfamw");
         trailerValues.put(MovieContract.TrailerEntry.COLUMN_SIZE, 720);
@@ -84,7 +84,7 @@ public class TestUtilities extends AndroidTestCase {
         movieRowId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, testValues);
 
         // Verify we got a row back.
-        assertTrue("Error: Failure to insert North Pole Location Values", movieRowId != -1);
+        assertTrue("Error: Failure to insert Movie Values", movieRowId != -1);
 
         return movieRowId;
     }
