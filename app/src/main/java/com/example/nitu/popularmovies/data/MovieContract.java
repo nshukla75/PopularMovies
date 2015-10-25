@@ -39,8 +39,8 @@ public class MovieContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE +"/"+CONTENT_AUTHORITY+"/"+PATH_MOVIE;
         public static final String TABLE_NAME = "movie";
 
-        //public static final String COLUMN_MOV_KEY = "movie_id";
-        public static final String COLUMN_MOVIE_ID = "movieid";
+        // _ID - Integer
+        public static final String COLUMN_MOVIE_KEY = "moviekey";
         public static final String COLUMN_POPULARITY="popularity";
         public static final String COLUMN_VOTE_AVERAGE="vote_average";
         public static final String COLUMN_FAVOURITE="favourite";
@@ -53,13 +53,12 @@ public class MovieContract {
         public static Uri buildMovieUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
-        public static Uri buildMovie(String movieSetting) {
-            return CONTENT_URI.buildUpon().appendPath(movieSetting).build();
+        public static Uri buildMovie(String movieKey) {
+            return CONTENT_URI.buildUpon().appendPath(movieKey).build();
         }
         public static String getMovieSettingFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }
-
         public static Uri buildPopularMovie() {
             return CONTENT_URI.buildUpon().appendPath("popularity").build();
         }
@@ -89,9 +88,9 @@ public class MovieContract {
         public static final String TABLE_NAME = "trailer";
 
         // Column with the foreign key into the movie table.
-        public static final String COLUMN_MOV_KEY = "movie_id";
+        public static final String COLUMN_MOV_ID = "movieId";
         //id from API
-        public static final String COLUMN_TRAILER_ID = "trailerid";
+        public static final String COLUMN_TRAILER_KEY = "trailerid";
         public static final String COLUMN_KEY = "key";
 
         public static final String COLUMN_SIZE = "size";
@@ -101,8 +100,8 @@ public class MovieContract {
 
         }
 
-        public static Uri buildTrailerMovie(String movieSetting) {
-            return CONTENT_URI.buildUpon().appendPath(movieSetting).build();
+        public static Uri buildTrailerMovie(String movieKey) {
+            return CONTENT_URI.buildUpon().appendPath(movieKey).build();
         }
 
         public static String getMovieSettingFromUri(Uri uri) {
@@ -115,15 +114,15 @@ public class MovieContract {
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_REVIEW).build();
         public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW ;
        /* public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;*/
 
         public static final String TABLE_NAME = "review";
 
         // Column with the foreign key into the Movie table.
-        public static final String COLUMN_MOV_KEY = "movie_id";
-        public static final String COLUMN_REVIEW_ID = "reviewid";
+        public static final String COLUMN_MOV_ID = "movieId";
+        public static final String COLUMN_REVIEW_KEY = "reviewid";
         public static final String COLUMN_AUTHOR = "author";
 
         public static final String COLUMN_CONTENT = "content";
@@ -133,8 +132,8 @@ public class MovieContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static Uri buildReviewMovie(String movieSetting) {
-            return CONTENT_URI.buildUpon().appendPath(movieSetting).build();
+        public static Uri buildReviewMovie(String movieId) {
+            return CONTENT_URI.buildUpon().appendPath(movieId).build();
         }
 
         public static String getMovieSettingFromUri(Uri uri) {

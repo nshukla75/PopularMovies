@@ -468,8 +468,8 @@ public class TestProvider extends AndroidTestCase {
         ContentValues[] returnContentValues = new ContentValues[BULK_INSERT_RECORDS_TO_INSERT];
         for ( int i = 0; i < BULK_INSERT_RECORDS_TO_INSERT; i++ ) {
             ContentValues trailerValues = new ContentValues();
-            trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOV_KEY, movieRowId);
-            trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_ID, "5576eac192514111e4001b0"+i);
+            trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOV_ID, movieRowId);
+            trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_KEY, "5576eac192514111e4001b0"+i);
             trailerValues.put(MovieContract.TrailerEntry.COLUMN_KEY, "lP-sUUUfamw");
             trailerValues.put(MovieContract.TrailerEntry.COLUMN_SIZE, 720);
             returnContentValues[i] = trailerValues;

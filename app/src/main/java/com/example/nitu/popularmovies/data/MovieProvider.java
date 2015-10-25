@@ -23,13 +23,13 @@ public class MovieProvider extends ContentProvider {
     private MovieDbHelper mOpenHelper;
 
     static final int TRAILER = 100;
-    static final int TRAILER_WITH_MOVIE = 101;
+    static final int TRAILER_WITH_MOVIE_ID = 101;
 
     static final int REVIEW = 200;
-    static final int REVIEW_WITH_MOVIE = 201;
+    static final int REVIEW_WITH_MOVIE_ID = 201;
 
     static final int MOVIE = 300;
-    static final int MOVIE_WITH_KEY = 301;
+    static final int MOVIE_WITH_ID = 301;
     static final int MOVIE_BY_POPULARITY = 302;
     static final int MOVIE_BY_RATING = 303;
     static final int MOVIE_BY_FAVOURITE = 304;
@@ -45,13 +45,14 @@ public class MovieProvider extends ContentProvider {
         sTrailerByMovieSettingQueryBuilder = new SQLiteQueryBuilder();
         sReviewByMovieSettingQueryBuilder = new SQLiteQueryBuilder();
         sMovieSettingQueryBuilder = new SQLiteQueryBuilder();
+
         //This is an inner join which looks like
         //weather INNER JOIN location ON weather.location_id = location._id
         sTrailerByMovieSettingQueryBuilder.setTables(
             MovieContract.TrailerEntry.TABLE_NAME + " INNER JOIN " +
             MovieContract.MovieEntry.TABLE_NAME +
             " ON " + MovieContract.TrailerEntry.TABLE_NAME +
-            "." + MovieContract.TrailerEntry.COLUMN_MOV_KEY +
+            "." + MovieContract.TrailerEntry.COLUMN_MOV_ID +
             " = " + MovieContract.MovieEntry.TABLE_NAME +
             "." + MovieContract.MovieEntry._ID);
 
@@ -59,7 +60,7 @@ public class MovieProvider extends ContentProvider {
             MovieContract.ReviewEntry.TABLE_NAME + " INNER JOIN " +
             MovieContract.MovieEntry.TABLE_NAME +
             " ON " + MovieContract.ReviewEntry.TABLE_NAME +
-            "." + MovieContract.ReviewEntry.COLUMN_MOV_KEY +
+            "." + MovieContract.ReviewEntry.COLUMN_MOV_ID +
             " = " + MovieContract.MovieEntry.TABLE_NAME +
           "." + MovieContract.MovieEntry._ID);
 
@@ -67,9 +68,9 @@ public class MovieProvider extends ContentProvider {
     }
 
     //movie.movieid = ?
-    private static final String sMovieSettingSelection =
+    private static final String sMovieKeySelection =
             MovieContract.MovieEntry.TABLE_NAME+
-                    "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ? ";
+                    "." + MovieContract.MovieEntry._ID + " = ? ";
 
     //movie.releaseDate >= ? AND movie.releaseDate <= ?
     private static final String sPlayingNowWithReleaseDateSelection =
@@ -90,7 +91,7 @@ public class MovieProvider extends ContentProvider {
         String[] selectionArgs;
         String selection;
 
-        selection = sMovieSettingSelection;
+        selection = sMovieKeySelection;
         selectionArgs = new String[]{movieSetting};
 
         return sTrailerByMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
@@ -104,11 +105,11 @@ public class MovieProvider extends ContentProvider {
     }
     //gets reviews by movie
     private Cursor getReviewByMovieSetting(Uri uri, String[] projection, String sortOrder) {
-        String movieSetting = MovieContract.ReviewEntry.getMovieSettingFromUri(uri);
+        String movieSetting = MovieContract.MovieEntry.getMovieSettingFromUri(uri);
         String[] selectionArgs;
         String selection;
 
-        selection = sMovieSettingSelection;
+        selection = sMovieKeySelection;
         selectionArgs = new String[]{movieSetting};
 
         return sReviewByMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
@@ -126,7 +127,7 @@ public class MovieProvider extends ContentProvider {
         String[] selectionArgs;
         String selection;
 
-        selection = sMovieSettingSelection;
+        selection = sMovieKeySelection;
         selectionArgs = new String[]{movieSetting};
 
         return sMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
@@ -239,13 +240,13 @@ public class MovieProvider extends ContentProvider {
         // 2) Use the addURI function to match each of the types.  Use the constants from
         // WeatherContract to help define the types to the UriMatcher.
         matcher.addURI(authority, MovieContract.PATH_TRAILER, TRAILER);
-        matcher.addURI(authority,  MovieContract.PATH_TRAILER + "/*", TRAILER_WITH_MOVIE);
+        matcher.addURI(authority, MovieContract.PATH_TRAILER  +"/*", TRAILER_WITH_MOVIE_ID);
 
         matcher.addURI(authority, MovieContract.PATH_REVIEW, REVIEW);
-        matcher.addURI(authority,  MovieContract.PATH_REVIEW + "/*", REVIEW_WITH_MOVIE);
+        matcher.addURI(authority, MovieContract.PATH_REVIEW + "/*", REVIEW_WITH_MOVIE_ID);
 
         matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
-        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE_WITH_KEY);
+        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE_WITH_ID);
         matcher.addURI(authority, MovieContract.PATH_MOVIE + "/popularity", MOVIE_BY_POPULARITY);
         matcher.addURI(authority, MovieContract.PATH_MOVIE + "/rating", MOVIE_BY_RATING);
         matcher.addURI(authority, MovieContract.PATH_MOVIE + "/favourite", MOVIE_BY_FAVOURITE);
@@ -273,15 +274,15 @@ public class MovieProvider extends ContentProvider {
         switch (match) {
             case TRAILER:
                 return MovieContract.TrailerEntry.CONTENT_TYPE;
-            case TRAILER_WITH_MOVIE:
+            case TRAILER_WITH_MOVIE_ID:
                 return MovieContract.TrailerEntry.CONTENT_TYPE;
             case REVIEW:
                 return MovieContract.ReviewEntry.CONTENT_TYPE;
-            case REVIEW_WITH_MOVIE:
+            case REVIEW_WITH_MOVIE_ID:
                 return MovieContract.ReviewEntry.CONTENT_TYPE;
             case MOVIE:
                 return MovieContract.MovieEntry.CONTENT_TYPE;
-            case MOVIE_WITH_KEY:
+            case MOVIE_WITH_ID:
                 return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
             case MOVIE_BY_POPULARITY:
                 return MovieContract.MovieEntry.CONTENT_TYPE;
@@ -319,7 +320,7 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
             // "trailer/*"
-            case TRAILER_WITH_MOVIE: {
+            case TRAILER_WITH_MOVIE_ID: {
                 retCursor = getTrailerByMovieSetting(uri, projection, sortOrder);
                 break;
             }
@@ -337,7 +338,7 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
             // "review/*"
-            case REVIEW_WITH_MOVIE: {
+            case REVIEW_WITH_MOVIE_ID: {
                 retCursor = getReviewByMovieSetting(uri, projection, sortOrder);
                 break;
             }
@@ -355,7 +356,7 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
             // "movie/*"
-            case MOVIE_WITH_KEY: {
+            case MOVIE_WITH_ID: {
                 retCursor = getMovieByMovieSetting(uri, projection, sortOrder);
                 break;
             }

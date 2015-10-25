@@ -1,7 +1,5 @@
 package com.example.nitu.popularmovies;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -26,18 +24,13 @@ import com.example.nitu.popularmovies.data.MovieContract;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+    private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
     final int MOVIE_LOADER=0;
     private MovieAdapter mMovieAdapter;
     private String msortBy;
     private static final String[] MOVIE_COLUMNS = {
-            // In this case the id needs to be fully qualified with a table name, since
-            // the content provider joins the location & weather tables in the background
-            // (both have an _id column)
-            // On the one hand, that's annoying.  On the other, you can search the weather table
-            // using the location set by the user, which is only in the Location table.
-            // So the convenience is worth it.
             MovieContract.MovieEntry._ID,
-            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+            MovieContract.MovieEntry.COLUMN_MOVIE_KEY,
             MovieContract.MovieEntry.COLUMN_POPULARITY,
             MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
             MovieContract.MovieEntry.COLUMN_FAVOURITE,
@@ -50,7 +43,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
     // must change.
     static final int COL_MOVIEID = 0;
-    static final int COL_MOVIE_ID = 1;
+    static final int COL_MOVIE_KEY = 1;//135397
     static final int COL_MOVIE_POPULARITY = 2;
     static final int COL_MOVIE_VOTE_AVERAGE = 3;
     static final int COL_MOVIE_FAVOURITE = 4;
@@ -64,17 +57,17 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        //mMovieAdapter.onSaveInstanceState(outState);
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         msortBy=Utility.getPreferences(getActivity());
         super.onCreate(savedInstanceState);
+        mMovieAdapter=new MovieAdapter(getActivity(),null,0);
         if (savedInstanceState != null) {
             getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
         }
         else {
-            mMovieAdapter=new MovieAdapter(getActivity(),null,0);
             updateMovie();
             getLoaderManager().initLoader(MOVIE_LOADER, null, this);
         }
@@ -86,21 +79,48 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         GridView listView = (GridView) rootView.findViewById(R.id.gridview_movie);
-        listView.setAdapter(mMovieAdapter);
+        if (mMovieAdapter.getCount()>0) listView.setAdapter(mMovieAdapter);
         Log.e("Create View", "in Create View...............");
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
-                    String sortBy = Utility.getPreferences(getActivity());
+                    updateReview(cursor.getString(COL_MOVIE_KEY),cursor.getString(COL_MOVIEID));
+                    updateTrailer(cursor.getString(COL_MOVIE_KEY), cursor.getString(COL_MOVIEID));
                     Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .setData(MovieContract.MovieEntry.buildMovie(cursor.getString(COL_MOVIE_ID)));
+                            .setData(MovieContract.MovieEntry.buildMovie(cursor.getString(COL_MOVIEID)));
                     startActivity(intent);
                 }
             }
         });
         return rootView;
+    }
+
+    private void updateReview(String movieKey,String movieId){
+        Log.e(LOG_TAG,"In update Review");
+        FetchReviewTask fetchReviewTask = new FetchReviewTask(getActivity());
+        if (NetworkUtils.getInstance(getContext()).isOnline()) {
+            Log.e("In update Review", "getting data for Review ");
+            Log.e(LOG_TAG,"going to fetch review data for "+ movieKey);
+            fetchReviewTask.execute(movieKey,movieId);
+        } else {
+            Toast.makeText(getActivity(),"Network is not Available",Toast.LENGTH_LONG).show();
+        }
+        Log.e(LOG_TAG, "OUT update Review");
+    }
+
+    private void updateTrailer(String movieKey,String movieId){
+        Log.e(LOG_TAG,"In update Trailer");
+        FetchTrailerTask fetchTrailerTask = new FetchTrailerTask(getActivity());
+        if (NetworkUtils.getInstance(getContext()).isOnline()) {
+            Log.e("In update Trailer", "getting data for Trailer ");
+            Log.e(LOG_TAG,"going to fetch trailer data for "+ movieKey);
+            fetchTrailerTask.execute(movieKey,movieId);
+        } else {
+            Toast.makeText(getActivity(), "Network is not Available", Toast.LENGTH_LONG).show();
+        }
+        Log.e(LOG_TAG, "OUT update Trailer");
     }
 
     @Override
@@ -121,15 +141,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (NetworkUtils.getInstance(getContext()).isOnline())
             movieTask.execute(sortBy);
         else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("Network is not available");
-            builder.setPositiveButton(R.string.action_exit, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                   // getActivity().finish();
-                }
-            });
-            builder.create();
-            builder.show();
+            Toast.makeText(getActivity(), "No Network connection" + sortBy, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -165,7 +177,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        mMovieAdapter.swapCursor(null);
+        //mMovieAdapter.swapCursor(null);
 
     }
 }

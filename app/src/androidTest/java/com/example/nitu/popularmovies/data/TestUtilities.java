@@ -43,8 +43,8 @@ public class TestUtilities extends AndroidTestCase {
 
     static ContentValues createReviewValues(long movieRowId) {
         ContentValues reviewValues = new ContentValues();
-        reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOV_KEY, movieRowId);
-        reviewValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID, "55910381c3a36807f900065d");
+        reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOV_ID, movieRowId);
+        reviewValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_KEY, "55910381c3a36807f900065d");
         reviewValues.put(MovieContract.ReviewEntry.COLUMN_AUTHOR, "jonlikesmoviesthatdontsuck");
         reviewValues.put(MovieContract.ReviewEntry.COLUMN_CONTENT, "Overall action packed movie... But there should be more puzzles in the climax... But I really love the movie....Excellent...");
         return reviewValues;
@@ -52,8 +52,8 @@ public class TestUtilities extends AndroidTestCase {
 
     static ContentValues createTrailerValues(long movieRowId) {
         ContentValues trailerValues = new ContentValues();
-        trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOV_KEY, movieRowId);
-        trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_ID, "5576eac192514111e4001b03");
+        trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOV_ID, movieRowId);
+        trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_KEY, "5576eac192514111e4001b03");
         trailerValues.put(MovieContract.TrailerEntry.COLUMN_KEY, "lP-sUUUfamw");
         trailerValues.put(MovieContract.TrailerEntry.COLUMN_SIZE, 720);
         return trailerValues;
@@ -62,7 +62,7 @@ public class TestUtilities extends AndroidTestCase {
     static ContentValues createMovieValues(byte[] image) {
         // Create a new map of values, where column names are the keys
         ContentValues testValues = new ContentValues();
-        testValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, "135397");
+        testValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_KEY, "135397");
         testValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY, 46.6);
         testValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, 7.1);
         testValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, 0);

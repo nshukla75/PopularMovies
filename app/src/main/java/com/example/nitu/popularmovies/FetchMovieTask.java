@@ -105,7 +105,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                     }
                     Log.e("trying to put image--", moviePosterPath + i);
                     ContentValues movieValues = new ContentValues();
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movieId);
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_KEY, movieId);
                     movieValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY, moviePopularity);
                     movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movieVoteAverage);
                     movieValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, 0);
@@ -125,7 +125,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                 inserted = mContext.getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,cvArray);
             }
 
-            Log.e(LOG_TAG, "FetchWeatherTask Complete. " + inserted + " Inserted");
+            Log.e(LOG_TAG, "FetchMovieTask Complete. " + inserted + " Inserted");
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
