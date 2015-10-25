@@ -1,4 +1,4 @@
-package com.example.nitu.popularmovies;
+package com.example.nitu.popularmovies.adaptors;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
+
+import com.example.nitu.popularmovies.R;
+import com.example.nitu.popularmovies.ReviewFragment;
 
 /**
  * Created by nitus on 10/9/2015.

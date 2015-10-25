@@ -17,7 +17,11 @@ import android.widget.GridView;
 
 import android.widget.Toast;
 
+import com.example.nitu.popularmovies.adaptors.MovieAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
+import com.example.nitu.popularmovies.fetchtasks.FetchMovieTask;
+import com.example.nitu.popularmovies.fetchtasks.FetchReviewTask;
+import com.example.nitu.popularmovies.fetchtasks.FetchTrailerTask;
 
 
 /**

@@ -1,24 +1,18 @@
-package com.example.nitu.popularmovies;
+package com.example.nitu.popularmovies.adaptors;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.CursorAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.example.nitu.popularmovies.R;
+import com.example.nitu.popularmovies.Utility;
 import com.example.nitu.popularmovies.data.MovieContract;
-import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by nitus on 10/9/2015.

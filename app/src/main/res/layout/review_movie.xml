@@ -2,12 +2,15 @@
     android:id="@+id/review_movie"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
-
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/review_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reviews: " />
     <ListView
         android:id="@+id/listView_movie"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

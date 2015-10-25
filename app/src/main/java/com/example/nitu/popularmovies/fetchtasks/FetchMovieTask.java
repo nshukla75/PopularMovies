@@ -1,4 +1,4 @@
-package com.example.nitu.popularmovies;
+package com.example.nitu.popularmovies.fetchtasks;
 
 import android.content.ContentValues;
 import android.content.Context;

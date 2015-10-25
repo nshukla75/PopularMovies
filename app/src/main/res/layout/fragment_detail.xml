@@ -16,7 +16,8 @@
                 android:id="@+id/title_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Movie Title" />
+                android:text="Movie Title"
+                android:textStyle="bold" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,7 +69,8 @@
                 android:id="@+id/overview_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Overview" />
+                android:text="Overview"
+                android:textStyle="bold" />
         </LinearLayout>
          <!--<TextView
             android:layout_width="wrap_content"
@@ -103,7 +105,8 @@
             <FrameLayout
                 android:id="@+id/content_parent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:padding="16dp"/>
         <!--</LinearLayout>-->
     </LinearLayout>
 </ScrollView>
