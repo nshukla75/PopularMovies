@@ -110,17 +110,15 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_review"
                 android:padding="10dp" />-->
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/trailerkey_parent"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:orientation="vertical"
+            android:layout_height="wrap_content"
             android:padding="15dp"/>
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/content_parent"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:orientation="vertical"
+            android:layout_height="wrap_content"
             android:padding="15dp"/>
         <!--</LinearLayout>-->
     </LinearLayout>

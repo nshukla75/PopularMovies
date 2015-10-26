@@ -11,7 +11,7 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
 import com.example.nitu.popularmovies.R;
-import com.example.nitu.popularmovies.Utility;
+import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.data.MovieContract;
 
 /**
@@ -36,19 +36,25 @@ public class MovieAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         View view =  LayoutInflater.from(context).inflate(R.layout.grid_item_movie,parent,false);
+        final ViewHolder holder = new ViewHolder();
+        holder.imgMovie = (ImageView) view.findViewById(R.id.grid_item_movie_imageview);
+        view.setTag(holder);
         return view;
     }
 
      @Override
     public void bindView(View view, Context context, Cursor cursor) {
-         ImageView imageView = (ImageView) view;
+         final ViewHolder holder = (ViewHolder)view.getTag();
          byte[] bb= Utility.getImage(cursor);
          if (bb!=null) {
-             imageView.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
+             holder.imgMovie.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
              Log.e("image to grid", "Length-----" + bb.length);
          }
 
      }
+    static class ViewHolder {
+        ImageView imgMovie;
+    }
 }
 
 

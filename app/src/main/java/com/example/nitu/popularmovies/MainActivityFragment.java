@@ -17,6 +17,7 @@ import android.widget.GridView;
 
 import android.widget.Toast;
 
+import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.adaptors.MovieAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
 import com.example.nitu.popularmovies.fetchtasks.FetchMovieTask;
@@ -56,6 +57,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     static final int COL_MOVIE_RELEASE_DATE = 7;
     static final int COL_MOVIE_POSTER = 8;
 
+    GridView listView;
     public MainActivityFragment() {}
 
     @Override
@@ -65,7 +67,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        msortBy=Utility.getPreferences(getActivity());
+        msortBy= Utility.getPreferences(getActivity());
         super.onCreate(savedInstanceState);
         mMovieAdapter=new MovieAdapter(getActivity(),null,0);
         if (savedInstanceState != null) {
@@ -82,7 +84,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        GridView listView = (GridView) rootView.findViewById(R.id.gridview_movie);
+        listView = (GridView) rootView.findViewById(R.id.gridview_movie);
         if (mMovieAdapter.getCount()>0) listView.setAdapter(mMovieAdapter);
         Log.e("Create View", "in Create View...............");
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -172,7 +174,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (null == mMovieAdapter)
             mMovieAdapter = new MovieAdapter(getActivity(),null,0);
         //gv is a GridView
-        GridView listView = (GridView) getActivity().findViewById(R.id.gridview_movie);
+        //listView = (GridView) getActivity().findViewById(R.id.gridview_movie);
         if (listView.getAdapter() != mMovieAdapter)
             listView.setAdapter(mMovieAdapter);
         if (mMovieAdapter.getCursor() != cursor)

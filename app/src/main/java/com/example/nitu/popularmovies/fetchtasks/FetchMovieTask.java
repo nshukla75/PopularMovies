@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.nitu.popularmovies.Utilities.AppConstants;
+import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.data.MovieContract;
 
 import org.apache.http.HttpEntity;
@@ -87,10 +89,11 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             for (int i = 0; i < movieArray.length(); i++) {
                 JSONObject movie = movieArray.getJSONObject(i);
                 String moviePoster = movie.getString("poster_path");
-                String movieReleaseDate = movie.getString("release_date");
+                String movieReleaseDate = Utility.getYear(movie.getString("release_date"));
                 //String moviePosterPath = null;
                 if ((moviePoster != null) &&(movieReleaseDate!= null)) {
-                    String moviePosterPath = "http://image.tmdb.org/t/p/w185" + moviePoster;
+                    //String moviePosterPath = "http://image.tmdb.org/t/p/w185" + moviePoster;
+                    String moviePosterPath = AppConstants.MOVIE_DETAIL_URL + moviePoster;
                     byte[] movieImage = null;
                     try {
                         movieImage = urlToImageBLOB(moviePosterPath);
@@ -157,15 +160,10 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         String movieJsonStr = null;
 
         String format = "json";
-        String apiKeyStr = "7537b743615a000671a98c32d354df39";
         try {
-            final String FORECAST_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
-            final String QUERY_PARAM = "sort_by";
-            final String APIKEY_PARAM = "api_key";
-
-            Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
-                    .appendQueryParameter(QUERY_PARAM, params[0])
-                    .appendQueryParameter(APIKEY_PARAM, apiKeyStr)
+            Uri builtUri = Uri.parse(AppConstants.BASE_URL).buildUpon()
+                    .appendQueryParameter(AppConstants.SORT_BY, movieQuery)
+                    .appendQueryParameter(AppConstants.MOVIE_API_KEY, AppConstants.MOVIE_API_KEY)
                     .build();
             URL url = new URL(builtUri.toString());
 

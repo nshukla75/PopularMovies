@@ -2,6 +2,7 @@ package com.example.nitu.popularmovies.adaptors;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,7 @@ public class ReviewAdapter extends CursorAdapter {
         final ViewHolder holder = (ViewHolder)view.getTag();
         holder.author.setText(cursor.getString(ReviewFragment.ReviewQuery.COL_REVIEW_AUTHOR));
         holder.content.setText(cursor.getString(ReviewFragment.ReviewQuery.COL_REVIEW_CONTENT));
+        Log.e("Review Adaptor",cursor.getString(ReviewFragment.ReviewQuery.COL_REVIEW_AUTHOR));
     }
     static class ViewHolder {
         TextView author;

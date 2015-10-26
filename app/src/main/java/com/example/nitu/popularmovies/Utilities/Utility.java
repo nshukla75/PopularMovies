@@ -1,10 +1,11 @@
-package com.example.nitu.popularmovies;
+package com.example.nitu.popularmovies.Utilities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
 
+import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.data.MovieContract;
 
 import java.text.DateFormat;
@@ -26,9 +27,14 @@ public class Utility {
         return bb;
     }
 
-    static String formatDate(long dateInMilliseconds) {
-        Date date = new Date(dateInMilliseconds);
-        return DateFormat.getDateInstance().format(date);
+    public static String getYear(String date){
+        String year = "";
+        if(date != null && date.length() > 0 && date.indexOf("-") > 0) {
+            year = date.substring(0, date.indexOf("-"));
+        }else{
+            year = date;
+        }
+        return year;
     }
 
 }

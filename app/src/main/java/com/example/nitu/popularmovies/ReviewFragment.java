@@ -23,11 +23,9 @@ import com.example.nitu.popularmovies.data.MovieContract;
 public class ReviewFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = ReviewFragment.class.getSimpleName();
     private ReviewAdapter mReviewAdapter;
+    private ListView listViewReview;
     public interface ReviewQuery {
         static final int REVIEW_LOADER = 2;
-        static final Uri CONTENT_URI= MovieContract.ReviewEntry.CONTENT_URI;
-        static final String SELECTION=null;
-        static final String SORT_ORDER = MovieContract.ReviewEntry._ID;
         static final String[] REVIEW_COLUMNS = {
                 MovieContract.ReviewEntry.TABLE_NAME + "." + MovieContract.ReviewEntry._ID,
                 MovieContract.ReviewEntry.COLUMN_MOV_KEY,
@@ -81,8 +79,8 @@ public class ReviewFragment extends Fragment implements LoaderManager.LoaderCall
                              Bundle savedInstanceState) {
         Log.e(LOG_TAG,"going to load view" + movieStr);
         View rootView = inflater.inflate(R.layout.review_movie, container, false);
-        ListView listView = (ListView) rootView.findViewById(R.id.listView_movie);
-        if (mReviewAdapter.getCount() > 0) listView.setAdapter(mReviewAdapter);
+        listViewReview = (ListView) rootView.findViewById(R.id.listView_movie);
+        if (mReviewAdapter.getCount() > 0) listViewReview.setAdapter(mReviewAdapter);
         return rootView;
     }
 
@@ -122,9 +120,9 @@ public class ReviewFragment extends Fragment implements LoaderManager.LoaderCall
 
         if (null == mReviewAdapter)
             mReviewAdapter = new ReviewAdapter(getActivity(),null,0);
-        ListView listView = (ListView) getActivity().findViewById(R.id.listView_movie);
-        if (listView.getAdapter() != mReviewAdapter)
-            listView.setAdapter(mReviewAdapter);
+        //listViewReview = (ListView) getActivity().findViewById(R.id.listView_movie);
+        if (listViewReview.getAdapter() != mReviewAdapter)
+            listViewReview.setAdapter(mReviewAdapter);
         if (mReviewAdapter.getCursor() != cursor)
             mReviewAdapter.swapCursor(cursor);
     }

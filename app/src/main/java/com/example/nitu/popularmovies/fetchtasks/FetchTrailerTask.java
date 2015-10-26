@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.nitu.popularmovies.Utilities.AppConstants;
 import com.example.nitu.popularmovies.data.MovieContract;
 
 import org.json.JSONArray;
@@ -141,14 +142,11 @@ public class FetchTrailerTask extends AsyncTask<String, Void, Void> {
         String trailerJsonStr = null;
 
         String format = "json";
-        String apiKeyStr = "7537b743615a000671a98c32d354df39";
         try {
             //trailer: http://api.themoviedb.org/3/movie/135397/videos?&api_key=7537b743615a000671a98c32d354df39
-            final String BASE_URL = "http://api.themoviedb.org/3/movie/"+ movieStr;
-            final String TRAILER_BASE_URL = BASE_URL +"/videos?";
-            final String APIKEY_PARAM = "api_key";
+            final String TRAILER_BASE_URL = AppConstants.MOVIE_REVIEWS_TRAILER_BASE_URL +"/" + movieStr+"/videos?";
             Uri builtUri = Uri.parse(TRAILER_BASE_URL).buildUpon()
-                    .appendQueryParameter(APIKEY_PARAM, apiKeyStr)
+                    .appendQueryParameter(AppConstants.API_KEY, AppConstants.MOVIE_API_KEY)
                     .build();
             URL url = new URL(builtUri.toString());
             trailerJsonStr = getJsonfromURL(url);

@@ -23,10 +23,9 @@ import com.example.nitu.popularmovies.data.MovieContract;
 public class TrailerFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = TrailerFragment.class.getSimpleName();
     private TrailerAdapter mTrailerAdapter;
+    private ListView listViewTrailer;
     public interface TrailerQuery {
         static final int TRAILER_LOADER = 1;
-        static final Uri CONTENT_URI= MovieContract.TrailerEntry.CONTENT_URI;
-        static final String SORT_ORDER = MovieContract.TrailerEntry._ID;
         static final String[] TRAILER_COLUMNS = {
                 MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry._ID,
                 MovieContract.TrailerEntry.COLUMN_MOV_KEY,
@@ -80,8 +79,8 @@ public class TrailerFragment extends Fragment implements LoaderManager.LoaderCal
                              Bundle savedInstanceState) {
         Log.e(LOG_TAG,"going to load view" + movieStr);
         View rootView = inflater.inflate(R.layout.trailer_movie, container, false);
-        ListView listView = (ListView) rootView.findViewById(R.id.listView_trailer);
-        if (mTrailerAdapter.getCount() > 0) listView.setAdapter(mTrailerAdapter);
+        listViewTrailer = (ListView) rootView.findViewById(R.id.listView_trailer);
+        if (mTrailerAdapter.getCount() > 0) listViewTrailer.setAdapter(mTrailerAdapter);
         return rootView;
     }
 
@@ -121,9 +120,9 @@ public class TrailerFragment extends Fragment implements LoaderManager.LoaderCal
 
         if (null == mTrailerAdapter)
             mTrailerAdapter = new TrailerAdapter(getActivity(),null,0);
-        ListView listView = (ListView) getActivity().findViewById(R.id.listView_trailer);
-        if (listView.getAdapter() != mTrailerAdapter)
-            listView.setAdapter(mTrailerAdapter);
+        //listViewTrailer = (ListView) getActivity().findViewById(R.id.listView_trailer);
+        if (listViewTrailer.getAdapter() != mTrailerAdapter)
+            listViewTrailer.setAdapter(mTrailerAdapter);
         if (mTrailerAdapter.getCursor() != cursor)
             mTrailerAdapter.swapCursor(cursor);
     }

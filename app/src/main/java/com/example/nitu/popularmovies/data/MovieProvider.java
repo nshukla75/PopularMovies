@@ -91,7 +91,7 @@ public class MovieProvider extends ContentProvider {
         String[] selectionArgs;
         String selection;
 
-        selection = sMovieKeySelection;
+        selection =  MovieContract.TrailerEntry.COLUMN_MOV_KEY + " = ?";//sMovieKeySelection;
         selectionArgs = new String[]{movieSetting};
 
         return sTrailerByMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
@@ -109,7 +109,7 @@ public class MovieProvider extends ContentProvider {
         String[] selectionArgs;
         String selection;
 
-        selection = MovieContract.ReviewEntry.COLUMN_MOV_KEY + " like ?";//sMovieKeySelection;
+        selection = MovieContract.ReviewEntry.COLUMN_MOV_KEY + " = ?";//sMovieKeySelection;
         selectionArgs = new String[]{movieSetting};
 
         return sReviewByMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
