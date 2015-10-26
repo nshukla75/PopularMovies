@@ -15,9 +15,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+
 import com.example.nitu.popularmovies.data.MovieContract;
 
 /**
@@ -49,6 +53,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         static final int COL_MOVIE_POSTER = 8;
     }
     private String movieStr;
+    public ToggleButton btnToggle;
     public DetailActivityFragment() {}
 
     @Override
@@ -71,6 +76,37 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                              Bundle savedInstanceState) {
         Log.e("Create View", "in Create View...............");
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        btnToggle = (ToggleButton)rootView.findViewById(R.id.chkState);
+
+        btnToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                if(isChecked){
+                    Toast.makeText(getActivity(), "toggle button checked is '"+ isChecked, Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(getActivity(), "toggle button checked is  '"+ isChecked, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+/*tb.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateTable(checked);
+                Toast.makeText(getActivity(), "Saved '"+ checked + "' in DB", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        reload.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("getData(1) : " + getData(1));
+                Toast.makeText(getApplicationContext(), "value from DB : " + getData(1), Toast.LENGTH_SHORT).show();
+                if (getData(1).equalsIgnoreCase("0"))
+                    ch.setChecked(false);
+                else
+                    ch.setChecked(true);
+            }
+        });*/
         return rootView;
     }
 
@@ -113,6 +149,12 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
         ((TextView) getView().findViewById(R.id.release_text))
                 .setText(data.getString(MovieQuery.COL_MOVIE_RELEASE_DATE));
+
+        btnToggle = (ToggleButton)getView().findViewById(R.id.chkState);
+        if (data.getInt(MovieQuery.COL_MOVIE_FAVOURITE)!= 0)
+            btnToggle.setChecked(true);
+        else
+            btnToggle.setChecked(false);
 
         ((TextView) getView().findViewById(R.id.overview_text))
                 .setText(data.getString(MovieQuery.COL_MOVIE_OVERVIEW));

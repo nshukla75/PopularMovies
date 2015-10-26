@@ -89,37 +89,40 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                 String moviePoster = movie.getString("poster_path");
                 String movieReleaseDate = movie.getString("release_date");
                 //String moviePosterPath = null;
-                if ((moviePoster !=null) &&(movieReleaseDate!=null)) {
-                    String movieId = movie.getString("id");
-                    String movieTitle = movie.getString("original_title");
+                if ((moviePoster != null) &&(movieReleaseDate!= null)) {
                     String moviePosterPath = "http://image.tmdb.org/t/p/w185" + moviePoster;
-                    String movieOverview = movie.getString("overview");
-                    String movieVoteAverage = movie.getString("vote_average");
-                    String movieVoteCount = movie.getString("vote_count");
-                    String moviePopularity = movie.getString("popularity");
-                    float f = Float.parseFloat(moviePopularity);
-                    int d = (int) Math.ceil(f);
-                    moviePopularity = Float.toString(d);
                     byte[] movieImage = null;
                     try {
                         movieImage = urlToImageBLOB(moviePosterPath);
                     } catch (java.io.IOException e) {
                         movieImage = null;
                     }
-                    Log.e("trying to put image--", moviePosterPath + i);
-                    ContentValues movieValues = new ContentValues();
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_KEY, movieId);
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY, moviePopularity);
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movieVoteAverage);
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, 0);
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, movieTitle);
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movieOverview);
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movieReleaseDate);
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER, movieImage);
-                    cVVector.add(movieValues);
+                    Log.e("trying to get image--", moviePosterPath + i);
+                    if (movieImage != null) {
+                        String movieId = movie.getString("id");
+                        String movieTitle = movie.getString("original_title");
+                        String movieOverview = movie.getString("overview");
+                        String movieVoteAverage = movie.getString("vote_average");
+                        String movieVoteCount = movie.getString("vote_count");
+                        String moviePopularity = movie.getString("popularity");
+                        float f = Float.parseFloat(moviePopularity);
+                        int d = (int) Math.ceil(f);
+                        moviePopularity = Float.toString(d);
+
+                        ContentValues movieValues = new ContentValues();
+                        movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_KEY, movieId);
+                        movieValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY, moviePopularity);
+                        movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movieVoteAverage);
+                        movieValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, 0);
+                        movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, movieTitle);
+                        movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movieOverview);
+                        movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movieReleaseDate);
+                        movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER, movieImage);
+                        cVVector.add(movieValues);
+                    }
                 }
             }
-            Log.e("Moive JSON","Data into Content Values...............");
+            Log.e("Moive JSON","Total Data into Content Values.."+ cVVector.size());
             int inserted = 0;
             // add to database
             if(cVVector.size()>0) {

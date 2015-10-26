@@ -43,8 +43,10 @@ public class MovieAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
          ImageView imageView = (ImageView) view;
          byte[] bb= Utility.getImage(cursor);
-         imageView.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
-         Log.e("image to grid", "Length-----" + bb.length);
+         if (bb!=null) {
+             imageView.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
+             Log.e("image to grid", "Length-----" + bb.length);
+         }
 
      }
 }

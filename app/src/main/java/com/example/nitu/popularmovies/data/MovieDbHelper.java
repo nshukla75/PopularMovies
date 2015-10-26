@@ -24,7 +24,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 TrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 
                 // the ID of the movie entry associated with this trailer data
-                TrailerEntry.COLUMN_MOV_KEY + " STRING NOT NULL, " +
+                TrailerEntry.COLUMN_MOV_KEY + " TEXT NOT NULL, " +
                 TrailerEntry.COLUMN_TRAILER_KEY + " TEXT UNIQUE NOT NULL, " +
                 TrailerEntry.COLUMN_KEY + " TEXT NOT NULL, " +
                 TrailerEntry.COLUMN_SIZE + " INTEGER NOT NULL, " +
@@ -44,7 +44,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 ReviewEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 
                 // the ID of the movie entry associated with this trailer data
-                ReviewEntry.COLUMN_MOV_KEY + " STRING NOT NULL, " +
+                ReviewEntry.COLUMN_MOV_KEY + " TEXT NOT NULL, " +
                 ReviewEntry.COLUMN_REVIEW_KEY + " TEXT UNIQUE NOT NULL, " +
                 ReviewEntry.COLUMN_AUTHOR + " TEXT NOT NULL, " +
                 ReviewEntry.COLUMN_CONTENT + " TEXT NOT NULL, " +
