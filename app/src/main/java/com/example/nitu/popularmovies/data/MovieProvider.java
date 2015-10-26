@@ -33,23 +33,26 @@ public class MovieProvider extends ContentProvider {
     static final int MOVIE_BY_POPULARITY = 302;
     static final int MOVIE_BY_RATING = 303;
     static final int MOVIE_BY_FAVOURITE = 304;
-    static final int MOVIE_BY_COMINGSOON = 305;
-    static final int MOVIE_BY_PLAYINGNOW = 306;
+   /* static final int MOVIE_BY_COMINGSOON = 305;
+    static final int MOVIE_BY_PLAYINGNOW = 306;*/
 
 
     private static final SQLiteQueryBuilder sTrailerByMovieSettingQueryBuilder;
     private static final SQLiteQueryBuilder sReviewByMovieSettingQueryBuilder;
+    private static final SQLiteQueryBuilder sTrailerMovieSettingQueryBuilder;
+    private static final SQLiteQueryBuilder sReviewMovieSettingQueryBuilder;
     private static final SQLiteQueryBuilder sMovieSettingQueryBuilder;
 
     static{
         sTrailerByMovieSettingQueryBuilder = new SQLiteQueryBuilder();
         sReviewByMovieSettingQueryBuilder = new SQLiteQueryBuilder();
+        sTrailerMovieSettingQueryBuilder = new SQLiteQueryBuilder();
+        sReviewMovieSettingQueryBuilder = new SQLiteQueryBuilder();
         sMovieSettingQueryBuilder = new SQLiteQueryBuilder();
 
         //This is an inner join which looks like
-        //weather INNER JOIN location ON weather.location_id = location._id
         sTrailerByMovieSettingQueryBuilder.setTables(
-            MovieContract.TrailerEntry.TABLE_NAME + " INNER JOIN " +
+            MovieContract.TrailerEntry.TABLE_NAME + " LEFT OUTER JOIN " +
             MovieContract.MovieEntry.TABLE_NAME +
             " ON " + MovieContract.TrailerEntry.TABLE_NAME +
             "." + MovieContract.TrailerEntry.COLUMN_MOV_KEY +
@@ -57,13 +60,15 @@ public class MovieProvider extends ContentProvider {
             "." + MovieContract.MovieEntry.COLUMN_MOVIE_KEY);
 
         sReviewByMovieSettingQueryBuilder.setTables(
-            MovieContract.ReviewEntry.TABLE_NAME + " INNER JOIN " +
+            MovieContract.ReviewEntry.TABLE_NAME + " LEFT OUTER JOIN " +
             MovieContract.MovieEntry.TABLE_NAME +
             " ON " + MovieContract.ReviewEntry.TABLE_NAME +
             "." + MovieContract.ReviewEntry.COLUMN_MOV_KEY +
             " = " + MovieContract.MovieEntry.TABLE_NAME +
           "." + MovieContract.MovieEntry.COLUMN_MOVIE_KEY);
 
+        sTrailerMovieSettingQueryBuilder.setTables(MovieContract.TrailerEntry.TABLE_NAME);
+        sReviewMovieSettingQueryBuilder.setTables(MovieContract.ReviewEntry.TABLE_NAME);
         sMovieSettingQueryBuilder.setTables(MovieContract.MovieEntry.TABLE_NAME);
     }
 
@@ -72,14 +77,14 @@ public class MovieProvider extends ContentProvider {
             MovieContract.MovieEntry.TABLE_NAME+
                     "." + MovieContract.MovieEntry.COLUMN_MOVIE_KEY + " = ? ";
 
-    //movie.releaseDate >= ? AND movie.releaseDate <= ?
+   /* //movie.releaseDate >= ? AND movie.releaseDate <= ?
     private static final String sPlayingNowWithReleaseDateSelection =
         MovieContract.MovieEntry.COLUMN_RELEASE_DATE + " >= ? AND " +
         MovieContract.MovieEntry.COLUMN_RELEASE_DATE + " <= ? ";
 
     //movie.releaseDate >= ?
     private static final String sComingSoonWithReleaseDateSelection =
-            MovieContract.MovieEntry.COLUMN_RELEASE_DATE + " >= ? " ;
+            MovieContract.MovieEntry.COLUMN_RELEASE_DATE + " >= ? " ;*/
 
     //movie.Favourite == 1
     private static final String sFavouriteSelection =
@@ -181,7 +186,7 @@ public class MovieProvider extends ContentProvider {
                 sortOrder
         );
     }
-    // get now Playing Movies
+   /* // get now Playing Movies
     private Cursor getPlayingNowMovie(Uri uri, String[] projection, String sortOrder) {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date()); // Now use today date.
@@ -229,7 +234,7 @@ public class MovieProvider extends ContentProvider {
         );
     }
     // get Trailer links by Movies
-
+*/
 
     static UriMatcher buildUriMatcher() {
         // 1) The code passed into the constructor represents the code to return for the root
@@ -250,8 +255,8 @@ public class MovieProvider extends ContentProvider {
         matcher.addURI(authority, MovieContract.PATH_MOVIE + "/popularity", MOVIE_BY_POPULARITY);
         matcher.addURI(authority, MovieContract.PATH_MOVIE + "/rating", MOVIE_BY_RATING);
         matcher.addURI(authority, MovieContract.PATH_MOVIE + "/favourite", MOVIE_BY_FAVOURITE);
-        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/comingsoon", MOVIE_BY_COMINGSOON);
-        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/playingnow", MOVIE_BY_PLAYINGNOW);
+       /* matcher.addURI(authority, MovieContract.PATH_MOVIE + "/comingsoon", MOVIE_BY_COMINGSOON);
+        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/playingnow", MOVIE_BY_PLAYINGNOW);*/
 
 
         // 3) Return the new matcher!
@@ -290,10 +295,10 @@ public class MovieProvider extends ContentProvider {
                 return MovieContract.MovieEntry.CONTENT_TYPE;
             case MOVIE_BY_FAVOURITE:
                 return MovieContract.MovieEntry.CONTENT_TYPE;
-            case MOVIE_BY_COMINGSOON:
+            /*case MOVIE_BY_COMINGSOON:
                 return MovieContract.MovieEntry.CONTENT_TYPE;
             case MOVIE_BY_PLAYINGNOW:
-                return MovieContract.MovieEntry.CONTENT_TYPE;
+                return MovieContract.MovieEntry.CONTENT_TYPE;*/
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -375,7 +380,7 @@ public class MovieProvider extends ContentProvider {
                 retCursor =  getFavouriteMovie(uri, projection, sortOrder);
                 break;
             }
-            // "movie/comingsoon"
+           /* // "movie/comingsoon"
             case MOVIE_BY_COMINGSOON: {
                 retCursor =  getComingSoonMovie(uri, projection, sortOrder);
                 break;
@@ -384,7 +389,7 @@ public class MovieProvider extends ContentProvider {
             case MOVIE_BY_PLAYINGNOW: {
                 retCursor =  getPlayingNowMovie(uri, projection, sortOrder);
                 break;
-            }
+            }*/
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }

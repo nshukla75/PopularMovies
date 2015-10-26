@@ -93,7 +93,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                 //String moviePosterPath = null;
                 if ((moviePoster != null) &&(movieReleaseDate!= null)) {
                     //String moviePosterPath = "http://image.tmdb.org/t/p/w185" + moviePoster;
-                    String moviePosterPath = AppConstants.MOVIE_DETAIL_URL + moviePoster;
+                    String moviePosterPath = AppConstants.MOVIE_W185_URL + moviePoster;
                     byte[] movieImage = null;
                     try {
                         movieImage = urlToImageBLOB(moviePosterPath);
@@ -163,7 +163,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         try {
             Uri builtUri = Uri.parse(AppConstants.BASE_URL).buildUpon()
                     .appendQueryParameter(AppConstants.SORT_BY, movieQuery)
-                    .appendQueryParameter(AppConstants.MOVIE_API_KEY, AppConstants.MOVIE_API_KEY)
+                    .appendQueryParameter(AppConstants.API_KEY, AppConstants.MOVIE_API_KEY)
                     .build();
             URL url = new URL(builtUri.toString());
 

@@ -1,6 +1,6 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -8,21 +8,23 @@
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_horizontal"
-            android:padding="16dp">
+            android:layout_height="100dp"
+            android:background="#009688"
+            android:gravity="center">
             <TextView
                 android:id="@+id/title_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Movie Title"
-                android:textStyle="bold" />
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="10dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="20dp"
+                android:gravity="center" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
             android:orientation="horizontal">
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -43,7 +45,8 @@
                     android:id="@+id/release_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2015-06-06" />
+                    android:textColor="@android:color/black"
+                    android:text="2015" />
                 <TextView
                     android:id="@+id/voteaverage_text"
                     android:layout_width="wrap_content"
