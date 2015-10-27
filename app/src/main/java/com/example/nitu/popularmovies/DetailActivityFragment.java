@@ -32,7 +32,8 @@ import com.example.nitu.popularmovies.data.MovieProvider;
  */
 public class DetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
-    private MovieAdapter mMovieAdapter;
+    //private MovieAdapter mMovieAdapter;
+    private long movieRowId;
     public interface MovieQuery {
         static final int DETAIL_LOADER = 0;
         static final String[] MOVIE_COLUMNS = {
@@ -68,7 +69,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMovieAdapter=new MovieAdapter(getActivity(),null,0);
+        //mMovieAdapter=new MovieAdapter(getActivity(),null,0);
         if (savedInstanceState != null) {
             getLoaderManager().restartLoader(MovieQuery.DETAIL_LOADER, null, this);
          }
@@ -99,9 +100,10 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         return rootView;
     }
     public void updateFavourite(int chkFavourite, String movieKey){
+        Cursor movieCursor = getContext().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, null, null, null);
         ContentValues updateValues = new ContentValues();
         updateValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, chkFavourite);
-        getContext().getContentResolver().update(getActivity().getIntent().getData(), updateValues, MovieContract.MovieEntry.COLUMN_MOVIE_KEY + "=" + movieKey, null);
+        int count = getContext().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateValues, MovieContract.MovieEntry._ID + "= ?", new String[] { Long.toString(movieRowId)});
     }
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -123,15 +125,12 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.v(LOG_TAG, "In onLoadFinished");
-        data.setNotificationUri(getContext().getContentResolver(), getActivity().getIntent().getData());
-        if (null == mMovieAdapter)
-            mMovieAdapter = new MovieAdapter(getActivity(),null,0);
-        if (mMovieAdapter.getCursor() != data)
-            mMovieAdapter.swapCursor(data);
+
         if (!data.moveToFirst()) {
             return;
         }
         movieStr = data.getString(MovieQuery.COL_MOVIE_KEY);
+        movieRowId=data.getLong(MovieQuery.COL_MOVIEID);
         ((TextView) getView().findViewById(R.id.title_text)).setText(data.getString(MovieQuery.COL_MOVIE_ORIGINAL_TITLE));
 
         ImageView imageView = (ImageView) getView().findViewById(R.id.imageView);
