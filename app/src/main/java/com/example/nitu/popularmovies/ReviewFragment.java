@@ -115,7 +115,7 @@ public class ReviewFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Log.e(LOG_TAG,"In load finish loader Review");
+        Log.e(LOG_TAG,"In Review load finish loader Review");
         cursor.setNotificationUri(getContext().getContentResolver(), MovieContract.ReviewEntry.buildReviewMovie(movieStr));
 
         if (null == mReviewAdapter)
@@ -125,6 +125,7 @@ public class ReviewFragment extends Fragment implements LoaderManager.LoaderCall
             listViewReview.setAdapter(mReviewAdapter);
         if (mReviewAdapter.getCursor() != cursor)
             mReviewAdapter.swapCursor(cursor);
+        Log.e(LOG_TAG,"out Review load finish loader Review"+ cursor.getCount());
     }
 
     @Override

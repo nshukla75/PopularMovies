@@ -115,7 +115,7 @@ public class TrailerFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Log.e(LOG_TAG,"In load finish loader Review");
+        Log.e(LOG_TAG,"In trailer load finish loader");
         cursor.setNotificationUri(getContext().getContentResolver(), MovieContract.TrailerEntry.buildTrailerMovie(movieStr));
 
         if (null == mTrailerAdapter)
@@ -125,6 +125,7 @@ public class TrailerFragment extends Fragment implements LoaderManager.LoaderCal
             listViewTrailer.setAdapter(mTrailerAdapter);
         if (mTrailerAdapter.getCursor() != cursor)
             mTrailerAdapter.swapCursor(cursor);
+        Log.e(LOG_TAG,"out trailer load finish loader"+ cursor.getCount());
     }
 
     @Override

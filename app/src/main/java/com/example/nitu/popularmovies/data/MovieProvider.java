@@ -52,7 +52,7 @@ public class MovieProvider extends ContentProvider {
 
         //This is an inner join which looks like
         sTrailerByMovieSettingQueryBuilder.setTables(
-            MovieContract.TrailerEntry.TABLE_NAME + " LEFT OUTER JOIN " +
+            MovieContract.TrailerEntry.TABLE_NAME + " INNER JOIN " +
             MovieContract.MovieEntry.TABLE_NAME +
             " ON " + MovieContract.TrailerEntry.TABLE_NAME +
             "." + MovieContract.TrailerEntry.COLUMN_MOV_KEY +
@@ -60,7 +60,7 @@ public class MovieProvider extends ContentProvider {
             "." + MovieContract.MovieEntry.COLUMN_MOVIE_KEY);
 
         sReviewByMovieSettingQueryBuilder.setTables(
-            MovieContract.ReviewEntry.TABLE_NAME + " LEFT OUTER JOIN " +
+            MovieContract.ReviewEntry.TABLE_NAME + " INNER JOIN " +
             MovieContract.MovieEntry.TABLE_NAME +
             " ON " + MovieContract.ReviewEntry.TABLE_NAME +
             "." + MovieContract.ReviewEntry.COLUMN_MOV_KEY +
@@ -96,7 +96,7 @@ public class MovieProvider extends ContentProvider {
         String[] selectionArgs;
         String selection;
 
-        selection =  MovieContract.TrailerEntry.COLUMN_MOV_KEY + " = ?";//sMovieKeySelection;
+        selection =  MovieContract.MovieEntry.COLUMN_MOVIE_KEY + " = ?";//sMovieKeySelection;
         selectionArgs = new String[]{movieSetting};
 
         return sTrailerByMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
@@ -114,7 +114,7 @@ public class MovieProvider extends ContentProvider {
         String[] selectionArgs;
         String selection;
 
-        selection = MovieContract.ReviewEntry.COLUMN_MOV_KEY + " = ?";//sMovieKeySelection;
+        selection = MovieContract.MovieEntry.COLUMN_MOVIE_KEY + " = ?";//sMovieKeySelection;
         selectionArgs = new String[]{movieSetting};
 
         return sReviewByMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
