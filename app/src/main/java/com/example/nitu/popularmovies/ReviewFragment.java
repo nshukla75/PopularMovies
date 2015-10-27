@@ -121,8 +121,6 @@ public class ReviewFragment extends Fragment implements LoaderManager.LoaderCall
         if (null == mReviewAdapter)
             mReviewAdapter = new ReviewAdapter(getActivity(),null,0);
         //listViewReview = (ListView) getActivity().findViewById(R.id.listView_movie);
-        if (mReviewAdapter.getCursor() != cursor)
-            mReviewAdapter.swapCursor(cursor);
         if (listViewReview.getAdapter() != mReviewAdapter)
             listViewReview.setAdapter(mReviewAdapter);
         if (mReviewAdapter.getCursor() != cursor)

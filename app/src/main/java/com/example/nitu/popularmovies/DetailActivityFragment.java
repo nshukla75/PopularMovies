@@ -163,8 +163,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             FragmentManager childFragMan = getChildFragmentManager();
             FragmentTransaction childFragTrans = childFragMan.beginTransaction();
             ReviewFragment mReviewFragment = ReviewFragment.newInstance(movieStr);
-            if (childFragMan.findFragmentById(R.id.review_movie)==null) {
-                childFragTrans.add(R.id.content_parent, mReviewFragment);
+            if (childFragMan.findFragmentById(R.id.review_parent)==null) {
+                childFragTrans.add(R.id.review_parent, mReviewFragment);
                 childFragTrans.addToBackStack("Review");
                 childFragTrans.commit();
             }
@@ -172,8 +172,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             FragmentManager trailerFragMan = getChildFragmentManager();
             FragmentTransaction trailerFragTrans = trailerFragMan.beginTransaction();
             TrailerFragment mTrailerFragment = TrailerFragment.newInstance(movieStr);
-            if (trailerFragMan.findFragmentById(R.id.trailer_movie)==null) {
-                trailerFragTrans.add(R.id.trailerkey_parent, mTrailerFragment);
+            if (trailerFragMan.findFragmentById(R.id.trailer_parent)==null) {
+                trailerFragTrans.add(R.id.trailer_parent, mTrailerFragment);
                 trailerFragTrans.addToBackStack("Trailer");
                 trailerFragTrans.commit();
             }

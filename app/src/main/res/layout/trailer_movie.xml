@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
     <TextView
-        android:id="@+id/review_text"
+        android:id="@+id/trailer_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Trailers: " />
@@ -12,5 +12,4 @@
         android:id="@+id/listView_trailer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
 </LinearLayout>
