@@ -1,5 +1,6 @@
 package com.example.nitu.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
@@ -22,13 +23,16 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.nitu.popularmovies.Utilities.Utility;
+import com.example.nitu.popularmovies.adaptors.MovieAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
+import com.example.nitu.popularmovies.data.MovieProvider;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class DetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
+    private MovieAdapter mMovieAdapter;
     public interface MovieQuery {
         static final int DETAIL_LOADER = 0;
         static final String[] MOVIE_COLUMNS = {
@@ -64,6 +68,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mMovieAdapter=new MovieAdapter(getActivity(),null,0);
         if (savedInstanceState != null) {
             getLoaderManager().restartLoader(MovieQuery.DETAIL_LOADER, null, this);
          }
@@ -83,33 +88,21 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
                 if(isChecked){
                     Toast.makeText(getActivity(), "toggle button checked is '"+ isChecked, Toast.LENGTH_SHORT).show();
+                    updateFavourite(1,movieStr);
                 }else{
                     Toast.makeText(getActivity(), "toggle button checked is  '"+ isChecked, Toast.LENGTH_SHORT).show();
+                    updateFavourite(0, movieStr);
                 }
             }
         });
-/*tb.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateTable(checked);
-                Toast.makeText(getActivity(), "Saved '"+ checked + "' in DB", Toast.LENGTH_SHORT).show();
-            }
-        });
 
-        reload.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.out.println("getData(1) : " + getData(1));
-                Toast.makeText(getApplicationContext(), "value from DB : " + getData(1), Toast.LENGTH_SHORT).show();
-                if (getData(1).equalsIgnoreCase("0"))
-                    ch.setChecked(false);
-                else
-                    ch.setChecked(true);
-            }
-        });*/
         return rootView;
     }
-
+    public void updateFavourite(int chkFavourite, String movieKey){
+        ContentValues updateValues = new ContentValues();
+        updateValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, chkFavourite);
+        getContext().getContentResolver().update(getActivity().getIntent().getData(), updateValues, MovieContract.MovieEntry.COLUMN_MOVIE_KEY + "=" + movieKey, null);
+    }
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.v(LOG_TAG, "In onCreateLoader");
@@ -130,6 +123,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.v(LOG_TAG, "In onLoadFinished");
+        data.setNotificationUri(getContext().getContentResolver(), getActivity().getIntent().getData());
+        if (null == mMovieAdapter)
+            mMovieAdapter = new MovieAdapter(getActivity(),null,0);
+        if (mMovieAdapter.getCursor() != data)
+            mMovieAdapter.swapCursor(data);
         if (!data.moveToFirst()) {
             return;
         }
