@@ -103,6 +103,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         Cursor movieCursor = getContext().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, null, null, null);
         ContentValues updateValues = new ContentValues();
         updateValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, chkFavourite);
+        updateValues.put(MovieContract.MovieEntry._ID, movieRowId);
         int count = getContext().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateValues, MovieContract.MovieEntry._ID + "= ?", new String[] { Long.toString(movieRowId)});
     }
     @Override
