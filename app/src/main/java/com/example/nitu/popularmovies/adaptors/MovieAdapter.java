@@ -10,9 +10,11 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
+import com.example.nitu.popularmovies.DetailActivityFragment;
 import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.data.MovieContract;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by nitus on 10/9/2015.
@@ -45,11 +47,14 @@ public class MovieAdapter extends CursorAdapter {
      @Override
     public void bindView(View view, Context context, Cursor cursor) {
          final ViewHolder holder = (ViewHolder)view.getTag();
-         byte[] bb= Utility.getImage(cursor);
+
+         Picasso.with(context).load(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH))).into(holder.imgMovie);
+
+         /*byte[] bb= Utility.getImage(cursor);
          if (bb!=null) {
              holder.imgMovie.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
              Log.e("image to grid", "Length-----" + bb.length);
-         }
+         }*/
 
      }
     static class ViewHolder {

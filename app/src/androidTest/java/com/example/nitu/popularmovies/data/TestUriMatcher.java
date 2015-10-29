@@ -29,9 +29,9 @@ public class TestUriMatcher extends AndroidTestCase {
     // content://com.example.android.sunshine.app/movie/popularity"
     private static final Uri TEST_MOVIE_WITH_FAVOURITE = MovieContract.MovieEntry.buildFavouriteMovie();
     // content://com.example.android.sunshine.app/movie/popularity"
-    private static final Uri TEST_MOVIE_WITH_COMINGSOON = MovieContract.MovieEntry.buildComingSoonMovie();
+   /* private static final Uri TEST_MOVIE_WITH_COMINGSOON = MovieContract.MovieEntry.buildComingSoonMovie();
     // content://com.example.android.sunshine.app/movie/popularity"
-    private static final Uri TEST_MOVIE_WITH_PLAYINGNOW = MovieContract.MovieEntry.buildPlayingNowMovie();
+    private static final Uri TEST_MOVIE_WITH_PLAYINGNOW = MovieContract.MovieEntry.buildPlayingNowMovie();*/
 
     public void testUriMatcher() {
         UriMatcher testMatcher = MovieProvider.buildUriMatcher();

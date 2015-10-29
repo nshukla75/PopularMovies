@@ -47,6 +47,7 @@ public class MovieContract {
         public static final String COLUMN_ORIGINAL_TITLE = "original_title" ;
         public static final String COLUMN_OVERVIEW = "overview";
         public static final String COLUMN_RELEASE_DATE = "release_date";
+        public static final String COLUMN_POSTER_PATH = "poster_path";
         public static final String COLUMN_POSTER = "poster";
 
 
@@ -68,12 +69,12 @@ public class MovieContract {
         public static Uri buildFavouriteMovie() {
             return CONTENT_URI.buildUpon().appendPath("favourite").build();
         }
-        public static Uri buildComingSoonMovie() {
+      /*  public static Uri buildComingSoonMovie() {
             return CONTENT_URI.buildUpon().appendPath("comingsoon").build();
         }
         public static Uri buildPlayingNowMovie() {
             return CONTENT_URI.buildUpon().appendPath("playingnow").build();
-        }
+        }*/
     }
 
     /* Inner class that defines the table contents of the Trailer table */
@@ -82,8 +83,9 @@ public class MovieContract {
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRAILER).build();
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILER;
-       /* public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILER;*/
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILER;
+
 
         public static final String TABLE_NAME = "trailer";
 
@@ -115,8 +117,8 @@ public class MovieContract {
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_REVIEW).build();
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW ;
-       /* public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;*/
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
 
         public static final String TABLE_NAME = "review";
 

@@ -42,6 +42,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
             MovieContract.MovieEntry.COLUMN_OVERVIEW,
             MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
+            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
             MovieContract.MovieEntry.COLUMN_POSTER
     };
 
@@ -55,8 +56,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     static final int COL_MOVIE_ORIGINAL_TITLE = 5;
     static final int COL_MOVIE_OVERVIEW = 6;
     static final int COL_MOVIE_RELEASE_DATE = 7;
-    static final int COL_MOVIE_POSTER = 8;
-
+    static final int COL_MOVIE_POSTER_PATH = 8;
+    static final int COL_MOVIE_POSTER = 9;
     GridView listView;
     public MainActivityFragment() {}
 

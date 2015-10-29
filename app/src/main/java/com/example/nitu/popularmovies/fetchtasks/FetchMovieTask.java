@@ -120,6 +120,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                         movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, movieTitle);
                         movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movieOverview);
                         movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movieReleaseDate);
+                        movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, moviePosterPath);
                         movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER, movieImage);
                         cVVector.add(movieValues);
                     }
