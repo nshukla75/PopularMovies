@@ -96,10 +96,10 @@ public class MovieProvider extends ContentProvider {
         String[] selectionArgs;
         String selection;
 
-        selection =  MovieContract.MovieEntry.COLUMN_MOVIE_KEY + " = ?";//sMovieKeySelection;
+        selection =  MovieContract.TrailerEntry.COLUMN_MOV_KEY + " = ?";//sMovieKeySelection;
         selectionArgs = new String[]{movieSetting};
 
-        return sTrailerByMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+        return sTrailerMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,
@@ -110,14 +110,14 @@ public class MovieProvider extends ContentProvider {
     }
     //gets reviews by movie
     private Cursor getReviewByMovieSetting(Uri uri, String[] projection, String sortOrder) {
-        String movieSetting = MovieContract.MovieEntry.getMovieSettingFromUri(uri);
+        String movieSetting = MovieContract.ReviewEntry.getMovieSettingFromUri(uri);
         String[] selectionArgs;
         String selection;
 
-        selection = MovieContract.MovieEntry.COLUMN_MOVIE_KEY + " = ?";//sMovieKeySelection;
+        selection = MovieContract.ReviewEntry.COLUMN_MOV_KEY + " = ?";//sMovieKeySelection;
         selectionArgs = new String[]{movieSetting};
 
-        return sReviewByMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+        return sReviewMovieSettingQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,
@@ -245,10 +245,10 @@ public class MovieProvider extends ContentProvider {
         // 2) Use the addURI function to match each of the types.  Use the constants from
         // WeatherContract to help define the types to the UriMatcher.
         matcher.addURI(authority, MovieContract.PATH_TRAILER, TRAILER);
-        matcher.addURI(authority, MovieContract.PATH_TRAILER  +"/*", TRAILER_WITH_MOVIE_KEY);
+        matcher.addURI(authority, MovieContract.PATH_TRAILER  +"/#", TRAILER_WITH_MOVIE_KEY);
 
         matcher.addURI(authority, MovieContract.PATH_REVIEW, REVIEW);
-        matcher.addURI(authority, MovieContract.PATH_REVIEW + "/*", REVIEW_WITH_MOVIE_KEY);
+        matcher.addURI(authority, MovieContract.PATH_REVIEW + "/#", REVIEW_WITH_MOVIE_KEY);
 
         matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
         matcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE_WITH_KEY);

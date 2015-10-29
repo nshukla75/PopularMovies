@@ -121,10 +121,11 @@ public class TrailerFragment extends Fragment implements LoaderManager.LoaderCal
         if (null == mTrailerAdapter)
             mTrailerAdapter = new TrailerAdapter(getActivity(),null,0);
         //listViewTrailer = (ListView) getActivity().findViewById(R.id.listView_trailer);
-        if (listViewTrailer.getAdapter() != mTrailerAdapter)
-            listViewTrailer.setAdapter(mTrailerAdapter);
         if (mTrailerAdapter.getCursor() != cursor)
             mTrailerAdapter.swapCursor(cursor);
+        if (listViewTrailer.getAdapter() != mTrailerAdapter)
+            listViewTrailer.setAdapter(mTrailerAdapter);
+
         Log.e(LOG_TAG,"out trailer load finish loader"+ cursor.getCount());
     }
 
