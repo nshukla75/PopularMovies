@@ -29,11 +29,6 @@ public class MovieAdapter extends CursorAdapter {
         mContext = context;
     }
 
-    private byte[] getImage(Cursor cursor) {
-        // get row indices for our cursor
-        byte[] bb = cursor.getBlob(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER));
-        return bb;
-    }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
@@ -48,13 +43,13 @@ public class MovieAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
          final ViewHolder holder = (ViewHolder)view.getTag();
 
-         Picasso.with(context).load(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH))).into(holder.imgMovie);
+         //Picasso.with(context).load(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH))).into(holder.imgMovie);
 
-         /*byte[] bb= Utility.getImage(cursor);
+         byte[] bb= Utility.getImage(cursor);
          if (bb!=null) {
              holder.imgMovie.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
              Log.e("image to grid", "Length-----" + bb.length);
-         }*/
+         }
 
      }
     static class ViewHolder {
