@@ -88,11 +88,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             @Override
             public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
                 if(isChecked){
-                    Toast.makeText(getActivity(), "toggle button checked is '"+ isChecked, Toast.LENGTH_SHORT).show();
                     updateFavourite(1,movieStr);
+                    Toast.makeText(getActivity(), MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE + "is added to your Favourite List", Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(getActivity(), "toggle button checked is  '"+ isChecked, Toast.LENGTH_SHORT).show();
                     updateFavourite(0, movieStr);
+                    Toast.makeText(getActivity(), MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE + "is removed from your Favourite List", Toast.LENGTH_SHORT).show();
                 }
             }
         });
