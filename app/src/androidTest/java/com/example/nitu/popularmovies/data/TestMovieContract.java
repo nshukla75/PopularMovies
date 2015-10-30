@@ -12,27 +12,27 @@ public class TestMovieContract extends AndroidTestCase {
     private static final String TEST_TRAILER_MOVIE = "135397";
 
     public void testBuildTrailerMovie() {
-        Uri movieUri = MovieContract.TrailerEntry.buildTrailerMovie(TEST_TRAILER_MOVIE);
+        Uri movieUri = MovieContract.MovieEntry.buildTrailerMovie(TEST_TRAILER_MOVIE);
         assertNotNull("Error: Null Uri returned.  You must fill-in buildTrailerMovie in " +
                         "MovieContract.",
                 movieUri);
         assertEquals("Error: Trailer movie not properly appended to the end of the Uri",
-                TEST_TRAILER_MOVIE, movieUri.getLastPathSegment());
+                TEST_TRAILER_MOVIE, movieUri.getPathSegments().get(1));
         assertEquals("Error: Trailer movie Uri doesn't match our expected result",
                 movieUri.toString(),
-                "content://com.example.nitu.popularmovies/trailer/135397");
+                "content://com.example.nitu.popularmovies/movie/135397/trailer");
     }
 
     public void testBuildReviewMovie() {
-        Uri movieUri = MovieContract.ReviewEntry.buildReviewMovie(TEST_TRAILER_MOVIE);
+        Uri movieUri = MovieContract.MovieEntry.buildReviewMovie(TEST_TRAILER_MOVIE);
         assertNotNull("Error: Null Uri returned.  You must fill-in buildReviewMovie in " +
                         "MovieContract.",
                 movieUri);
         assertEquals("Error: Trailer movie not properly appended to the end of the Uri",
-                TEST_TRAILER_MOVIE, movieUri.getLastPathSegment());
+                TEST_TRAILER_MOVIE, movieUri.getPathSegments().get(1));
         assertEquals("Error: Review movie Uri doesn't match our expected result",
                 movieUri.toString(),
-                "content://com.example.nitu.popularmovies/review/135397");
+                "content://com.example.nitu.popularmovies/movie/135397/review");
     }
 
 }

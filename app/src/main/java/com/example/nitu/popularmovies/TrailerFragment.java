@@ -1,5 +1,8 @@
 package com.example.nitu.popularmovies;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,11 +14,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.nitu.popularmovies.Utilities.AppConstants;
+import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.adaptors.ReviewAdapter;
 import com.example.nitu.popularmovies.adaptors.TrailerAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
+
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -24,21 +32,21 @@ public class TrailerFragment extends Fragment implements LoaderManager.LoaderCal
     private static final String LOG_TAG = TrailerFragment.class.getSimpleName();
     private TrailerAdapter mTrailerAdapter;
     private ListView listViewTrailer;
-    public interface TrailerQuery {
-        static final int TRAILER_LOADER = 1;
-        static final String[] TRAILER_COLUMNS = {
-                MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry._ID,
-                MovieContract.TrailerEntry.COLUMN_MOV_KEY,
-                MovieContract.TrailerEntry.COLUMN_TRAILER_KEY,
-                MovieContract.TrailerEntry.COLUMN_KEY,
-                MovieContract.TrailerEntry.COLUMN_SIZE
-        };
-        static final int COL_TRAILERID = 0;
-        static final int COL_MOVIE_ID = 1;
-        static final int COL_TRAILER_ID = 2;
-        static final int COL_TRAILER_KEY = 3;
-        static final int COL_TRAILER_SIZE=4;
-    }
+
+    static final int TRAILER_LOADER = 1;
+    static final String[] TRAILER_COLUMNS = {
+            MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry._ID,
+            MovieContract.TrailerEntry.COLUMN_MOV_KEY,
+            MovieContract.TrailerEntry.COLUMN_TRAILER_KEY,
+            MovieContract.TrailerEntry.COLUMN_KEY,
+            MovieContract.TrailerEntry.COLUMN_SIZE
+    };
+    static final int COL_TRAILERID = 0;
+    static final int COL_MOVIE_ID = 1;
+    static final int COL_TRAILER_ID = 2;
+    static final int COL_TRAILER_KEY = 3;
+    static final int COL_TRAILER_SIZE=4;
+
     private String movieStr;
 
     public TrailerFragment() {
@@ -66,12 +74,12 @@ public class TrailerFragment extends Fragment implements LoaderManager.LoaderCal
         mTrailerAdapter = new TrailerAdapter(getActivity(), null, 0);
         if (savedInstanceState != null) {
             Log.e(LOG_TAG,"In create restart loader");
-            getLoaderManager().restartLoader(TrailerQuery.TRAILER_LOADER, null, this);
+            getLoaderManager().restartLoader(TRAILER_LOADER, null, this);
         } else {
             Log.e(LOG_TAG,"In create init loader");
-            getLoaderManager().initLoader(TrailerQuery.TRAILER_LOADER, null, this);
+            getLoaderManager().initLoader(TRAILER_LOADER, null, this);
         }
-        Log.e(LOG_TAG,"out create trailer");
+        Log.e(LOG_TAG, "out create trailer");
     }
 
     @Override
@@ -81,7 +89,21 @@ public class TrailerFragment extends Fragment implements LoaderManager.LoaderCal
         View rootView = inflater.inflate(R.layout.trailer_movie, container, false);
         listViewTrailer = (ListView) rootView.findViewById(R.id.listView_trailer);
         if (mTrailerAdapter.getCount() > 0) listViewTrailer.setAdapter(mTrailerAdapter);
+        listViewTrailer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                if (cursor != null) {
+                    startVideo(cursor.getString(COL_TRAILER_KEY));
+                }
+            }
+        });
         return rootView;
+    }
+    private void startVideo(String videoID) {
+        // default youtube app
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(AppConstants.MOVIE_YOUTUBE_URL + videoID));
+        startActivity(intent);
     }
 
     /*@Override
@@ -102,11 +124,11 @@ public class TrailerFragment extends Fragment implements LoaderManager.LoaderCal
         if (getArguments()!=null) {
             movieStr = (getArguments().getString("movieStr"));
         }
-        Uri reviewUri = MovieContract.TrailerEntry.buildTrailerMovie(movieStr);
+        Uri reviewUri = MovieContract.MovieEntry.buildTrailerMovie(movieStr);
         return new CursorLoader(
                 getActivity(),
                 reviewUri,
-                TrailerQuery.TRAILER_COLUMNS,
+                TRAILER_COLUMNS,
                 null,
                 null,
                 null
@@ -116,7 +138,7 @@ public class TrailerFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         Log.e(LOG_TAG,"In trailer load finish loader");
-        cursor.setNotificationUri(getContext().getContentResolver(), MovieContract.TrailerEntry.buildTrailerMovie(movieStr));
+        cursor.setNotificationUri(getContext().getContentResolver(), MovieContract.MovieEntry.buildTrailerMovie(movieStr));
 
         if (null == mTrailerAdapter)
             mTrailerAdapter = new TrailerAdapter(getActivity(),null,0);

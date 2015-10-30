@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.ReviewFragment;
+import com.example.nitu.popularmovies.data.MovieContract;
 
 /**
  * Created by nitus on 10/9/2015.
@@ -37,9 +38,9 @@ public class ReviewAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         final ViewHolder holder = (ViewHolder)view.getTag();
-        holder.author.setText(cursor.getString(ReviewFragment.ReviewQuery.COL_REVIEW_AUTHOR));
-        holder.content.setText(cursor.getString(ReviewFragment.ReviewQuery.COL_REVIEW_CONTENT));
-        Log.e("Review Adaptor",cursor.getString(ReviewFragment.ReviewQuery.COL_REVIEW_AUTHOR));
+        holder.author.setText(cursor.getString(cursor.getColumnIndex(MovieContract.ReviewEntry.COLUMN_AUTHOR)));
+        holder.content.setText(cursor.getString(cursor.getColumnIndex(MovieContract.ReviewEntry.COLUMN_CONTENT)));
+        Log.e("Review Adaptor",cursor.getString(cursor.getColumnIndex(MovieContract.ReviewEntry.COLUMN_AUTHOR)));
     }
     static class ViewHolder {
         TextView author;

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.TrailerFragment;
+import com.example.nitu.popularmovies.data.MovieContract;
 
 /**
  * Created by nitus on 10/9/2015.
@@ -33,6 +34,6 @@ public class TrailerAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
        TextView tv=(TextView)view.findViewById(R.id.list_item_trailer_textview);
-       tv.setText(cursor.getString(TrailerFragment.TrailerQuery.COL_TRAILER_KEY));
+       tv.setText(cursor.getString(cursor.getColumnIndex(MovieContract.TrailerEntry.COLUMN_KEY)));
     }
 }

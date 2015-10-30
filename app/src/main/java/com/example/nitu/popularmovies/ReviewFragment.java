@@ -24,22 +24,22 @@ public class ReviewFragment extends Fragment implements LoaderManager.LoaderCall
     private static final String LOG_TAG = ReviewFragment.class.getSimpleName();
     private ReviewAdapter mReviewAdapter;
     private ListView listViewReview;
-    public interface ReviewQuery {
-        static final int REVIEW_LOADER = 2;
-        static final String[] REVIEW_COLUMNS = {
-                MovieContract.ReviewEntry.TABLE_NAME + "." + MovieContract.ReviewEntry._ID,
-                MovieContract.ReviewEntry.COLUMN_MOV_KEY,
-                MovieContract.ReviewEntry.COLUMN_REVIEW_KEY,
-                MovieContract.ReviewEntry.COLUMN_AUTHOR,
-                MovieContract.ReviewEntry.COLUMN_CONTENT
-        };
-        static final int COL_REVIEWID = 0;
-        static final int COL_MOVIE_ID = 1;
-        static final int COL_REVIEW_KEY = 2;
-        static final int COL_REVIEW_AUTHOR = 3;
-        static final int COL_REVIEW_CONTENT=4;
-    }
-        private String movieStr;
+
+    static final int REVIEW_LOADER = 0;
+    static final String[] REVIEW_COLUMNS = {
+            MovieContract.ReviewEntry.TABLE_NAME + "." + MovieContract.ReviewEntry._ID,
+            MovieContract.ReviewEntry.TABLE_NAME + "." +MovieContract.ReviewEntry.COLUMN_MOV_KEY,
+            MovieContract.ReviewEntry.COLUMN_REVIEW_KEY,
+            MovieContract.ReviewEntry.COLUMN_AUTHOR,
+            MovieContract.ReviewEntry.COLUMN_CONTENT
+    };
+    static final int COL_REVIEWID = 0;
+    static final int COL_MOVIE_ID = 1;
+    static final int COL_REVIEW_KEY = 2;
+    static final int COL_REVIEW_AUTHOR = 3;
+    static final int COL_REVIEW_CONTENT=4;
+
+    private String movieStr;
 
     public ReviewFragment() {
         Log.e(LOG_TAG, "In new Review " + movieStr);
@@ -66,10 +66,10 @@ public class ReviewFragment extends Fragment implements LoaderManager.LoaderCall
         mReviewAdapter = new ReviewAdapter(getActivity(), null, 0);
         if (savedInstanceState != null) {
             Log.e(LOG_TAG,"In create restart loader");
-            getLoaderManager().restartLoader(ReviewQuery.REVIEW_LOADER, null, this);
+            getLoaderManager().restartLoader(REVIEW_LOADER, null, this);
         } else {
             Log.e(LOG_TAG,"In create init loader");
-            getLoaderManager().initLoader(ReviewQuery.REVIEW_LOADER, null, this);
+            getLoaderManager().initLoader(REVIEW_LOADER, null, this);
         }
         Log.e(LOG_TAG,"out create Review");
     }
@@ -102,21 +102,21 @@ public class ReviewFragment extends Fragment implements LoaderManager.LoaderCall
         if (getArguments()!=null) {
             movieStr = (getArguments().getString("movieStr"));
         }
-        Uri reviewUri = MovieContract.ReviewEntry.buildReviewMovie(movieStr);
-        return new CursorLoader(
-                getActivity(),
+        Uri reviewUri = MovieContract.MovieEntry.buildReviewMovie(movieStr);
+        return new CursorLoader(getActivity(),
                 reviewUri,
-                ReviewQuery.REVIEW_COLUMNS,
+                REVIEW_COLUMNS,
                 null,
                 null,
                 null
         );
+
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         Log.e(LOG_TAG,"In Review load finish loader Review");
-        cursor.setNotificationUri(getContext().getContentResolver(), MovieContract.ReviewEntry.buildReviewMovie(movieStr));
+        cursor.setNotificationUri(getContext().getContentResolver(), MovieContract.MovieEntry.buildReviewMovie(movieStr));
 
         if (null == mReviewAdapter)
             mReviewAdapter = new ReviewAdapter(getActivity(),null,0);

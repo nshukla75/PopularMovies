@@ -12,12 +12,12 @@ public class TestUriMatcher extends AndroidTestCase {
 
     // "content://com.example.nitu.popularmovies.data/trailer"
     private static final Uri TEST_TRAILER_DIR = MovieContract.TrailerEntry.CONTENT_URI;
-    // "content://com.example.nitu.popularmovies.data/trailer/*"
-    private static final Uri TEST_TRAILER_WITH_MOVIE_DIR = MovieContract.TrailerEntry.buildTrailerMovie(MOVIE_QUERY);
+    // "content://com.example.nitu.popularmovies.data/movie/*/trailer"
+    private static final Uri TEST_TRAILER_WITH_MOVIE_DIR = MovieContract.MovieEntry.buildTrailerMovie(MOVIE_QUERY);
     // "content://com.example.nitu.popularmovies.data/review"
     private static final Uri TEST_REVIEW_DIR = MovieContract.ReviewEntry.CONTENT_URI;
     // "content://com.example.nitu.popularmovies.data/review/*"
-    private static final Uri TEST_REVIEW_WITH_MOVIE_DIR = MovieContract.ReviewEntry.buildReviewMovie(MOVIE_QUERY);
+    private static final Uri TEST_REVIEW_WITH_MOVIE_DIR = MovieContract.MovieEntry.buildReviewMovie(MOVIE_QUERY);
     // content://com.example.android.sunshine.app/movie"
     private static final Uri TEST_MOVIE_DIR = MovieContract.MovieEntry.CONTENT_URI;
     // content://com.example.android.sunshine.app/movie/*"

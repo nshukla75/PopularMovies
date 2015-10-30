@@ -126,12 +126,12 @@ public class TestProvider extends AndroidTestCase {
         assertEquals("Error: the TrailerEntry CONTENT_URI should return TrailerEntry.CONTENT_TYPE",
                 MovieContract.TrailerEntry.CONTENT_TYPE, type);
 
-        // content://com.example.nitu.popularmovies.data/trailer/135397
+        // content://com.example.nitu.popularmovies.data/trailer/1
         type = mContext.getContentResolver().getType(
-                MovieContract.TrailerEntry.buildTrailerMovie(testMovie));
+                MovieContract.TrailerEntry.buildTrailerUri(1));
         // vnd.android.cursor.dir/com.example.nitu.popularmovies.data/trailer
         assertEquals("Error: the TrailerEntry CONTENT_URI with movie should return TrailerEntry.CONTENT_TYPE",
-                MovieContract.TrailerEntry.CONTENT_TYPE, type);
+                MovieContract.TrailerEntry.CONTENT_ITEM_TYPE, type);
 
         // content://com.example.nitu.popularmovies.data/review/
         type = mContext.getContentResolver().getType(MovieContract.ReviewEntry.CONTENT_URI);
@@ -139,12 +139,12 @@ public class TestProvider extends AndroidTestCase {
         assertEquals("Error: the ReviewEntry CONTENT_URI should return ReviewEntry.CONTENT_TYPE",
                 MovieContract.ReviewEntry.CONTENT_TYPE, type);
 
-        // content://com.example.nitu.popularmovies.data/review/135397
+        // content://com.example.nitu.popularmovies.data/review/1
         type = mContext.getContentResolver().getType(
-                MovieContract.ReviewEntry.buildReviewMovie(testMovie));
+                MovieContract.ReviewEntry.buildReviewUri(1));
         // vnd.android.cursor.dir/com.example.nitu.popularmovies.data/review
         assertEquals("Error: the ReviewEntry CONTENT_URI with movie should return ReviewEntry.CONTENT_TYPE",
-                MovieContract.ReviewEntry.CONTENT_TYPE, type);
+                MovieContract.ReviewEntry.CONTENT_ITEM_TYPE, type);
 
         // content://com.example.nitu.popularmovies.data/movie/
         type = mContext.getContentResolver().getType(MovieContract.MovieEntry.CONTENT_URI);
@@ -158,6 +158,36 @@ public class TestProvider extends AndroidTestCase {
         // vnd.android.cursor.dir/com.example.nitu.popularmovies.data/movie
         assertEquals("Error: the MovieEntry CONTENT_URI with movie should return MovieEntry.CONTENT_TYPE",
                 MovieContract.MovieEntry.CONTENT_ITEM_TYPE, type);
+
+        // content://com.example.nitu.popularmovies.data/movie/popularity
+        type = mContext.getContentResolver().getType(MovieContract.MovieEntry.buildPopularMovie());
+        // vnd.android.cursor.dir/com.example.nitu.popularmovies.data/movie/popularity
+        assertEquals("Error: the MovieEntry CONTENT_URI should return MovieEntry.CONTENT_TYPE",
+                MovieContract.MovieEntry.CONTENT_TYPE, type);
+
+        // content://com.example.nitu.popularmovies.data/movie/rating
+        type = mContext.getContentResolver().getType(MovieContract.MovieEntry.buildTopratedMovie());
+        // vnd.android.cursor.dir/com.example.nitu.popularmovies.data/movie/rating
+        assertEquals("Error: the MovieEntry CONTENT_URI should return MovieEntry.CONTENT_TYPE",
+                MovieContract.MovieEntry.CONTENT_TYPE, type);
+
+        // content://com.example.nitu.popularmovies.data/movie/favourite
+        type = mContext.getContentResolver().getType(MovieContract.MovieEntry.buildFavouriteMovie());
+        // vnd.android.cursor.dir/com.example.nitu.popularmovies.data/movie/favourite
+        assertEquals("Error: the MovieEntry CONTENT_URI should return MovieEntry.CONTENT_TYPE",
+                MovieContract.MovieEntry.CONTENT_TYPE, type);
+
+        // content://com.example.nitu.popularmovies.data/movie/#/trailer
+        type = mContext.getContentResolver().getType(MovieContract.MovieEntry.buildTrailerMovie(testMovie));
+        // vnd.android.cursor.dir/com.example.nitu.popularmovies.data/movie/#/trailer
+        assertEquals("Error: the MovieEntry CONTENT_URI should return MovieEntry.CONTENT_TYPE",
+                MovieContract.MovieEntry.CONTENT_TYPE, type);
+
+        // content://com.example.nitu.popularmovies.data/movie/#/review
+        type = mContext.getContentResolver().getType(MovieContract.MovieEntry.buildReviewMovie(testMovie));
+        // vnd.android.cursor.dir/com.example.nitu.popularmovies.data/movie/#/review
+        assertEquals("Error: the MovieEntry CONTENT_URI should return MovieEntry.CONTENT_TYPE",
+                MovieContract.MovieEntry.CONTENT_TYPE, type);
     }
 
     /*  This test uses the database directly to insert and then uses the ContentProvider to
@@ -353,8 +383,7 @@ public class TestProvider extends AndroidTestCase {
                 .insert(MovieContract.TrailerEntry.CONTENT_URI, trailerValues);
         assertTrue(trailerInsertUri != null);
 
-        // Did our content observer get called?  Students:  If this fails, your insert weather
-        // in your ContentProvider isn't calling
+        long trailerRowId = ContentUris.parseId(trailerInsertUri);
         // getContext().getContentResolver().notifyChange(uri, null);
         tco.waitForNotificationOrFail();
         mContext.getContentResolver().unregisterContentObserver(tco);
@@ -371,20 +400,6 @@ public class TestProvider extends AndroidTestCase {
         TestUtilities.validateCursor("testInsertReadProvider. Error validating TrailerEntry insert.",
                 trailerCursor, trailerValues);
 
-        // Add the location values in with the weather data so that we can make
-        // sure that the join worked and we actually get all the values back
-        trailerValues.putAll(testValues);
-
-        // Get the joined Trailer and Movie data
-        trailerCursor = mContext.getContentResolver().query(
-                MovieContract.TrailerEntry.buildTrailerMovie(TestUtilities.TEST_MOVIE),
-                null, // leaving "columns" null just returns all the columns.
-                null, // cols for "where" clause
-                null, // values for "where" clause
-                null  // sort order
-        );
-        TestUtilities.validateCursor("testInsertReadProvider.  Error validating joined Trailer and Movie Data.",
-                trailerCursor, testValues);
 
         // -------------Fantastic.  Now that we have a movie, add some Review!
         ContentValues reviewValues = TestUtilities.createReviewValues(TestUtilities.TEST_MOVIE);
@@ -415,20 +430,6 @@ public class TestProvider extends AndroidTestCase {
         TestUtilities.validateCursor("testInsertReadProvider. Error validating ReviewEntry insert.",
                 reviewCursor, reviewValues);
 
-        // Add the location values in with the weather data so that we can make
-        // sure that the join worked and we actually get all the values back
-        reviewValues.putAll(testValues);
-
-        // Get the joined Weather and Location data
-        reviewCursor = mContext.getContentResolver().query(
-                MovieContract.ReviewEntry.buildReviewMovie(TestUtilities.TEST_MOVIE),
-                null, // leaving "columns" null just returns all the columns.
-                null, // cols for "where" clause
-                null, // values for "where" clause
-                null  // sort order
-        );
-        TestUtilities.validateCursor("testInsertReadProvider.  Error validating joined Review and Movie Data.",
-                reviewCursor, testValues);
     }
 
     // Make sure we can still delete after adding/updating stuff
@@ -450,9 +451,6 @@ public class TestProvider extends AndroidTestCase {
 
         deleteAllRecordsFromProvider();
 
-        // Students: If either of these fail, you most-likely are not calling the
-        // getContext().getContentResolver().notifyChange(uri, null); in the ContentProvider
-        // delete.  (only if the insertReadProvider is succeeding)
         movieObserver.waitForNotificationOrFail();
         trailerObserver.waitForNotificationOrFail();
         reviewObserver.waitForNotificationOrFail();

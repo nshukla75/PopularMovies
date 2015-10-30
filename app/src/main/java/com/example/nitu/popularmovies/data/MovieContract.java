@@ -69,12 +69,15 @@ public class MovieContract {
         public static Uri buildFavouriteMovie() {
             return CONTENT_URI.buildUpon().appendPath("favourite").build();
         }
-      /*  public static Uri buildComingSoonMovie() {
-            return CONTENT_URI.buildUpon().appendPath("comingsoon").build();
+        public static Uri buildTrailerMovie(String movieKey) {
+            final String trailerUri= CONTENT_URI +"/"+ movieKey +"/trailer";
+            Uri returnUri = Uri.parse(trailerUri);
+            return returnUri;
         }
-        public static Uri buildPlayingNowMovie() {
-            return CONTENT_URI.buildUpon().appendPath("playingnow").build();
-        }*/
+        public static Uri buildReviewMovie(String movieKey) {
+            final String reviewUri= CONTENT_URI +"/"+ movieKey +"/review";
+            return Uri.parse(reviewUri).buildUpon().build();
+        }
     }
 
     /* Inner class that defines the table contents of the Trailer table */
@@ -88,11 +91,11 @@ public class MovieContract {
 
 
         public static final String TABLE_NAME = "trailer";
-
         // Column with the foreign key into the movie table.
         public static final String COLUMN_MOV_KEY = "movieId";
         //id from API
         public static final String COLUMN_TRAILER_KEY = "trailerid";
+
         public static final String COLUMN_KEY = "key";
 
         public static final String COLUMN_SIZE = "size";
@@ -100,14 +103,6 @@ public class MovieContract {
         public static Uri buildTrailerUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
 
-        }
-
-        public static Uri buildTrailerMovie(String movieKey) {
-            return CONTENT_URI.buildUpon().appendPath(movieKey).build();
-        }
-
-        public static String getMovieSettingFromUri(Uri uri) {
-            return uri.getPathSegments().get(1);
         }
     }
 
@@ -132,14 +127,6 @@ public class MovieContract {
 
         public static Uri buildReviewUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
-        }
-
-        public static Uri buildReviewMovie(String movieKey) {
-            return CONTENT_URI.buildUpon().appendPath(movieKey).build();
-        }
-
-        public static String getMovieSettingFromUri(Uri uri) {
-            return uri.getPathSegments().get(1);
         }
     }
 }

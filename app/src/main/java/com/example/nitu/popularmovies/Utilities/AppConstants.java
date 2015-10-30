@@ -19,7 +19,7 @@ public class AppConstants {
     public static final String MOVIE_LIST_FROM_BUNDLE_KEY="movie_list_from_bundle_key";
     public static final String MOVIE_DTL_FROM_BUNDLE_KEY="movie_list_from_bundle_key";
     public static final int FETCH_LIMIT=12;
-    public static final String MOVIE_YOUTUBE_URL="https://youtube";
+    public static final String MOVIE_YOUTUBE_URL="https://www.youtube.com/watch?v=";
     public static final String MOVIE_REVIEWS_TRAILER_BASE_URL="http://api.themoviedb.org/3/movie";
 
 }

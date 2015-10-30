@@ -31,7 +31,7 @@ public class FetchTrailerTask extends AsyncTask<String, Void, Void> {
     public FetchTrailerTask(Context context) {
         mContext = context;
     }
-    private boolean DEBUG = true;
+
 
     private void getTrailerDataFromJson(String trailerJsonStr,String movieStr)
             throws JSONException {
