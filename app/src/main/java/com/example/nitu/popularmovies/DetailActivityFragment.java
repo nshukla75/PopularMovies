@@ -58,12 +58,21 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         static final int COL_MOVIE_POSTER = 8;
     }
     private String movieStr;
+    private String title;
     public ToggleButton btnToggle;
     public DetailActivityFragment() {}
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+    }
+
+    private void createShareForecastIntent() {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
     }
 
     @Override
@@ -77,28 +86,30 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             getLoaderManager().initLoader(MovieQuery.DETAIL_LOADER, null, this);
         }
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.e("Create View", "in Create View...............");
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        btnToggle = (ToggleButton)rootView.findViewById(R.id.chkState);
-
+        getActivity().setTitle(title);
+        btnToggle = (ToggleButton) rootView.findViewById(R.id.chkState);
         btnToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-                if(isChecked){
-                    updateFavourite(1,movieStr);
-                    Toast.makeText(getActivity(), MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE + "is added to your Favourite List", Toast.LENGTH_SHORT).show();
-                }else{
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    updateFavourite(1, movieStr);
+                    Toast.makeText(getActivity(), title + "is added to your Favourite List", Toast.LENGTH_SHORT).show();
+                } else {
                     updateFavourite(0, movieStr);
-                    Toast.makeText(getActivity(), MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE + "is removed from your Favourite List", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), title + "is removed from your Favourite List", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
         return rootView;
     }
+
     public void updateFavourite(int chkFavourite, String movieKey){
         Cursor movieCursor = getContext().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, null, null, null);
         ContentValues updateValues = new ContentValues();
@@ -106,6 +117,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         updateValues.put(MovieContract.MovieEntry._ID, movieRowId);
         int count = getContext().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateValues, MovieContract.MovieEntry._ID + "= ?", new String[] { Long.toString(movieRowId)});
     }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.v(LOG_TAG, "In onCreateLoader");
@@ -132,7 +144,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         }
         movieStr = data.getString(MovieQuery.COL_MOVIE_KEY);
         movieRowId=data.getLong(MovieQuery.COL_MOVIEID);
-        ((TextView) getView().findViewById(R.id.title_text)).setText(data.getString(MovieQuery.COL_MOVIE_ORIGINAL_TITLE));
+        title=data.getString(MovieQuery.COL_MOVIE_ORIGINAL_TITLE);
+        ((TextView) getView().findViewById(R.id.title_text)).setText(title);
 
         ImageView imageView = (ImageView) getView().findViewById(R.id.imageView);
         byte[] bb = Utility.getImage(data);

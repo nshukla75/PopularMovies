@@ -94,18 +94,23 @@ public class TrailerFragment extends Fragment implements LoaderManager.LoaderCal
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
-                    startVideo(cursor.getString(COL_TRAILER_KEY));
+                    startVideoOnBrowser(cursor.getString(COL_TRAILER_KEY));
+                    //startVideoOnApp(cursor.getString(COL_TRAILER_KEY));
                 }
             }
         });
         return rootView;
     }
-    private void startVideo(String videoID) {
+    private void startVideoOnBrowser(String videoID) {
         // default youtube app
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(AppConstants.MOVIE_YOUTUBE_URL + videoID));
         startActivity(intent);
     }
-
+    private void startVideoOnApp(String videoID) {
+        // default youtube app
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.YouTube:" + videoID));
+        startActivity(intent);
+    }
     /*@Override
     public void onResume() {
         Log.e(LOG_TAG,"In Resume Review");
