@@ -14,11 +14,13 @@
     <string name="pref_title_sort_order">Sort order of the movies by:</string>
     <string-array name="pref_sort_order_titles">
         <item>Most Popular</item>
-        <item>Highest Rated</item>
+        <item>Top Rated</item>
+        <item>Favourite</item>
     </string-array>
     <string-array name="pref_sort_order_values">
         <item>popularity.desc</item>
         <item>vote_average.desc</item>
+        <item>favourite</item>
     </string-array>
 
 

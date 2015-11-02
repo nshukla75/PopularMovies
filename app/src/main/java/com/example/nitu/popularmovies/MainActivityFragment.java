@@ -99,6 +99,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         listView = (GridView) rootView.findViewById(R.id.gridview_movie);
         if (mMovieAdapter.getCount()>0) listView.setAdapter(mMovieAdapter);
+        else Toast.makeText(getActivity(), "No Movies for " + Utility.getPreferences(getActivity()), Toast.LENGTH_LONG).show();
         Log.e("Create View", "in Create View...............");
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -174,6 +175,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         Uri movieUri;
         if (sortBy.equals("vote_average.desc"))
             movieUri = MovieContract.MovieEntry.buildTopratedMovie();
+        else if (sortBy.equals("favourite"))
+            movieUri=MovieContract.MovieEntry.buildFavouriteMovie();
         else
             movieUri = MovieContract.MovieEntry.buildPopularMovie();
         Toast.makeText(getActivity(), "Loading data for" + sortBy, Toast.LENGTH_LONG).show();
