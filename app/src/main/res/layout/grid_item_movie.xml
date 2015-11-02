@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:gravity="center_vertical"
-android:orientation="horizontal"
-android:minHeight="?android:attr/listPreferredItemHeight"
-android:padding="0dp">
-
-<ImageView
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/grid_item_movie_imageview"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="1dp"
+    android:scaleType="centerCrop"
+    android:padding="2dp"
     />
 
-</LinearLayout>

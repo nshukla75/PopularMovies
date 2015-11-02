@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
-import com.example.nitu.popularmovies.DetailActivityFragment;
 import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.data.MovieContract;
@@ -19,12 +18,12 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by nitus on 10/9/2015.
  */
-public class MovieAdapter extends CursorAdapter {
-    private final String LOG_TAG = MovieAdapter.class.getSimpleName();
+public class GridViewAdapter extends CursorAdapter {
+    private final String LOG_TAG = GridViewAdapter.class.getSimpleName();
     //private static final String KEY_ADAPTER_STATE = "MovieAdapter.KEY_ADAPTER_STATE";
     private final Context mContext;
 
-    public MovieAdapter(Context context, Cursor c, int flags) {
+    public GridViewAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
         mContext = context;
     }

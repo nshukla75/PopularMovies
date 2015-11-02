@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:text="Movie Title"
             android:textColor="@android:color/white"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="2dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="20dp"
             android:gravity="center"/>

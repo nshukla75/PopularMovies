@@ -18,6 +18,7 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.example.nitu.popularmovies.Utilities.Utility;
+import com.example.nitu.popularmovies.adaptors.GridViewAdapter;
 import com.example.nitu.popularmovies.adaptors.MovieAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
 import com.example.nitu.popularmovies.fetchtasks.FetchMovieTask;
@@ -31,7 +32,7 @@ import com.example.nitu.popularmovies.fetchtasks.FetchTrailerTask;
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
     final int MOVIE_LOADER=0;
-    private MovieAdapter mMovieAdapter;
+    private GridViewAdapter mMovieAdapter;
     private String msortBy;
     boolean mDualPane;
     int mCurCheckPosition = 0;
@@ -72,7 +73,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onCreate(Bundle savedInstanceState) {
         msortBy= Utility.getPreferences(getActivity());
         super.onCreate(savedInstanceState);
-        mMovieAdapter=new MovieAdapter(getActivity(),null,0);
+        mMovieAdapter=new GridViewAdapter(getActivity(),null,0);
         if (savedInstanceState != null) {
             getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
         }
@@ -192,7 +193,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         cursor.setNotificationUri(getContext().getContentResolver(), MovieContract.MovieEntry.CONTENT_URI);
         if (null == mMovieAdapter)
-            mMovieAdapter = new MovieAdapter(getActivity(),null,0);
+            mMovieAdapter = new GridViewAdapter(getActivity(),null,0);
         //gv is a GridView
         //listView = (GridView) getActivity().findViewById(R.id.gridview_movie);
         if (listView.getAdapter() != mMovieAdapter)
