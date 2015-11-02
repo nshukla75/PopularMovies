@@ -1,5 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/review_movie"
+    android:id="@+id/trailer_movie"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -7,10 +7,11 @@
         android:id="@+id/review_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Reviews: " />
+        android:text="Reviews: "/>
     <ListView
-        android:id="@+id/listView_movie"
+        android:id="@+id/listView_review"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
 </LinearLayout>
+
+

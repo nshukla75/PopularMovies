@@ -33,6 +33,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     final int MOVIE_LOADER=0;
     private MovieAdapter mMovieAdapter;
     private String msortBy;
+    boolean mDualPane;
+    int mCurCheckPosition = 0;
     private static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry._ID,
             MovieContract.MovieEntry.COLUMN_MOVIE_KEY,
@@ -64,7 +66,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //mMovieAdapter.onSaveInstanceState(outState);
+        outState.putInt("curChoice", mCurCheckPosition);
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,6 +83,16 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            // Restore last state for checked position.
+            mCurCheckPosition = savedInstanceState.getInt("curChoice", 0);
+        }
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -91,12 +103,16 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                mCurCheckPosition = position;
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
                     updateReview(cursor.getString(COL_MOVIE_KEY));
                     updateTrailer(cursor.getString(COL_MOVIE_KEY));
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .setData(MovieContract.MovieEntry.buildMovie(cursor.getString(COL_MOVIE_KEY)));
+                    Intent intent = new Intent(getActivity(), DetailActivity.class);
+                    //intent.setData(MovieContract.MovieEntry.buildMovie(cursor.getString(COL_MOVIE_KEY)));
+                    Bundle bundle = new Bundle();
+                    bundle.putString("movieKey", cursor.getString(COL_MOVIE_KEY));
+                    intent.putExtras(bundle);
                     startActivity(intent);
                 }
             }

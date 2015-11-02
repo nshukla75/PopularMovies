@@ -2,19 +2,16 @@ package com.example.nitu.popularmovies;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-
-public class DetailActivity extends AppCompatActivity {
-
-    public ShareActionProvider mShareActionProvider;
-
+public class DetailActivity extends AppCompatActivity implements DetailActivityFragment.OnDataPass{
+    private static final String LOG_TAG = DetailActivity.class.getSimpleName();
+    public String FirstTrailerURL="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,10 +27,11 @@ public class DetailActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.detailfragment, menu);
 
         // Locate MenuItem with ShareActionProvider
-        MenuItem item = menu.findItem(R.id.action_share);
+        //MenuItem item = menu.findItem(R.id.share);
 
         // Fetch and store ShareActionProvider
-        mShareActionProvider = (ShareActionProvider)  MenuItemCompat.getActionProvider(item);
+        //mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        //setShareIntent();
         return true;
     }
 
@@ -45,22 +43,23 @@ public class DetailActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_share) {
-            //startActivity(new Intent(this, SettingsActivity.class));
-            setShareIntent();
+        if (id == R.id.share) {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Trailer of Movie");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, FirstTrailerURL);
+            startActivity(Intent.createChooser(shareIntent, "Reciever's Address"));
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
-    private void setShareIntent() {
-        if (mShareActionProvider != null) {
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-                 shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Testing Oceanbook");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "Not ready"  );
 
-             mShareActionProvider.setShareIntent(shareIntent);
-        }
+    @Override
+    public void DataPass(String data) {
+
+        FirstTrailerURL = data;
+        Log.d("LOG","hello " + FirstTrailerURL);
+
     }
 }
 

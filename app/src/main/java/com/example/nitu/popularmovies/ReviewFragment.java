@@ -79,7 +79,7 @@ public class ReviewFragment extends Fragment implements LoaderManager.LoaderCall
                              Bundle savedInstanceState) {
         Log.e(LOG_TAG,"going to load view" + movieStr);
         View rootView = inflater.inflate(R.layout.review_movie, container, false);
-        listViewReview = (ListView) rootView.findViewById(R.id.listView_movie);
+        listViewReview = (ListView) rootView.findViewById(R.id.listView_review);
         if (mReviewAdapter.getCount() > 0) listViewReview.setAdapter(mReviewAdapter);
         return rootView;
     }
