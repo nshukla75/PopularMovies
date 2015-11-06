@@ -1,9 +1,8 @@
-package com.example.nitu.popularmovies;
+package com.example.nitu.popularmovies.Utilities;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 /**
  * Created by nitus on 10/4/2015.

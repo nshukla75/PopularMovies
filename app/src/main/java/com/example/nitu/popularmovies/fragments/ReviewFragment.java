@@ -1,4 +1,4 @@
-package com.example.nitu.popularmovies;
+package com.example.nitu.popularmovies.fragments;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 
+import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.adaptors.ReviewAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
 

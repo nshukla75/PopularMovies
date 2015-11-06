@@ -1,8 +1,6 @@
-package com.example.nitu.popularmovies;
+package com.example.nitu.popularmovies.fragments;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,13 +15,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.Utilities.AppConstants;
-import com.example.nitu.popularmovies.Utilities.Utility;
-import com.example.nitu.popularmovies.adaptors.ReviewAdapter;
 import com.example.nitu.popularmovies.adaptors.TrailerAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
-
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.

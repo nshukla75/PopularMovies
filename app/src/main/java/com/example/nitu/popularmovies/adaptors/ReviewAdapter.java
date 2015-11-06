@@ -10,7 +10,6 @@ import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 import com.example.nitu.popularmovies.R;
-import com.example.nitu.popularmovies.ReviewFragment;
 import com.example.nitu.popularmovies.data.MovieContract;
 
 /**

@@ -1,4 +1,4 @@
-package com.example.nitu.popularmovies;
+package com.example.nitu.popularmovies.fragments;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -17,9 +17,11 @@ import android.widget.GridView;
 
 import android.widget.Toast;
 
+import com.example.nitu.popularmovies.R;
+import com.example.nitu.popularmovies.Utilities.NetworkUtils;
 import com.example.nitu.popularmovies.Utilities.Utility;
+import com.example.nitu.popularmovies.activities.DetailActivity;
 import com.example.nitu.popularmovies.adaptors.GridViewAdapter;
-import com.example.nitu.popularmovies.adaptors.MovieAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
 import com.example.nitu.popularmovies.fetchtasks.FetchMovieTask;
 import com.example.nitu.popularmovies.fetchtasks.FetchReviewTask;

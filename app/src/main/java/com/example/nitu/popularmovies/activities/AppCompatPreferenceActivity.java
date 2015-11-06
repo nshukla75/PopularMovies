@@ -1,4 +1,4 @@
-package com.example.nitu.popularmovies;
+package com.example.nitu.popularmovies.activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

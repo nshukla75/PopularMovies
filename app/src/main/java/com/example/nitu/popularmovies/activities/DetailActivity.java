@@ -1,4 +1,4 @@
-package com.example.nitu.popularmovies;
+package com.example.nitu.popularmovies.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,8 +8,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.nitu.popularmovies.fragments.DetailActivityFragment;
+import com.example.nitu.popularmovies.R;
 
-public class DetailActivity extends AppCompatActivity implements DetailActivityFragment.OnDataPass{
+
+public class DetailActivity extends AppCompatActivity implements DetailActivityFragment.OnDataPass {
     private static final String LOG_TAG = DetailActivity.class.getSimpleName();
     public String FirstTrailerURL="";
     @Override
