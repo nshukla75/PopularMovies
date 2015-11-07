@@ -30,6 +30,10 @@ public class BaseActivity extends AppCompatActivity {
             MenuItem item = menu.findItem(R.id.action_settings);
             item.setVisible(false);
         }
+        else if(this instanceof MainActivity) {
+            MenuItem item = menu.findItem(R.id.action_share);
+            item.setVisible(false);
+        }
         return true;
     }
     @Override

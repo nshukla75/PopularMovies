@@ -10,9 +10,13 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,6 +108,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private ListView listViewTrailer;
     private ListView listViewReview;
     private View rootView;
+    private ShareActionProvider mShareActionProvider;
+    private Menu mMenu;
+    private MenuItem shareMenuItem;
 
     public DetailActivityFragment() {}
 
@@ -127,6 +134,20 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         else {
             //getLoaderManager().initLoader(DETAIL_LOADER, null, this);
         }
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        mMenu = menu;
+        inflater.inflate(R.menu.menu_base, menu);
+        shareMenuItem = menu.findItem(R.id.action_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareMenuItem);
+        shareMenuItem.setVisible(false);
+
+        Utility.makeMenuItemInvisible(menu, R.id.action_settings);
+        //for crate home button
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        //activity.getSupportActionBar();
+        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -153,11 +174,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //for crate home button
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        //activity.getSupportActionBar();
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         Log.e("Create View", "in Create View...............");
         Bundle arguments = getActivity().getIntent().getExtras();
         movieStr = arguments.getString("movieKey");
@@ -327,7 +343,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 if (listViewTrailer.getAdapter() != mTrailerAdapter)
                     listViewTrailer.setAdapter(mTrailerAdapter);
                 if (data.moveToFirst()) {
-                    YouTubleFirstTrilerURL=AppConstants.MOVIE_YOUTUBE_URL + data.getString(TrailerQuery.COL_TRAILER_KEY);
+                    YouTubleFirstTrilerURL = AppConstants.MOVIE_YOUTUBE_URL + data.getString(TrailerQuery.COL_TRAILER_KEY);
+                    if (mShareActionProvider != null) {
+                        mMenu.findItem(R.id.action_share).setVisible(true);
+                    } else Log.e(LOG_TAG,"mShareActionProvider not set");
+
                 }
                 Log.e(LOG_TAG,"out trailer load finish loader"+ data.getCount());
                 break;
