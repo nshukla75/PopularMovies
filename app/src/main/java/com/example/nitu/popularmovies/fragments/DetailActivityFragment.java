@@ -1,7 +1,6 @@
 package com.example.nitu.popularmovies.fragments;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
@@ -11,8 +10,10 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -32,7 +33,6 @@ import com.example.nitu.popularmovies.adaptors.ReviewAdapter;
 import com.example.nitu.popularmovies.adaptors.TrailerAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
 
-
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -41,9 +41,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private MovieAdapter mMovieAdapter;
     private TrailerAdapter mTrailerAdapter;
     private ReviewAdapter mReviewAdapter;
-    public interface OnDataPass {
-        public void DataPass(String data);
-    }
+
     public interface MovieQuery {
         static final int DETAIL_LOADER = 0;
         static final String[] MOVIE_COLUMNS = {
@@ -101,6 +99,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private long movieRowId;
     public String movieStr;
     private String title;
+    private String YouTubleFirstTrilerURL;
     public ToggleButton btnToggle;
     private ListView listViewTrailer;
     private ListView listViewReview;
@@ -116,6 +115,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         mMovieAdapter=new MovieAdapter(getActivity(),null,0);
         mTrailerAdapter=new TrailerAdapter(getActivity(),null,0);
         mReviewAdapter=new ReviewAdapter(getActivity(),null,0);
@@ -129,23 +129,35 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         }
     }
 
-    OnDataPass dataPasser;
-
     @Override
-    public void onAttach(Context a) {
-        super.onAttach(a);
-
-        try {
-            dataPasser = (OnDataPass) a;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(a.toString() + " must implement onDataPass");
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        switch(item.getItemId()){
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                return true;
+            case R.id.action_share:
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Trailer of Movie - "+ title);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, YouTubleFirstTrilerURL);
+                startActivity(Intent.createChooser(shareIntent, "Reciever's Address"));
+                return true;
         }
+        return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //for crate home button
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        //activity.getSupportActionBar();
+        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Log.e("Create View", "in Create View...............");
         Bundle arguments = getActivity().getIntent().getExtras();
         movieStr = arguments.getString("movieKey");
@@ -173,13 +185,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         });
 
         Log.e(LOG_TAG, "going to load view" + movieStr);
-        //LinearLayout trailerLayout = (LinearLayout)getActivity().findViewById(R.id.trailer_parent);
-        //View trailerView = inflater.inflate(R.layout.trailer_movie, container, false);
         listViewTrailer = (ListView) rootView.findViewById(R.id.listView_trailer);
         //if (mTrailerAdapter.getCount() > 0) {
             listViewTrailer.setAdapter(mTrailerAdapter);
-            //String tempURL=AppConstants.MOVIE_YOUTUBE_URL + data.getString(TrailerQuery.COL_TRAILER_KEY);
-            //passData(tempURL);
             listViewTrailer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -226,10 +234,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.v(LOG_TAG, "In onCreateLoader");
-        /*Intent intent = getActivity().getIntent();
-        if (intent == null) {
-            return null;
-        }*/
         Bundle arguments = getActivity().getIntent().getExtras();
         movieStr = arguments.getString("movieKey");
         if (movieStr ==null) { return null; }
@@ -323,8 +327,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 if (listViewTrailer.getAdapter() != mTrailerAdapter)
                     listViewTrailer.setAdapter(mTrailerAdapter);
                 if (data.moveToFirst()) {
-                    String tempURL=AppConstants.MOVIE_YOUTUBE_URL + data.getString(TrailerQuery.COL_TRAILER_KEY);
-                    dataPasser.DataPass(tempURL);
+                    YouTubleFirstTrilerURL=AppConstants.MOVIE_YOUTUBE_URL + data.getString(TrailerQuery.COL_TRAILER_KEY);
                 }
                 Log.e(LOG_TAG,"out trailer load finish loader"+ data.getCount());
                 break;
@@ -341,26 +344,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
                 Log.e(LOG_TAG,"out Review load finish loader Review"+ data.getCount());
                 break;
-
-
-        /*if (movieStr != null) {
-            FragmentManager childFragMan = getChildFragmentManager();
-            FragmentTransaction childFragTrans = childFragMan.beginTransaction();
-            ReviewFragment mReviewFragment = ReviewFragment.newInstance(movieStr);
-            if (childFragMan.findFragmentById(R.id.review_parent)==null) {
-                childFragTrans.add(R.id.review_parent, mReviewFragment);
-                childFragTrans.addToBackStack("Review");
-                childFragTrans.commit();
-            }
-
-            FragmentManager trailerFragMan = getChildFragmentManager();
-            FragmentTransaction trailerFragTrans = trailerFragMan.beginTransaction();
-            TrailerFragment mTrailerFragment = TrailerFragment.newInstance(movieStr);
-            if (trailerFragMan.findFragmentById(R.id.trailer_parent)==null) {
-                trailerFragTrans.add(R.id.trailer_parent, mTrailerFragment);
-                trailerFragTrans.addToBackStack("Trailer");
-                trailerFragTrans.commit();
-            }*/
         }
     }
 

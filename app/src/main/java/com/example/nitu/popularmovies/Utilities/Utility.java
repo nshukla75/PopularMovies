@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.data.MovieContract;
 
-import java.text.DateFormat;
-import java.util.Date;
 
 /**
  * Created by nitus on 10/17/2015.
@@ -35,6 +35,12 @@ public class Utility {
             year = date;
         }
         return year;
+    }
+    public static void makeMenuItemInvisible(Menu menu, int... ids) {
+        for (int id : ids) {
+            MenuItem mi = menu.findItem(id);
+            if (mi != null) mi.setVisible(false);
+        }
     }
 
 }
