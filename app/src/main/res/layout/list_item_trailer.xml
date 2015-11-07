@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/layout_border">
+   <!-- <ImageView
+        android:id="@+id/trailer_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_action_playback_play"/>-->
+
+    <TextView
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
-         android:id="@+id/list_item_trailer_textview" />
+         android:id="@+id/list_item_trailer_textview"
+        android:text="Trailer "/>
 
+</LinearLayout>

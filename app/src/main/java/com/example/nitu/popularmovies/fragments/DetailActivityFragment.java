@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -31,7 +32,6 @@ import android.widget.ToggleButton;
 
 import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.Utilities.AppConstants;
-import com.example.nitu.popularmovies.Utilities.Helper;
 import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.adaptors.MovieAdapter;
 import com.example.nitu.popularmovies.adaptors.ReviewAdapter;
@@ -112,6 +112,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private ShareActionProvider mShareActionProvider;
     private Menu mMenu;
     private MenuItem shareMenuItem;
+    private Boolean trailerDataModified;
+    private Boolean reviewDataModified;
 
     public DetailActivityFragment() {}
 
@@ -180,7 +182,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         movieStr = arguments.getString("movieKey");
         if (movieStr == null) { return null; }
         getLoaderManager().initLoader(MovieQuery.DETAIL_LOADER, null, this);
+        trailerDataModified=false;
         getLoaderManager().initLoader(TrailerQuery.TRAILER_LOADER, null, this);
+        reviewDataModified=false;
         getLoaderManager().initLoader(ReviewQuery.REVIEW_LOADER, null, this);
 
 
@@ -202,7 +206,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         });
 
         Log.e(LOG_TAG, "going to load view" + movieStr);
-        listViewTrailer = (ListView) rootView.findViewById(R.id.listView_trailer);
+        View trailerView = (View)inflater.inflate(R.layout.trailer_movie, container, false);
+        listViewTrailer = (ListView) trailerView.findViewById(R.id.listView_trailer);
         //if (mTrailerAdapter.getCount() > 0) {
             listViewTrailer.setAdapter(mTrailerAdapter);
             listViewTrailer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -211,28 +216,35 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                     if (cursor != null) {
                         startVideoOnBrowser(cursor.getString(TrailerQuery.COL_TRAILER_KEY));
-                        //startVideoOnApp(cursor.getString(COL_TRAILER_KEY));
                     }
                 }
             });
         //}
 
+        final int adapterCount = mTrailerAdapter.getCount();
+        LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.trailer_linear);
+        //ll.setOrientation(LinearLayout.HORIZONTAL);
+        for (int i = 0; i < adapterCount; i++) {
+            View item = mTrailerAdapter.getView(i, null, null);
+            ll.addView(item);
+        }
 
         Log.e(LOG_TAG,"going to load view" + movieStr);
         //LinearLayout reviewLayout = (LinearLayout)getActivity().findViewById(R.id.review_parent);
-        //View reviewView = inflater.inflate(R.layout.review_movie, container, false);
-        listViewReview = (ListView) rootView.findViewById(R.id.listView_review);
+        View reviewView = inflater.inflate(R.layout.review_movie, container, false);
+        listViewReview = (ListView) reviewView.findViewById(R.id.listView_review);
         //if (mReviewAdapter.getCount() > 0)
             listViewReview.setAdapter(mReviewAdapter);
+
+
         /*listViewTrailer.addHeaderView(detailView);
         listViewTrailer.addFooterView(reviewView);*/
         /*rootView.addView(detailLayout,1);
         rootView.addView(trailerLayout,2);
         rootView.addView(reviewLayout,3);*/
-        Log.e(LOG_TAG,"trailer Count"+  mTrailerAdapter.getCount());
+        Log.e(LOG_TAG, "trailer Count" + mTrailerAdapter.getCount());
         Log.e(LOG_TAG, "review Count" + mReviewAdapter.getCount());
-        Helper.getListViewSize(listViewReview);
-        Helper.getListViewSize(listViewTrailer);
+
         return rootView;
     }
 
@@ -341,8 +353,10 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
                 if (null == mTrailerAdapter)
                     mTrailerAdapter = new TrailerAdapter(getActivity(),null,0);
-                if (mTrailerAdapter.getCursor() != data)
+                if (mTrailerAdapter.getCursor() != data) {
                     mTrailerAdapter.swapCursor(data);
+                    trailerDataModified = true;
+                }
                 if (listViewTrailer.getAdapter() != mTrailerAdapter)
                     listViewTrailer.setAdapter(mTrailerAdapter);
                 if (data.moveToFirst()) {
@@ -350,7 +364,23 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     if (mShareActionProvider != null) {
                         mMenu.findItem(R.id.action_share).setVisible(true);
                     } else Log.e(LOG_TAG,"mShareActionProvider not set");
-
+                    if (trailerDataModified) {
+                        final int adapterCount = mTrailerAdapter.getCount();
+                        LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.trailer_linear);
+                        //ll.setOrientation(LinearLayout.HORIZONTAL);
+                        for (int i = 0; i < adapterCount; i++) {
+                            View item = mTrailerAdapter.getView(i, null, null);
+                            final String videoID = data.getString(TrailerQuery.COL_TRAILER_KEY);
+                            item.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View v) {
+                                    //Toast.makeText(getContext(),"Clicked Button Index :" + index,Toast.LENGTH_LONG).show();
+                                    startVideoOnBrowser(videoID);
+                                }
+                            });
+                            data.moveToNext();
+                            ll.addView(item);
+                        }
+                    }
                 }
                 Log.e(LOG_TAG,"out trailer load finish loader"+ data.getCount());
                 break;
@@ -360,11 +390,20 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
                 if (null == mReviewAdapter)
                     mReviewAdapter = new ReviewAdapter(getActivity(),null,0);
-                if (mReviewAdapter.getCursor() != data)
-                    mReviewAdapter.swapCursor(data);
+                if (mReviewAdapter.getCursor() != data){
+                    reviewDataModified = true;
+                    mReviewAdapter.swapCursor(data);}
                 if (listViewReview.getAdapter() != mReviewAdapter)
                     listViewReview.setAdapter(mReviewAdapter);
-
+                if ((reviewDataModified) && data.moveToFirst()) {
+                    final int adapterCount = mReviewAdapter.getCount();
+                    LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.review_linear);
+                    //ll.setOrientation(LinearLayout.HORIZONTAL);
+                    for (int i = 0; i < adapterCount; i++) {
+                        View item = mReviewAdapter.getView(i, null, null);
+                        ll.addView(item);
+                    }
+                }
                 Log.e(LOG_TAG,"out Review load finish loader Review"+ data.getCount());
                 break;
         }
