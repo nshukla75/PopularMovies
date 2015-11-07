@@ -31,6 +31,7 @@ import android.widget.ToggleButton;
 
 import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.Utilities.AppConstants;
+import com.example.nitu.popularmovies.Utilities.Helper;
 import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.adaptors.MovieAdapter;
 import com.example.nitu.popularmovies.adaptors.ReviewAdapter;
@@ -230,6 +231,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         rootView.addView(reviewLayout,3);*/
         Log.e(LOG_TAG,"trailer Count"+  mTrailerAdapter.getCount());
         Log.e(LOG_TAG, "review Count" + mReviewAdapter.getCount());
+        Helper.getListViewSize(listViewReview);
+        Helper.getListViewSize(listViewTrailer);
         return rootView;
     }
 
