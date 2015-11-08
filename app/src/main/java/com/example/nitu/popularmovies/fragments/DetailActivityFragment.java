@@ -115,7 +115,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private Boolean trailerDataModified;
     private Boolean reviewDataModified;
 
-    public DetailActivityFragment() {}
+    public DetailActivityFragment() {setHasOptionsMenu(true);}
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -125,17 +125,24 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
         mMovieAdapter=new MovieAdapter(getActivity(),null,0);
         mTrailerAdapter=new TrailerAdapter(getActivity(),null,0);
         mReviewAdapter=new ReviewAdapter(getActivity(),null,0);
+        trailerDataModified = false;
+        reviewDataModified = false;
         if (savedInstanceState != null) {
             getLoaderManager().restartLoader(MovieQuery.DETAIL_LOADER, null, this);
             getLoaderManager().restartLoader(TrailerQuery.TRAILER_LOADER, null, this);
             getLoaderManager().restartLoader(ReviewQuery.REVIEW_LOADER, null, this);
          }
         else {
-            //getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+            Bundle arguments = getActivity().getIntent().getExtras();
+            movieStr = arguments.getString("movieKey");
+            if (movieStr != null) {
+                getLoaderManager().initLoader(MovieQuery.DETAIL_LOADER, null, this);
+                getLoaderManager().initLoader(TrailerQuery.TRAILER_LOADER, null, this);
+                getLoaderManager().initLoader(ReviewQuery.REVIEW_LOADER, null, this);
+            }
         }
     }
     @Override
@@ -182,16 +189,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.e("Create View", "in Create View...............");
-        Bundle arguments = getActivity().getIntent().getExtras();
-        movieStr = arguments.getString("movieKey");
+
         if (movieStr == null) { return null; }
-        getLoaderManager().initLoader(MovieQuery.DETAIL_LOADER, null, this);
-        trailerDataModified=false;
-        getLoaderManager().initLoader(TrailerQuery.TRAILER_LOADER, null, this);
-        reviewDataModified=false;
-        getLoaderManager().initLoader(ReviewQuery.REVIEW_LOADER, null, this);
-
-
         rootView = (View)inflater.inflate(R.layout.fragment_detail, container, false);
 
         getActivity().setTitle(title);

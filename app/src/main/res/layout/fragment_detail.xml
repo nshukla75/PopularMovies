@@ -5,7 +5,7 @@
         android:id="@+id/titleLinear"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="#009688"
+        android:background="@color/ocean_blue"
         android:gravity="center">
         <TextView
             android:id="@+id/title_text"
@@ -73,8 +73,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/toggle_selector"
-                        android:textOff=""
-                        android:textOn=""
+                        android:textOff="Mark as Favourite"
+                        android:textOn="Favourite"
                         android:clickable="true" />
                 </LinearLayout>
             </LinearLayout>
@@ -95,22 +95,14 @@
                     android:layout_height="wrap_content"
                     android:text="Trailers: "
                     android:textStyle="bold"
-                    android:paddingTop="16dp"/>
-                <!--<TextView
-                    android:id="@+id/firstTrailer_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="invisible" />-->
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"/>
             </LinearLayout>
             <LinearLayout
                     android:id="@+id/trailer_linear"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                <!--<ListView
-                    android:id="@+id/listView_trailer"
-                    android:layout_width="match_parent"
-                    android:layout_height="fill_parent"/>-->
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -122,17 +114,14 @@
                     android:layout_height="wrap_content"
                     android:text="Reviews: "
                     android:textStyle="bold"
-                    android:paddingTop="16dp"/>
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"/>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/review_linear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-               <!-- <ListView
-                    android:id="@+id/listView_review"
-                    android:layout_width="match_parent"
-                    android:layout_height="fill_parent"/>-->
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
