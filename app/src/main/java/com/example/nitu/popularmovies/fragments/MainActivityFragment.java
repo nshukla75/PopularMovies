@@ -225,6 +225,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             listView.setAdapter(mMovieAdapter);
         if (mMovieAdapter.getCursor() != cursor)
             mMovieAdapter.swapCursor(cursor);
+        if (cursor.getCount()==0)
+            Toast.makeText(getActivity(), "No Movie in your selection" , Toast.LENGTH_LONG).show();
     }
 
     @Override
