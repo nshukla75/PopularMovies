@@ -353,10 +353,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
                 if (null == mTrailerAdapter)
                     mTrailerAdapter = new TrailerAdapter(getActivity(),null,0);
-                if (mTrailerAdapter.getCursor() != data) {
+                if (mTrailerAdapter.getCursor() != data)
                     mTrailerAdapter.swapCursor(data);
-                    trailerDataModified = true;
-                }
                 if (listViewTrailer.getAdapter() != mTrailerAdapter)
                     listViewTrailer.setAdapter(mTrailerAdapter);
                 if (data.moveToFirst()) {
@@ -364,7 +362,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     if (mShareActionProvider != null) {
                         mMenu.findItem(R.id.action_share).setVisible(true);
                     } else Log.e(LOG_TAG,"mShareActionProvider not set");
-                    if (trailerDataModified) {
+                    if (!trailerDataModified) {
                         final int adapterCount = mTrailerAdapter.getCount();
                         LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.trailer_linear);
                         //ll.setOrientation(LinearLayout.HORIZONTAL);
@@ -380,6 +378,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                             data.moveToNext();
                             ll.addView(item);
                         }
+                        trailerDataModified = true;
                     }
                 }
                 Log.e(LOG_TAG,"out trailer load finish loader"+ data.getCount());
@@ -390,12 +389,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
                 if (null == mReviewAdapter)
                     mReviewAdapter = new ReviewAdapter(getActivity(),null,0);
-                if (mReviewAdapter.getCursor() != data){
-                    reviewDataModified = true;
-                    mReviewAdapter.swapCursor(data);}
+                if (mReviewAdapter.getCursor() != data)
+                    mReviewAdapter.swapCursor(data);
                 if (listViewReview.getAdapter() != mReviewAdapter)
                     listViewReview.setAdapter(mReviewAdapter);
-                if ((reviewDataModified) && data.moveToFirst()) {
+                if ((!reviewDataModified) && data.moveToFirst()) {
                     final int adapterCount = mReviewAdapter.getCount();
                     LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.review_linear);
                     //ll.setOrientation(LinearLayout.HORIZONTAL);
@@ -403,6 +401,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                         View item = mReviewAdapter.getView(i, null, null);
                         ll.addView(item);
                     }
+                    reviewDataModified = true;
                 }
                 Log.e(LOG_TAG,"out Review load finish loader Review"+ data.getCount());
                 break;
