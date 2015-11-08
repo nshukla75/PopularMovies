@@ -6,6 +6,7 @@ package com.example.nitu.popularmovies.Utilities;
 public class AppConstants {
     public static final String MOVIE_API_KEY = "7537b743615a000671a98c32d354df39";
     public static final String BASE_URL = "http://api.themoviedb.org/3/discover/movie";
+    public static final String BASE_MINUTE_URL = "http://api.themoviedb.org/3/movie/";
     public static final String SORT_BY="sort_by";
     public static final String PAGE_NO="page";
     public static final String API_KEY="api_key";

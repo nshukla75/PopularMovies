@@ -26,6 +26,7 @@ import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.activities.DetailActivity;
 import com.example.nitu.popularmovies.adaptors.GridViewAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
+import com.example.nitu.popularmovies.fetchtasks.FetchMinuteTask;
 import com.example.nitu.popularmovies.fetchtasks.FetchMovieTask;
 import com.example.nitu.popularmovies.fetchtasks.FetchReviewTask;
 import com.example.nitu.popularmovies.fetchtasks.FetchTrailerTask;
@@ -117,6 +118,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 if (cursor != null) {
                     updateReview(cursor.getString(COL_MOVIE_KEY));
                     updateTrailer(cursor.getString(COL_MOVIE_KEY));
+                    updateMovieMinute(cursor.getString(COL_MOVIE_KEY));
                     Intent intent = new Intent(getActivity(), DetailActivity.class);
                     //intent.setData(MovieContract.MovieEntry.buildMovie(cursor.getString(COL_MOVIE_KEY)));
                     Bundle bundle = new Bundle();
@@ -128,7 +130,18 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         });
         return rootView;
     }
-
+    private void updateMovieMinute(String movieKey){
+        Log.e(LOG_TAG,"In update Review");
+        FetchMinuteTask fetchMinuteTask = new FetchMinuteTask(getActivity());
+        if (NetworkUtils.getInstance(getContext()).isOnline()) {
+            Log.e("In update Review", "getting data for Review ");
+            Log.e(LOG_TAG,"going to fetch review data for "+ movieKey);
+            fetchMinuteTask.execute(movieKey);
+        } else {
+            Toast.makeText(getActivity(),"Network is not Available",Toast.LENGTH_LONG).show();
+        }
+        Log.e(LOG_TAG, "OUT update Minute");
+    }
     private void updateReview(String movieKey){
         Log.e(LOG_TAG,"In update Review");
         FetchReviewTask fetchReviewTask = new FetchReviewTask(getActivity());

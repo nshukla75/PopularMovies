@@ -49,6 +49,7 @@ public class MovieContract {
         public static final String COLUMN_RELEASE_DATE = "release_date";
         public static final String COLUMN_POSTER_PATH = "poster_path";
         public static final String COLUMN_POSTER = "poster";
+        public static final String COLUMN_MINUTE = "runtime";
 
 
         public static Uri buildMovieUri(long id) {

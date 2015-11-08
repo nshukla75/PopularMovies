@@ -58,7 +58,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
                 MovieContract.MovieEntry.COLUMN_OVERVIEW,
                 MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
-                MovieContract.MovieEntry.COLUMN_POSTER
+                MovieContract.MovieEntry.COLUMN_POSTER_PATH,
+                MovieContract.MovieEntry.COLUMN_POSTER,
+                MovieContract.MovieEntry.COLUMN_MINUTE
         };
         static final int COL_MOVIEID = 0;
         static final int COL_MOVIE_KEY = 1;
@@ -68,7 +70,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         static final int COL_MOVIE_ORIGINAL_TITLE = 5;
         static final int COL_MOVIE_OVERVIEW = 6;
         static final int COL_MOVIE_RELEASE_DATE = 7;
-        static final int COL_MOVIE_POSTER = 8;
+        static final int COL_MOVIE_POSTERPATH = 8;
+        static final int COL_MOVIE_POSTER = 9;
+        static final int COL_MOVIE_RUNTIME = 10;
     }
     public interface TrailerQuery {
         static final int TRAILER_LOADER = 1;
@@ -329,6 +333,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
                 byte[] bb = Utility.getImage(data);
                 imageView.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
+
+                ((TextView) rootView.findViewById(R.id.runtime_text))
+                        .setText(data.getString(MovieQuery.COL_MOVIE_RUNTIME) + "min");
 
                 String mMovieVoteAverage = data.getString(MovieQuery.COL_MOVIE_VOTE_AVERAGE);
 
