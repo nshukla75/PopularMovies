@@ -146,11 +146,15 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareMenuItem);
         shareMenuItem.setVisible(false);
 
-        Utility.makeMenuItemInvisible(menu, R.id.action_settings);
+        MenuItem item = menu.findItem(R.id.action_settings);
+        item.setVisible(false);
+
+        Utility.makeMenuItemInvisible(mMenu, R.id.action_settings);
         //for crate home button
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         //activity.getSupportActionBar();
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
     @Override

@@ -4,16 +4,18 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="@drawable/layout_border">
-   <!-- <ImageView
+    <ImageView
         android:id="@+id/trailer_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_action_playback_play"/>-->
+        android:src="@drawable/ic_action_playback_play"
+        android:padding="1dp"/>
 
     <TextView
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:id="@+id/list_item_trailer_textview"
-        android:text="Trailer "/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_item_trailer_textview"
+        android:text="Trailer "
+        android:paddingTop="5dp"/>
 
 </LinearLayout>

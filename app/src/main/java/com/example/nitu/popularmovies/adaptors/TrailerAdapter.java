@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.nitu.popularmovies.R;
@@ -32,8 +33,9 @@ public class TrailerAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-       TextView tv=(TextView)view.findViewById(R.id.list_item_trailer_textview);
-       tv.setText(" Trailer "+ (cursor.getPosition()+ 1));
+        ImageView imv=(ImageView)view.findViewById(R.id.trailer_play);
+        TextView tv=(TextView)view.findViewById(R.id.list_item_trailer_textview);
+        tv.setText(" Trailer "+ (cursor.getPosition()+ 1));
        //cursor.getString(cursor.getColumnIndex(MovieContract.TrailerEntry.COLUMN_KEY)));
     }
 }
