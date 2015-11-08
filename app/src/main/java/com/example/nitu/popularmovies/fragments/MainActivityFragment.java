@@ -30,6 +30,9 @@ import com.example.nitu.popularmovies.fetchtasks.FetchMovieTask;
 import com.example.nitu.popularmovies.fetchtasks.FetchReviewTask;
 import com.example.nitu.popularmovies.fetchtasks.FetchTrailerTask;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 
 /**
  * A placeholder fragment containing a simple view.
@@ -170,6 +173,24 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (NetworkUtils.getInstance(getContext()).isOnline())
             movieTask.execute(sortBy);
         else {
+            /*BufferedReader reader = null;
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                // But it does make debugging a *lot* easier if you print out the completed
+                // buffer for debugging.
+                buffer.append(line + "\n");
+            }
+
+            if (buffer.length() == 0) {
+                // Stream was empty.  No point in parsing.
+                return null;
+            }
+            movieJsonStr = buffer.toString();
+            Log.e("Do In Background","GOT JSON Here .........");
+            movieTask.getMovieDataFromJson(movieJsonStr);*/
+
             Toast.makeText(getActivity(), "No Network connection" + sortBy, Toast.LENGTH_LONG).show();
         }
     }
