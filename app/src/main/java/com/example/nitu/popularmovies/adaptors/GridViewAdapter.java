@@ -48,6 +48,7 @@ public class GridViewAdapter extends CursorAdapter {
         else
             Picasso.with(context)
                     .load(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)))
+                    .error(R.drawable.abc_btn_rating_star_off_mtrl_alpha)
                     .into(holder.imgMovie);
         holder.txtMovie.setText(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE)));
     }

@@ -37,6 +37,7 @@ import com.example.nitu.popularmovies.adaptors.MovieAdapter;
 import com.example.nitu.popularmovies.adaptors.ReviewAdapter;
 import com.example.nitu.popularmovies.adaptors.TrailerAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
+import com.squareup.picasso.Picasso;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -332,7 +333,15 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
                 ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
                 byte[] bb = Utility.getImage(data);
-                imageView.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
+                if (bb!=null) {
+                    imageView.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
+                    Log.e("image to grid", "Length-----" + bb.length);
+                }
+                else
+                    Picasso.with(getContext())
+                        .load(data.getString(data.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)))
+                        .error(R.drawable.abc_btn_rating_star_off_mtrl_alpha)
+                        .into(imageView);
 
                 ((TextView) rootView.findViewById(R.id.runtime_text))
                         .setText(data.getString(MovieQuery.COL_MOVIE_RUNTIME) + "min");
