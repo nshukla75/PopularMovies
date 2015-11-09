@@ -132,6 +132,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                 }
             }
             Log.e("Moive JSON","Total Data into Content Values.."+ cVVector.size());
+            int deleted = mContext.getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, MovieContract.MovieEntry.COLUMN_POSTER + "= ?", new String[] { null});
             int inserted = 0;
             // add to database
             if(cVVector.size()>0) {

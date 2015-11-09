@@ -189,6 +189,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         FetchMovieTask movieTask = new FetchMovieTask(getActivity());
         String sortBy=Utility.getPreferences(getActivity());
         Toast.makeText(getActivity(), "Getting data for" + sortBy, Toast.LENGTH_LONG).show();
+
         if (NetworkUtils.getInstance(getContext()).isOnline())
             movieTask.execute(sortBy);
         else {
