@@ -41,16 +41,20 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
     private boolean DEBUG = true;
 
     public static byte[] urlToImageBLOB(String url) throws IOException {
-
-        HttpEntity entity = null;
-        DefaultHttpClient mHttpClient = new DefaultHttpClient();
-        HttpGet mHttpGet = new HttpGet(url);
-        HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
-        if (mHttpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            entity = mHttpResponse.getEntity();
+        try {
+            HttpEntity entity = null;
+            DefaultHttpClient mHttpClient = new DefaultHttpClient();
+            HttpGet mHttpGet = new HttpGet(url);
+            HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+            if (mHttpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                entity = mHttpResponse.getEntity();
+            }
+            if (entity == null) return null;
+            return EntityUtils.toByteArray(entity);
+        }catch(Exception e){
+            return null;
         }
-        if (entity == null) return null;
-        return EntityUtils.toByteArray(entity);
+
     }
 
     /**
@@ -60,7 +64,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
-    private void getMovieDataFromJson(String movieJsonStr)
+    public void getMovieDataFromJson(String movieJsonStr)
             throws JSONException {
 
         // Now we have a String representing the complete forecast in JSON Format.
@@ -101,7 +105,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                         movieImage = null;
                     }
                     Log.e("trying to get image--", moviePosterPath + i);
-                    if (movieImage != null) {
+                    //if (movieImage != null) {
                         String movieId = movie.getString("id");
                         String movieTitle = movie.getString("original_title");
                         String movieOverview = movie.getString("overview");
@@ -122,8 +126,9 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                         movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movieReleaseDate);
                         movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, moviePosterPath);
                         movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER, movieImage);
+                        movieValues.put(MovieContract.MovieEntry.COLUMN_MINUTE, "--");
                         cVVector.add(movieValues);
-                    }
+                    //}
                 }
             }
             Log.e("Moive JSON","Total Data into Content Values.."+ cVVector.size());

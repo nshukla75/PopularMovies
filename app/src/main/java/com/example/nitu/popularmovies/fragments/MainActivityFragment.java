@@ -31,7 +31,11 @@ import com.example.nitu.popularmovies.fetchtasks.FetchMovieTask;
 import com.example.nitu.popularmovies.fetchtasks.FetchReviewTask;
 import com.example.nitu.popularmovies.fetchtasks.FetchTrailerTask;
 
+import org.json.JSONException;
+
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 
@@ -130,6 +134,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         });
         return rootView;
     }
+
     private void updateMovieMinute(String movieKey){
         Log.e(LOG_TAG,"In update Review");
         FetchMinuteTask fetchMinuteTask = new FetchMinuteTask(getActivity());
@@ -142,6 +147,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         }
         Log.e(LOG_TAG, "OUT update Minute");
     }
+
     private void updateReview(String movieKey){
         Log.e(LOG_TAG,"In update Review");
         FetchReviewTask fetchReviewTask = new FetchReviewTask(getActivity());
@@ -186,26 +192,39 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (NetworkUtils.getInstance(getContext()).isOnline())
             movieTask.execute(sortBy);
         else {
-            /*BufferedReader reader = null;
-            reader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                // But it does make debugging a *lot* easier if you print out the completed
-                // buffer for debugging.
-                buffer.append(line + "\n");
+            BufferedReader reader = null;
+            try {
+                InputStream inputStream = getResources().openRawResource(R.raw.popularmovie);
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream != null) {
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        buffer.append(line + "\n");
+                    }
+                    if (buffer.length() != 0) {
+                        String movieJsonStr = buffer.toString();
+                        Log.e("Do In Background", "GOT JSON Here .........");
+                        movieTask.getMovieDataFromJson(movieJsonStr);
+                    }
+                }
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
             }
-
-            if (buffer.length() == 0) {
-                // Stream was empty.  No point in parsing.
-                return null;
-            }
-            movieJsonStr = buffer.toString();
-            Log.e("Do In Background","GOT JSON Here .........");
-            movieTask.getMovieDataFromJson(movieJsonStr);*/
-
             Toast.makeText(getActivity(), "No Network connection" + sortBy, Toast.LENGTH_LONG).show();
         }
+
     }
 
     @Override
