@@ -120,8 +120,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 mCurCheckPosition = position;
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
-                    updateReview(cursor.getString(COL_MOVIE_KEY));
-                    updateTrailer(cursor.getString(COL_MOVIE_KEY));
+                    //updateReview(cursor.getString(COL_MOVIE_KEY));
+                    //updateTrailer(cursor.getString(COL_MOVIE_KEY));
                     updateMovieMinute(cursor.getString(COL_MOVIE_KEY));
                     Intent intent = new Intent(getActivity(), DetailActivity.class);
                     //intent.setData(MovieContract.MovieEntry.buildMovie(cursor.getString(COL_MOVIE_KEY)));

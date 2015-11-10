@@ -32,11 +32,14 @@ import android.widget.ToggleButton;
 
 import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.Utilities.AppConstants;
+import com.example.nitu.popularmovies.Utilities.NetworkUtils;
 import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.adaptors.MovieAdapter;
 import com.example.nitu.popularmovies.adaptors.ReviewAdapter;
 import com.example.nitu.popularmovies.adaptors.TrailerAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
+import com.example.nitu.popularmovies.fetchtasks.FetchReviewTask;
+import com.example.nitu.popularmovies.fetchtasks.FetchTrailerTask;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -144,11 +147,39 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             Bundle arguments = getActivity().getIntent().getExtras();
             movieStr = arguments.getString("movieKey");
             if (movieStr != null) {
+                updateReview(movieStr);
+                updateTrailer(movieStr);
                 getLoaderManager().initLoader(MovieQuery.DETAIL_LOADER, null, this);
                 getLoaderManager().initLoader(TrailerQuery.TRAILER_LOADER, null, this);
                 getLoaderManager().initLoader(ReviewQuery.REVIEW_LOADER, null, this);
             }
         }
+    }
+
+    private void updateReview(String movieKey){
+        Log.e(LOG_TAG,"In update Review");
+        FetchReviewTask fetchReviewTask = new FetchReviewTask(getActivity());
+        if (NetworkUtils.getInstance(getContext()).isOnline()) {
+            Log.e("In update Review", "getting data for Review ");
+            Log.e(LOG_TAG,"going to fetch review data for "+ movieKey);
+            fetchReviewTask.execute(movieKey);
+        } else {
+            Toast.makeText(getActivity(),"Reviews are not Available",Toast.LENGTH_LONG).show();
+        }
+        Log.e(LOG_TAG, "OUT update Review");
+    }
+
+    private void updateTrailer(String movieKey){
+        Log.e(LOG_TAG,"In update Trailer");
+        FetchTrailerTask fetchTrailerTask = new FetchTrailerTask(getActivity());
+        if (NetworkUtils.getInstance(getContext()).isOnline()) {
+            Log.e("In update Trailer", "getting data for Trailer ");
+            Log.e(LOG_TAG, "going to fetch trailer data for " + movieKey);
+            fetchTrailerTask.execute(movieKey);
+        } else {
+            Toast.makeText(getActivity(), "Trailers are not Available", Toast.LENGTH_LONG).show();
+        }
+        Log.e(LOG_TAG, "OUT update Trailer");
     }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
