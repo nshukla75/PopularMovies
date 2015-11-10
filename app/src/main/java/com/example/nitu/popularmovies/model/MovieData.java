@@ -20,7 +20,8 @@ public class MovieData implements Parcelable, Serializable {
     public String poster_path;
     public Double popularity;
     public Double vote_average;
-    public Integer vote_count;
+    public Integer favourite;
+    public Integer minutes;
 
     public MovieData() {
     }
@@ -34,7 +35,8 @@ public class MovieData implements Parcelable, Serializable {
         poster_path = in.readString();
         popularity = in.readDouble();
         vote_average = in.readDouble();
-        vote_count = in.readInt();
+        favourite = in.readInt();
+        minutes = in.readInt();
     }
 
 
@@ -48,7 +50,8 @@ public class MovieData implements Parcelable, Serializable {
         dest.writeString(poster_path);
         dest.writeDouble(popularity);
         dest.writeDouble(vote_average);
-        dest.writeInt(vote_count);
+        dest.writeInt(favourite);
+        dest.writeInt(minutes);
     }
 
     public static final Parcelable.Creator<MovieData> CREATOR = new Parcelable.Creator<MovieData>() {
@@ -92,8 +95,11 @@ public class MovieData implements Parcelable, Serializable {
             return false;
         if (vote_average != null ? !vote_average.equals(that.vote_average) : that.vote_average != null)
             return false;
-        return !(vote_count != null ? !vote_count.equals(that.vote_count) : that.vote_count != null);
-
+        if (favourite != null ? !favourite.equals(that.favourite) : that.favourite != null)
+            return false;
+        if (minutes != null ? !minutes.equals(that.minutes) : that.minutes != null)
+            return false;
+        return false;
     }
 
     @Override
@@ -106,7 +112,8 @@ public class MovieData implements Parcelable, Serializable {
         result = 31 * result + (poster_path != null ? poster_path.hashCode() : 0);
         result = 31 * result + (popularity != null ? popularity.hashCode() : 0);
         result = 31 * result + (vote_average != null ? vote_average.hashCode() : 0);
-        result = 31 * result + (vote_count != null ? vote_count.hashCode() : 0);
+        result = 31 * result + (favourite != null ? favourite.hashCode() : 0);
+        result = 31 * result + (minutes != null ? minutes.hashCode() : 0);
         return result;
     }
 }

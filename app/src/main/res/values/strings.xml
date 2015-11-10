@@ -26,4 +26,5 @@
     <string name="movie_id_key">movieKey</string>
     <string name="mark_as_favorite">Mark as Favorite!</string>
     <string name="grid_image_size">w185</string>
+    <string name="movie_grid_image_desc_generic">Movie Thumbnail</string>
 </resources>

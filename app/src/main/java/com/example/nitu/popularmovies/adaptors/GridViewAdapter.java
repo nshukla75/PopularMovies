@@ -21,12 +21,14 @@ import com.squareup.picasso.Picasso;
  */
 public class GridViewAdapter extends CursorAdapter {
     private final String LOG_TAG = MovieAdapter.class.getSimpleName();
-    //private static final String KEY_ADAPTER_STATE = "MovieAdapter.KEY_ADAPTER_STATE";
+    private final String sImgSize;
+
     private final Context mContext;
 
     public GridViewAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
         mContext = context;
+        sImgSize = context.getString(R.string.grid_image_size);
     }
 
     @Override
@@ -40,17 +42,18 @@ public class GridViewAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         final ViewHolder holder = (ViewHolder)view.getTag();
-        byte[] bb= Utility.getImage(cursor);
+       /* byte[] bb= Utility.getImage(cursor);
         if (bb!=null) {
             holder.imgMovie.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
             Log.e("image to grid", "Length-----" + bb.length);
         }
-        else
+        else*/
             Picasso.with(context)
                     .load(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)))
                     .error(R.drawable.abc_btn_rating_star_off_mtrl_alpha)
+                    .resize(550,775)
                     .into(holder.imgMovie);
-        holder.txtMovie.setText(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE)));
+        //holder.txtMovie.setText(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE)));
     }
 
     static class ViewHolder {
@@ -58,7 +61,7 @@ public class GridViewAdapter extends CursorAdapter {
         TextView txtMovie;
         public ViewHolder(View view) {
             imgMovie = (ImageView) view.findViewById(R.id.grid_item_movie_imageview);
-            txtMovie = (TextView) view.findViewById(R.id.txt_title);
+            //txtMovie = (TextView) view.findViewById(R.id.txt_title);
         }
 
     }

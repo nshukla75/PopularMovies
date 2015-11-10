@@ -363,12 +363,12 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 ((TextView) rootView.findViewById(R.id.title_text)).setText(title);
 
                 ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
-                byte[] bb = Utility.getImage(data);
+                /*byte[] bb = Utility.getImage(data);
                 if (bb!=null) {
                     imageView.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
                     Log.e("image to grid", "Length-----" + bb.length);
                 }
-                else
+                else*/
                     Picasso.with(getContext())
                         .load(data.getString(data.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)))
                         .error(R.drawable.abc_btn_rating_star_off_mtrl_alpha)
