@@ -153,7 +153,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         mMenu = menu;
-        inflater.inflate(R.menu.menu_base, menu);
+        inflater.inflate(R.menu.menu_detail, menu);
         shareMenuItem = menu.findItem(R.id.action_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareMenuItem);
         shareMenuItem.setVisible(false);
