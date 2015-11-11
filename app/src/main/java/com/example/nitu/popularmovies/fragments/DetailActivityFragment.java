@@ -44,6 +44,8 @@ import com.example.nitu.popularmovies.fetchtasks.FetchReviewTask;
 import com.example.nitu.popularmovies.fetchtasks.FetchTrailerTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -109,25 +111,33 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         static final int COL_REVIEW_CONTENT=4;
     }
 
+    private static final UriMatcher sUriMatcher = MovieProvider.buildUriMatcher();
+    private final AtomicBoolean trailerDataModified = new AtomicBoolean();
+    private final AtomicBoolean reviewDataModified = new AtomicBoolean();
+    private final AtomicBoolean movieDetailsModified = new AtomicBoolean();
+
     private long movieRowId;
     public String movieStr;
     private String title;
-    private String YouTubleFirstTrilerURL;
+    private String YouTubeFirstTrilerURL;
+
     public ToggleButton btnToggle;
+    private View rootView;
     private ListView listViewTrailer;
     private ListView listViewReview;
-    private View rootView;
-    private ShareActionProvider mShareActionProvider;
     private Menu mMenu;
     private MenuItem shareMenuItem;
-    private Boolean trailerDataModified;
-    private Boolean reviewDataModified;
-    private static final UriMatcher sUriMatcher = MovieProvider.buildUriMatcher();
+    private ShareActionProvider mShareActionProvider;
+
+
+
     public DetailActivityFragment() {setHasOptionsMenu(true);}
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putString("movieKey", movieStr);
+        outState.putString("ShareYoutubeLinkKey", YouTubeFirstTrilerURL);
     }
 
     @Override
@@ -136,32 +146,49 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         mMovieAdapter=new MovieAdapter(getActivity(),null,0);
         mTrailerAdapter=new TrailerAdapter(getActivity(),null,0);
         mReviewAdapter=new ReviewAdapter(getActivity(),null,0);
-        trailerDataModified = false;
-        reviewDataModified = false;
-        if (savedInstanceState != null) {
+        trailerDataModified.set(false);
+        reviewDataModified.set(false);
+        if (savedInstanceState != null) { synchronized (movieStr) {
+            movieStr = savedInstanceState.getString("movieKey");
+            YouTubeFirstTrilerURL = savedInstanceState.getString("ShareYoutubeLinkKey");
+            if (YouTubeFirstTrilerURL != null)
+                if (mShareActionProvider != null) {
+                    mMenu.findItem(R.id.action_share).setVisible(true);
+                } else Log.e(LOG_TAG, "mShareActionProvider not set");
+            try {
+                movieStr.notifyAll();
+            } catch (IllegalMonitorStateException x) {
+            }
+            }
             getLoaderManager().restartLoader(MovieQuery.DETAIL_LOADER, null, this);
             getLoaderManager().restartLoader(TrailerQuery.TRAILER_LOADER, null, this);
             getLoaderManager().restartLoader(ReviewQuery.REVIEW_LOADER, null, this);
          }
         else {
-            Bundle arguments = getActivity().getIntent().getExtras();
-            movieStr = arguments.getString("movieKey");
-            if (movieStr != null) {
-                updateReview(movieStr);
-                updateTrailer(movieStr);
-                getLoaderManager().initLoader(MovieQuery.DETAIL_LOADER, null, this);
-                getLoaderManager().initLoader(TrailerQuery.TRAILER_LOADER, null, this);
-                getLoaderManager().initLoader(ReviewQuery.REVIEW_LOADER, null, this);
-            }
+            runFragment();
+        }
+    }
+
+    private void runFragment() {
+        Bundle arguments = getActivity().getIntent().getExtras();
+        movieStr = arguments.getString("movieKey");
+        if (movieStr != null) {
+            updateReview(movieStr);
+            updateTrailer(movieStr);
+            Bundle b = new Bundle();
+            b.putString("movieKey", movieStr);
+            getLoaderManager().initLoader(MovieQuery.DETAIL_LOADER, b, this);
+            getLoaderManager().initLoader(TrailerQuery.TRAILER_LOADER, b, this);
+            getLoaderManager().initLoader(ReviewQuery.REVIEW_LOADER, b, this);
         }
     }
 
     private void updateReview(String movieKey){
-        Log.e(LOG_TAG,"In update Review");
+        Log.e(LOG_TAG, "In update Review");
         FetchReviewTask fetchReviewTask = new FetchReviewTask(getActivity());
         if (NetworkUtils.getInstance(getContext()).isOnline()) {
             Log.e("In update Review", "getting data for Review ");
-            Log.e(LOG_TAG,"going to fetch review data for "+ movieKey);
+            Log.e(LOG_TAG, "going to fetch review data for " + movieKey);
             fetchReviewTask.execute(movieKey);
         } else {
             Toast.makeText(getActivity(),"Reviews are not Available",Toast.LENGTH_LONG).show();
@@ -195,7 +222,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         Utility.makeMenuItemInvisible(mMenu, R.id.action_settings);
         //for crate home button
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        //activity.getSupportActionBar();
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
@@ -214,7 +240,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Trailer of Movie - "+ title);
-                shareIntent.putExtra(Intent.EXTRA_TEXT, YouTubleFirstTrilerURL);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, YouTubeFirstTrilerURL);
                 startActivity(Intent.createChooser(shareIntent, "Reciever's Address"));
                 return true;
         }
@@ -262,28 +288,16 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
         final int adapterCount = mTrailerAdapter.getCount();
         LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.trailer_linear);
-        //ll.setOrientation(LinearLayout.HORIZONTAL);
         for (int i = 0; i < adapterCount; i++) {
             View item = mTrailerAdapter.getView(i, null, null);
             ll.addView(item);
         }
 
         Log.e(LOG_TAG,"going to load view" + movieStr);
-        //LinearLayout reviewLayout = (LinearLayout)getActivity().findViewById(R.id.review_parent);
         View reviewView = inflater.inflate(R.layout.review_movie, container, false);
         listViewReview = (ListView) reviewView.findViewById(R.id.listView_review);
         //if (mReviewAdapter.getCount() > 0)
             listViewReview.setAdapter(mReviewAdapter);
-
-
-        /*listViewTrailer.addHeaderView(detailView);
-        listViewTrailer.addFooterView(reviewView);*/
-        /*rootView.addView(detailLayout,1);
-        rootView.addView(trailerLayout,2);
-        rootView.addView(reviewLayout,3);*/
-        Log.e(LOG_TAG, "trailer Count" + mTrailerAdapter.getCount());
-        Log.e(LOG_TAG, "review Count" + mReviewAdapter.getCount());
-
         return rootView;
     }
 
@@ -298,14 +312,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         ContentValues updateValues = new ContentValues();
         updateValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, chkFavourite);
         updateValues.put(MovieContract.MovieEntry._ID, movieRowId);
-        int count = getContext().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateValues, MovieContract.MovieEntry._ID + "= ?", new String[] { Long.toString(movieRowId)});
+        int count = getContext().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateValues, MovieContract.MovieEntry._ID + "= ?", new String[]{Long.toString(movieRowId)});
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.v(LOG_TAG, "In onCreateLoader");
-        Bundle arguments = getActivity().getIntent().getExtras();
-        movieStr = arguments.getString("movieKey");
+        movieStr = args.getString("movieKey");
         if (movieStr ==null) { return null; }
         switch (id) {
             case 0:
@@ -319,7 +332,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                         null
                 );
                 return movieCursorLoader;
-            //break;
             case 1:
                 Uri trailerUri = MovieContract.MovieEntry.buildTrailerMovie(movieStr);
                 CursorLoader trailerCursorLoader= new CursorLoader(
@@ -331,7 +343,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                         null
                 );
                 return trailerCursorLoader;
-            //break;
             case 2:
                 Uri reviewUri = MovieContract.MovieEntry.buildReviewMovie(movieStr);
                 CursorLoader reviewCursorLoader= new CursorLoader(getActivity(),
@@ -342,7 +353,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                         null
                 );
                 return reviewCursorLoader;
-            //break;
             default: return null;
         }
     }
@@ -354,59 +364,54 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         int match = sUriMatcher.match(uri);
         switch (match){
             case MovieProvider.MOVIE_WITH_KEY:
-                //data.setNotificationUri(getContext().getContentResolver(), MovieContract.MovieEntry.buildMovie(movieStr));
                 mMovieAdapter.swapCursor(data);
-                Log.v(LOG_TAG, "In onLoadFinished");
-                if (data == null || !data.moveToFirst()) {
-                    Toast.makeText(getContext(), "No Data Loaded. Please go back and refresh", Toast.LENGTH_LONG).show();
-                    getActivity().onBackPressed();
-                    return;
-                }
-                movieStr = data.getString(MovieQuery.COL_MOVIE_KEY);
-                movieRowId=data.getLong(MovieQuery.COL_MOVIEID);
-                title=data.getString(MovieQuery.COL_MOVIE_ORIGINAL_TITLE);
-                ((TextView) rootView.findViewById(R.id.title_text)).setText(title);
+                Log.v(LOG_TAG, "In onLoadFinished Movie");
+                if (!movieDetailsModified.get()) {
+                    if (data == null || !data.moveToFirst()) {
+                        Toast.makeText(getContext(), "No Data Loaded. Please go back and refresh", Toast.LENGTH_LONG).show();
+                        getActivity().onBackPressed();
+                        return;
+                    }
+                    movieStr = data.getString(MovieQuery.COL_MOVIE_KEY);
+                    movieRowId = data.getLong(MovieQuery.COL_MOVIEID);
+                    title = data.getString(MovieQuery.COL_MOVIE_ORIGINAL_TITLE);
+                    ((TextView) rootView.findViewById(R.id.title_text)).setText(title);
 
-                ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
-                /*byte[] bb = Utility.getImage(data);
-                if (bb!=null) {
-                    imageView.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
-                    Log.e("image to grid", "Length-----" + bb.length);
-                }
-                else*/
+                    ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
                     Picasso.with(getContext())
-                        .load(data.getString(data.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)))
-                        .error(R.drawable.abc_btn_rating_star_off_mtrl_alpha)
-                        //.fit()
-                        .into(imageView);
+                            .load(data.getString(data.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)))
+                            .error(R.drawable.abc_btn_rating_star_off_mtrl_alpha)
+                                    //.fit()
+                            .into(imageView);
 
-                ((TextView) rootView.findViewById(R.id.runtime_text))
-                        .setText(data.getString(MovieQuery.COL_MOVIE_RUNTIME) + "min");
+                    ((TextView) rootView.findViewById(R.id.runtime_text))
+                            .setText(data.getString(MovieQuery.COL_MOVIE_RUNTIME) + "min");
 
-                String mMovieVoteAverage = data.getString(MovieQuery.COL_MOVIE_VOTE_AVERAGE);
+                    String mMovieVoteAverage = data.getString(MovieQuery.COL_MOVIE_VOTE_AVERAGE);
 
-                ((TextView) rootView.findViewById(R.id.voteaverage_text))
-                        .setText(mMovieVoteAverage + "/10");
-                Float f = Float.parseFloat(mMovieVoteAverage);
-                ((RatingBar) rootView.findViewById(R.id.ratingBar)).setRating(f);
+                    ((TextView) rootView.findViewById(R.id.voteaverage_text))
+                            .setText(mMovieVoteAverage + "/10");
+                    Float f = Float.parseFloat(mMovieVoteAverage);
+                    ((RatingBar) rootView.findViewById(R.id.ratingBar)).setRating(f);
 
-                ((TextView) rootView.findViewById(R.id.release_text))
-                        .setText(data.getString(MovieQuery.COL_MOVIE_RELEASE_DATE));
+                    ((TextView) rootView.findViewById(R.id.release_text))
+                            .setText(data.getString(MovieQuery.COL_MOVIE_RELEASE_DATE));
 
-                btnToggle = (ToggleButton)rootView.findViewById(R.id.chkState);
-                if (data.getInt(MovieQuery.COL_MOVIE_FAVOURITE)!= 0)
-                    btnToggle.setChecked(true);
-                else
-                    btnToggle.setChecked(false);
+                    btnToggle = (ToggleButton) rootView.findViewById(R.id.chkState);
+                    if (data.getInt(MovieQuery.COL_MOVIE_FAVOURITE) != 0)
+                        btnToggle.setChecked(true);
+                    else
+                        btnToggle.setChecked(false);
 
-                ((TextView) rootView.findViewById(R.id.overview_text))
-                        .setText(data.getString(MovieQuery.COL_MOVIE_OVERVIEW));
-               Log.e(LOG_TAG, "going to start Review Fragment");
+                    ((TextView) rootView.findViewById(R.id.overview_text))
+                            .setText(data.getString(MovieQuery.COL_MOVIE_OVERVIEW));
+
+                    movieDetailsModified.set(true);
+                    Log.v(LOG_TAG, "Out of Load Finish Movie");
+                }
                 break;
             case MovieProvider.TRAILER_WITH_MOVIE_KEY:
                 Log.e(LOG_TAG,"In trailer load finish loader");
-                //data.setNotificationUri(getContext().getContentResolver(), MovieContract.MovieEntry.buildTrailerMovie(movieStr));
-
                 if (null == mTrailerAdapter)
                     mTrailerAdapter = new TrailerAdapter(getActivity(),null,0);
                 if (mTrailerAdapter.getCursor() != data)
@@ -414,52 +419,50 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 if (listViewTrailer.getAdapter() != mTrailerAdapter)
                     listViewTrailer.setAdapter(mTrailerAdapter);
                 if (data!= null) {
-                    YouTubleFirstTrilerURL = AppConstants.MOVIE_YOUTUBE_URL + data.getString(TrailerQuery.COL_TRAILER_KEY);
+                    data.moveToFirst();
+                    YouTubeFirstTrilerURL = AppConstants.MOVIE_YOUTUBE_URL + data.getString(TrailerQuery.COL_TRAILER_KEY);
                     if (mShareActionProvider != null) {
                         mMenu.findItem(R.id.action_share).setVisible(true);
                     } else Log.e(LOG_TAG,"mShareActionProvider not set");
-                    if (!trailerDataModified) {
+                    if (!trailerDataModified.get()) {
                         final int adapterCount = mTrailerAdapter.getCount();
                         LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.trailer_linear);
-                        //ll.setOrientation(LinearLayout.HORIZONTAL);
                         for (int i = 0; i < adapterCount; i++) {
                             View item = mTrailerAdapter.getView(i, null, null);
                             final String videoID = data.getString(TrailerQuery.COL_TRAILER_KEY);
                             item.setOnClickListener(new View.OnClickListener() {
                                 public void onClick(View v) {
-                                    //Toast.makeText(getContext(),"Clicked Button Index :" + index,Toast.LENGTH_LONG).show();
                                     startVideoOnBrowser(videoID);
                                 }
                             });
                             data.moveToNext();
                             ll.addView(item);
                         }
-                        trailerDataModified = true;
+                        trailerDataModified.set(true);
                     }
                 }
-                //Log.e(LOG_TAG,"out trailer load finish loader"+ data.getCount());
+                Log.e(LOG_TAG,"out trailer load finish loader");
                 break;
             case MovieProvider.REVIEW_WITH_MOVIE_KEY:
                 Log.e(LOG_TAG,"In Review load finish loader Review");
-                //data.setNotificationUri(getContext().getContentResolver(), MovieContract.MovieEntry.buildReviewMovie(movieStr));
-
                 if (null == mReviewAdapter)
                     mReviewAdapter = new ReviewAdapter(getActivity(),null,0);
                 if (mReviewAdapter.getCursor() != data)
                     mReviewAdapter.swapCursor(data);
                 if (listViewReview.getAdapter() != mReviewAdapter)
                     listViewReview.setAdapter(mReviewAdapter);
-                if ((!reviewDataModified) && data!= null) {
-                    final int adapterCount = mReviewAdapter.getCount();
-                    LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.review_linear);
-                    //ll.setOrientation(LinearLayout.HORIZONTAL);
-                    for (int i = 0; i < adapterCount; i++) {
-                        View item = mReviewAdapter.getView(i, null, null);
-                        ll.addView(item);
+                if (data!= null) {
+                    if ((!reviewDataModified.get())) {
+                        final int adapterCount = mReviewAdapter.getCount();
+                        LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.review_linear);
+                        for (int i = 0; i < adapterCount; i++) {
+                            View item = mReviewAdapter.getView(i, null, null);
+                            ll.addView(item);
+                        }
+                        reviewDataModified.set(true);
                     }
-                    reviewDataModified = true;
                 }
-                //Log.e(LOG_TAG,"out Review load finish loader Review"+ data.getCount());
+                Log.e(LOG_TAG,"out Review load finish loader Review");
                 break;
         }
     }
@@ -468,4 +471,5 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.v(LOG_TAG, "In onLoadReset");
     }
+
 }
