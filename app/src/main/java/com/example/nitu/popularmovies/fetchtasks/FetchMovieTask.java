@@ -40,7 +40,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
     }
     private boolean DEBUG = true;
 
-    public static byte[] urlToImageBLOB(String url) throws IOException {
+   /* public static byte[] urlToImageBLOB(String url) throws IOException {
         try {
             HttpEntity entity = null;
             DefaultHttpClient mHttpClient = new DefaultHttpClient();
@@ -55,7 +55,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             return null;
         }
 
-    }
+    }*/
 
     /**
      * Take the String representing the complete forecast in JSON Format and
@@ -98,12 +98,12 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                 if ((moviePoster != null) &&(movieReleaseDate!= null)) {
                     //String moviePosterPath = "http://image.tmdb.org/t/p/w185" + moviePoster;
                     String moviePosterPath = AppConstants.MOVIE_W185_URL + moviePoster;
-                    byte[] movieImage = null;
+                   /* byte[] movieImage = null;
                     try {
                         movieImage = urlToImageBLOB(moviePosterPath);
                     } catch (java.io.IOException e) {
                         movieImage = null;
-                    }
+                    }*/
                     Log.e("trying to get image--", moviePosterPath + i);
                     //if (movieImage != null) {
                         String movieId = movie.getString("id");
@@ -125,14 +125,14 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                         movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movieOverview);
                         movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movieReleaseDate);
                         movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, moviePosterPath);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER, movieImage);
+                        //movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER, movieImage);
                         movieValues.put(MovieContract.MovieEntry.COLUMN_MINUTE, "--");
                         cVVector.add(movieValues);
                     //}
                 }
             }
             Log.e("Moive JSON","Total Data into Content Values.."+ cVVector.size());
-            int deleted = mContext.getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, MovieContract.MovieEntry.COLUMN_POSTER + "= ?", new String[] { null});
+            //int deleted = mContext.getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, MovieContract.MovieEntry.COLUMN_POSTER + "= ?", new String[] { null});
             int inserted = 0;
             // add to database
             if(cVVector.size()>0) {

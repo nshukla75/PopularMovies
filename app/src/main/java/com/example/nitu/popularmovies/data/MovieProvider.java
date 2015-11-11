@@ -22,19 +22,19 @@ public class MovieProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private MovieDbHelper mOpenHelper;
 
-    static final int TRAILER = 100;
-    static final int TRAILER_WITH_ID = 101;
+    public static final int TRAILER = 100;
+    public static final int TRAILER_WITH_ID = 101;
 
-    static final int REVIEW = 200;
-    static final int REVIEW_WITH_ID = 201;
+    public static final int REVIEW = 200;
+    public static final int REVIEW_WITH_ID = 201;
 
-    static final int MOVIE = 300;
-    static final int MOVIE_WITH_KEY = 301;
-    static final int MOVIE_BY_POPULARITY = 302;
-    static final int MOVIE_BY_RATING = 303;
-    static final int MOVIE_BY_FAVOURITE = 304;
-    static final int TRAILER_WITH_MOVIE_KEY = 305;
-    static final int REVIEW_WITH_MOVIE_KEY = 306;
+    public static final int MOVIE = 300;
+    public static final int MOVIE_WITH_KEY = 301;
+    public static final int MOVIE_BY_POPULARITY = 302;
+    public static final int MOVIE_BY_RATING = 303;
+    public static final int MOVIE_BY_FAVOURITE = 304;
+    public static final int TRAILER_WITH_MOVIE_KEY = 305;
+    public static final int REVIEW_WITH_MOVIE_KEY = 306;
 
     private static final SQLiteQueryBuilder sTrailerMovieSettingQueryBuilder;
     private static final SQLiteQueryBuilder sReviewMovieSettingQueryBuilder;
@@ -196,7 +196,7 @@ public class MovieProvider extends ContentProvider {
         );
     }
 
-    static UriMatcher buildUriMatcher() {
+    public static UriMatcher buildUriMatcher() {
         // 1) The code passed into the constructor represents the code to return for the root
         // URI.  It's common to use NO_MATCH as the code for this case. Add the constructor below.
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);

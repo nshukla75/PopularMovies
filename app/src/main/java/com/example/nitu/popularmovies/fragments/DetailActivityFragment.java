@@ -2,6 +2,7 @@ package com.example.nitu.popularmovies.fragments;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -38,6 +39,7 @@ import com.example.nitu.popularmovies.adaptors.MovieAdapter;
 import com.example.nitu.popularmovies.adaptors.ReviewAdapter;
 import com.example.nitu.popularmovies.adaptors.TrailerAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
+import com.example.nitu.popularmovies.data.MovieProvider;
 import com.example.nitu.popularmovies.fetchtasks.FetchReviewTask;
 import com.example.nitu.popularmovies.fetchtasks.FetchTrailerTask;
 import com.squareup.picasso.Picasso;
@@ -63,7 +65,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 MovieContract.MovieEntry.COLUMN_OVERVIEW,
                 MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
                 MovieContract.MovieEntry.COLUMN_POSTER_PATH,
-                MovieContract.MovieEntry.COLUMN_POSTER,
                 MovieContract.MovieEntry.COLUMN_MINUTE
         };
         static final int COL_MOVIEID = 0;
@@ -75,8 +76,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         static final int COL_MOVIE_OVERVIEW = 6;
         static final int COL_MOVIE_RELEASE_DATE = 7;
         static final int COL_MOVIE_POSTERPATH = 8;
-        static final int COL_MOVIE_POSTER = 9;
-        static final int COL_MOVIE_RUNTIME = 10;
+        static final int COL_MOVIE_RUNTIME = 9;
     }
     public interface TrailerQuery {
         static final int TRAILER_LOADER = 1;
@@ -122,7 +122,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private MenuItem shareMenuItem;
     private Boolean trailerDataModified;
     private Boolean reviewDataModified;
-
+    private static final UriMatcher sUriMatcher = MovieProvider.buildUriMatcher();
     public DetailActivityFragment() {setHasOptionsMenu(true);}
 
     @Override
@@ -349,12 +349,17 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        switch (loader.getId()){
-            case 0:
-                data.setNotificationUri(getContext().getContentResolver(), MovieContract.MovieEntry.buildMovie(movieStr));
+        Uri uri = ((CursorLoader) loader).getUri();
+        if (!data.moveToFirst()) data = null;
+        int match = sUriMatcher.match(uri);
+        switch (match){
+            case MovieProvider.MOVIE_WITH_KEY:
+                //data.setNotificationUri(getContext().getContentResolver(), MovieContract.MovieEntry.buildMovie(movieStr));
                 mMovieAdapter.swapCursor(data);
                 Log.v(LOG_TAG, "In onLoadFinished");
-                if (!data.moveToFirst()) {
+                if (data == null || !data.moveToFirst()) {
+                    Toast.makeText(getContext(), "No Data Loaded. Please go back and refresh", Toast.LENGTH_LONG).show();
+                    getActivity().onBackPressed();
                     return;
                 }
                 movieStr = data.getString(MovieQuery.COL_MOVIE_KEY);
@@ -372,6 +377,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     Picasso.with(getContext())
                         .load(data.getString(data.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)))
                         .error(R.drawable.abc_btn_rating_star_off_mtrl_alpha)
+                        //.fit()
                         .into(imageView);
 
                 ((TextView) rootView.findViewById(R.id.runtime_text))
@@ -397,9 +403,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                         .setText(data.getString(MovieQuery.COL_MOVIE_OVERVIEW));
                Log.e(LOG_TAG, "going to start Review Fragment");
                 break;
-            case 1:
+            case MovieProvider.TRAILER_WITH_MOVIE_KEY:
                 Log.e(LOG_TAG,"In trailer load finish loader");
-                data.setNotificationUri(getContext().getContentResolver(), MovieContract.MovieEntry.buildTrailerMovie(movieStr));
+                //data.setNotificationUri(getContext().getContentResolver(), MovieContract.MovieEntry.buildTrailerMovie(movieStr));
 
                 if (null == mTrailerAdapter)
                     mTrailerAdapter = new TrailerAdapter(getActivity(),null,0);
@@ -407,7 +413,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     mTrailerAdapter.swapCursor(data);
                 if (listViewTrailer.getAdapter() != mTrailerAdapter)
                     listViewTrailer.setAdapter(mTrailerAdapter);
-                if (data.moveToFirst()) {
+                if (data!= null) {
                     YouTubleFirstTrilerURL = AppConstants.MOVIE_YOUTUBE_URL + data.getString(TrailerQuery.COL_TRAILER_KEY);
                     if (mShareActionProvider != null) {
                         mMenu.findItem(R.id.action_share).setVisible(true);
@@ -431,11 +437,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                         trailerDataModified = true;
                     }
                 }
-                Log.e(LOG_TAG,"out trailer load finish loader"+ data.getCount());
+                //Log.e(LOG_TAG,"out trailer load finish loader"+ data.getCount());
                 break;
-            case 2:
+            case MovieProvider.REVIEW_WITH_MOVIE_KEY:
                 Log.e(LOG_TAG,"In Review load finish loader Review");
-                data.setNotificationUri(getContext().getContentResolver(), MovieContract.MovieEntry.buildReviewMovie(movieStr));
+                //data.setNotificationUri(getContext().getContentResolver(), MovieContract.MovieEntry.buildReviewMovie(movieStr));
 
                 if (null == mReviewAdapter)
                     mReviewAdapter = new ReviewAdapter(getActivity(),null,0);
@@ -443,7 +449,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     mReviewAdapter.swapCursor(data);
                 if (listViewReview.getAdapter() != mReviewAdapter)
                     listViewReview.setAdapter(mReviewAdapter);
-                if ((!reviewDataModified) && data.moveToFirst()) {
+                if ((!reviewDataModified) && data!= null) {
                     final int adapterCount = mReviewAdapter.getCount();
                     LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.review_linear);
                     //ll.setOrientation(LinearLayout.HORIZONTAL);
@@ -453,7 +459,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     }
                     reviewDataModified = true;
                 }
-                Log.e(LOG_TAG,"out Review load finish loader Review"+ data.getCount());
+                //Log.e(LOG_TAG,"out Review load finish loader Review"+ data.getCount());
                 break;
         }
     }

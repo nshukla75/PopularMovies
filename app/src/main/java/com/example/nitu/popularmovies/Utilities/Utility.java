@@ -21,11 +21,11 @@ public class Utility {
                 context.getString(R.string.pref_sort_default)));
     }
 
-    public static byte[] getImage(Cursor cursor) {
+   /* public static byte[] getImage(Cursor cursor) {
         // get row indices for our cursor
         byte[] bb = cursor.getBlob(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER));
         return bb;
-    }
+    }*/
 
     public static String getYear(String date){
         String year = "";

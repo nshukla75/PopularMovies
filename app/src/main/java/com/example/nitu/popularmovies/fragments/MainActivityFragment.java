@@ -61,7 +61,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             MovieContract.MovieEntry.COLUMN_OVERVIEW,
             MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
             MovieContract.MovieEntry.COLUMN_POSTER_PATH,
-            MovieContract.MovieEntry.COLUMN_POSTER,
             MovieContract.MovieEntry.COLUMN_MINUTE
     };
 
@@ -74,8 +73,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     static final int COL_MOVIE_OVERVIEW = 6;
     static final int COL_MOVIE_RELEASE_DATE = 7;
     static final int COL_MOVIE_POSTER_PATH = 8;
-    static final int COL_MOVIE_POSTER = 9;
-    static final int COL_MOVIE_MINUTE=10;
+    static final int COL_MOVIE_MINUTE = 9;
     GridView listView;
 
     public MainActivityFragment() {}
@@ -100,6 +98,20 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             getLoaderManager().initLoader(MOVIE_LOADER, null, this);
         }
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        String sortBy = Utility.getPreferences(getActivity());
+        Bundle b = new Bundle();
+        b.putString("sort", sortBy);
+        if (sortBy != null && !sortBy.equals(msortBy)) {
+            updateMovie();
+            getLoaderManager().restartLoader(MOVIE_LOADER, b, this);
+        }
+        msortBy = sortBy;
+        super.onResume();
     }
 
     @Override
@@ -130,7 +142,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     //updateTrailer(cursor.getString(COL_MOVIE_KEY));
                     updateMovieMinute(cursor.getString(COL_MOVIE_KEY));
 
-                    MovieData Movieobj = new MovieData();
+ /*                   MovieData Movieobj = new MovieData();
                     Movieobj.id = cursor.getLong(COL_MOVIEID);
                     Movieobj.original_title = cursor.getString(COL_MOVIE_ORIGINAL_TITLE);
                     Movieobj.overview = cursor.getString(COL_MOVIE_OVERVIEW);
@@ -139,7 +151,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     Movieobj.release_date = cursor.getString(COL_MOVIE_RELEASE_DATE);
                     Movieobj.poster_path = cursor.getString(COL_MOVIE_POSTER_PATH);
                     Movieobj.favourite = cursor.getInt(COL_MOVIE_FAVOURITE);
-                    Movieobj.minutes = cursor.getInt(COL_MOVIE_MINUTE);
+                    Movieobj.minutes = cursor.getInt(COL_MOVIE_MINUTE);*/
 
                     Intent intent = new Intent(getActivity(), DetailActivity.class);
                     //intent.setData(MovieContract.MovieEntry.buildMovie(cursor.getString(COL_MOVIE_KEY)));
@@ -160,8 +172,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (NetworkUtils.getInstance(getContext()).isOnline()) {
             Log.v(LOG_TAG,"going to fetch minute data for "+ movieKey);
             fetchMinuteTask.execute(movieKey);
-       /* } else {
-            Toast.makeText(getActivity(),"Can't update movie runtime",Toast.LENGTH_LONG).show();*/
         }
     }
 
@@ -191,20 +201,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         Log.e(LOG_TAG, "OUT update Trailer");
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        String sortBy = Utility.getPreferences(getActivity());
-        Bundle b = new Bundle();
-        b.putString("sort", sortBy);
-        if (sortBy != null && !sortBy.equals(msortBy)) {
-            updateMovie();
-            getLoaderManager().restartLoader(MOVIE_LOADER, b, this);
-        }
-        msortBy = sortBy;
-        super.onResume();
-    }
-
     private void updateMovie() {
         FetchMovieTask movieTask = new FetchMovieTask(getActivity());
         String sortBy=Utility.getPreferences(getActivity());
@@ -217,6 +213,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         }*/
 
     }
+
     private void getLiveDataAndCallLoader() {
         String sortBy = Utility.getPreferences(getActivity());
         if (!(sortBy.equals("favourite"))){
@@ -276,29 +273,28 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         cursor.setNotificationUri(getContext().getContentResolver(), MovieContract.MovieEntry.CONTENT_URI);
         String sortBy = Utility.getPreferences(getActivity());
+        if (null == mMovieAdapter)
+            mMovieAdapter = new GridViewAdapter(getActivity(), null, 0);
+        //gv is a GridView
+        //listView = (GridView) getActivity().findViewById(R.id.gridview_movie);
+        if (listView.getAdapter() != mMovieAdapter)
+            listView.setAdapter(mMovieAdapter);
+        if (mMovieAdapter.getCursor() != cursor)
+            mMovieAdapter.swapCursor(cursor);
+        int pos= cursor.getPosition();
+        if (pos != GridView.INVALID_POSITION)
+        listView.smoothScrollToPosition(pos);
         if (!cursor.moveToFirst()) {
             if (sortBy.equals("favourite"))
                 Toast.makeText(getActivity(), "No Movie in your Favourite selection", Toast.LENGTH_LONG).show();
             else
                 getLiveDataAndCallLoader();
-        }else {
-            if (null == mMovieAdapter)
-                mMovieAdapter = new GridViewAdapter(getActivity(), null, 0);
-            //gv is a GridView
-            //listView = (GridView) getActivity().findViewById(R.id.gridview_movie);
-            if (listView.getAdapter() != mMovieAdapter)
-                listView.setAdapter(mMovieAdapter);
-            if (mMovieAdapter.getCursor() != cursor)
-                mMovieAdapter.swapCursor(cursor);
-            int pos= cursor.getPosition();
-            if (pos != GridView.INVALID_POSITION)
-                listView.smoothScrollToPosition(pos);
         }
+
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         mMovieAdapter.swapCursor(null);
-
     }
 }

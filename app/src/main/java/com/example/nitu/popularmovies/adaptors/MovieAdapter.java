@@ -43,14 +43,15 @@ public class MovieAdapter extends CursorAdapter {
 
 
 
-         byte[] bb= Utility.getImage(cursor);
+         /*byte[] bb= Utility.getImage(cursor);
          if (bb!=null) {
              holder.imgMovie.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
              Log.e("image to grid", "Length-----" + bb.length);
          }
-         else
+         else*/
              Picasso.with(context)
                  .load(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)))
+                 .error(R.drawable.abc_btn_rating_star_off_mtrl_alpha)
                  .into(holder.imgMovie);
      }
 
