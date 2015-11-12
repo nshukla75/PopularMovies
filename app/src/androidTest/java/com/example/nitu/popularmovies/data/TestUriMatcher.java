@@ -8,7 +8,7 @@ import android.test.AndroidTestCase;
  * Created by nitus on 10/16/2015.
  */
 public class TestUriMatcher extends AndroidTestCase {
-    private static final String MOVIE_QUERY = "135397";
+    private static final long MOVIE_QUERY = 1419033600L;
 
     // "content://com.example.nitu.popularmovies.data/trailer"
     private static final Uri TEST_TRAILER_DIR = MovieContract.TrailerEntry.CONTENT_URI;

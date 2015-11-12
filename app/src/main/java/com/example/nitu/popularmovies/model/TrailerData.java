@@ -9,20 +9,23 @@ import java.io.Serializable;
  * Created by nitus on 10/6/2015.
  */
 public class TrailerData  implements Parcelable, Serializable {
-    public final String youtube_key;
-    public final String trailer_title;
-    public final String movie_title;
+    public final String youtube_key; // Key
+    public final String trailer_title;//name
+    public final Long movie_key;// movie_Key Long
+    public final String trailer_key;
 
     protected TrailerData(Parcel in) {
         youtube_key = in.readString();
         trailer_title = in.readString();
-        movie_title = in.readString();
+        movie_key = in.readLong();
+        trailer_key=in.readString();
     }
 
-    public TrailerData(String youtube_key, String title, String movie_title) {
+    public TrailerData(String youtube_key, String title, Long movie_key, String trailer_key) {
         this.youtube_key = youtube_key;
         this.trailer_title = title;
-        this.movie_title = movie_title;
+        this.movie_key = movie_key;
+        this.trailer_key = trailer_key;
     }
 
     public static final Parcelable.Creator<TrailerData> CREATOR = new Parcelable.Creator<TrailerData>() {
@@ -46,7 +49,8 @@ public class TrailerData  implements Parcelable, Serializable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(youtube_key);
         dest.writeString(trailer_title);
-        dest.writeString(movie_title);
+        dest.writeLong(movie_key);
+        dest.writeString(trailer_key);
     }
 
     @Override
@@ -60,24 +64,27 @@ public class TrailerData  implements Parcelable, Serializable {
             return false;
         if (trailer_title != null ? !trailer_title.equals(that.trailer_title) : that.trailer_title != null)
             return false;
-        return !(movie_title != null ? !movie_title.equals(that.movie_title) : that.movie_title != null);
-
+        if (movie_key != null ? !movie_key.equals(that.movie_key) : that.movie_key != null)
+            return false;
+        return !(trailer_key != null ? !trailer_key.equals(that.trailer_key) : that.trailer_key != null);
     }
 
     @Override
     public int hashCode() {
         int result = youtube_key != null ? youtube_key.hashCode() : 0;
         result = 31 * result + (trailer_title != null ? trailer_title.hashCode() : 0);
-        result = 31 * result + (movie_title != null ? movie_title.hashCode() : 0);
+        result = 31 * result + (movie_key != null ? movie_key.hashCode() : 0);
+        result = 31 * result + (trailer_key != null ? trailer_key.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
         return "TrailerListObj{" +
-                "movie_title='" + movie_title + '\'' +
+                "movie_key='" + movie_key + '\'' +
                 ", youtube_key='" + youtube_key + '\'' +
                 ", trailer_title='" + trailer_title + '\'' +
+                ", trailer_key='" + trailer_title + '\'' +
                 '}';
     }
 }

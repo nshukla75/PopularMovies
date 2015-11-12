@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/trailer_cell"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:background="@drawable/layout_border">
-    <ImageView
-        android:id="@+id/trailer_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_action_playback_play"
-        android:padding="1dp"/>
+    android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/list_item_trailer_textview"
-        android:text="Trailer "
-        android:paddingTop="5dp"/>
+
+        <ImageView
+            android:id="@+id/trailer_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_media_play" />
+
+        <TextView
+            android:id="@+id/trailer_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:textAppearance="?android:attr/textAppearanceListItem" />
+        <ImageView
+            android:id="@+id/youtube_thumb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+            android:baselineAlignBottom="false"
+            android:src="@android:drawable/ic_media_next" />
 
 </LinearLayout>

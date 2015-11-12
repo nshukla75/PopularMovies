@@ -156,7 +156,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     Intent intent = new Intent(getActivity(), DetailActivity.class);
                     //intent.setData(MovieContract.MovieEntry.buildMovie(cursor.getString(COL_MOVIE_KEY)));
                     Bundle bundle = new Bundle();
-                    bundle.putString("movieKey", cursor.getString(COL_MOVIE_KEY));
+                    bundle.putLong("movie_id_key", cursor.getLong(COL_MOVIE_KEY));
+
                     intent.putExtras(bundle);
                     startActivity(intent);
                 } else

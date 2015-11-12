@@ -52,11 +52,11 @@ public class MovieContract {
         public static final String COLUMN_MINUTE = "runtime";
 
 
-        public static Uri buildMovieUri(long id) {
+        public static Uri buildMovieUri(Long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
-        public static Uri buildMovie(String movieKey) {
-            return CONTENT_URI.buildUpon().appendPath(movieKey).build();
+        public static Uri buildMovie(Long movieKey) {
+            return CONTENT_URI.buildUpon().appendPath(movieKey.toString()).build();
         }
         public static String getMovieSettingFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
@@ -70,13 +70,13 @@ public class MovieContract {
         public static Uri buildFavouriteMovie() {
             return CONTENT_URI.buildUpon().appendPath("favourite").build();
         }
-        public static Uri buildTrailerMovie(String movieKey) {
-            final String trailerUri= CONTENT_URI +"/"+ movieKey +"/trailer";
+        public static Uri buildTrailerMovie(Long movieKey) {
+            final String trailerUri= CONTENT_URI +"/"+ movieKey.toString() +"/trailer";
             Uri returnUri = Uri.parse(trailerUri);
             return returnUri;
         }
-        public static Uri buildReviewMovie(String movieKey) {
-            final String reviewUri= CONTENT_URI +"/"+ movieKey +"/review";
+        public static Uri buildReviewMovie(Long movieKey) {
+            final String reviewUri= CONTENT_URI +"/"+ movieKey.toString() +"/review";
             return Uri.parse(reviewUri).buildUpon().build();
         }
     }

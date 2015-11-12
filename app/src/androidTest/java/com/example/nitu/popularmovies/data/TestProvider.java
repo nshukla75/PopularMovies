@@ -119,7 +119,7 @@ public class TestProvider extends AndroidTestCase {
        the correct type for each type of URI that it can handle.
     */
     public void testGetType() {
-        String testMovie = "135397";
+        long testMovie = 1419033600L;
         // content://com.example.nitu.popularmovies.data/trailer/
         String type = mContext.getContentResolver().getType(MovieContract.TrailerEntry.CONTENT_URI);
         // vnd.android.cursor.dir/com.example.nitu.popularmovies.data/trailer

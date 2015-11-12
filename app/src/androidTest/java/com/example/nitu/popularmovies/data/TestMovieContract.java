@@ -9,7 +9,7 @@ import android.test.AndroidTestCase;
 public class TestMovieContract extends AndroidTestCase {
 
     // intentionally includes a slash to make sure Uri is getting quoted correctly
-    private static final String TEST_TRAILER_MOVIE = "135397";
+    private static final Long TEST_TRAILER_MOVIE = 1419033600L;
 
     public void testBuildTrailerMovie() {
         Uri movieUri = MovieContract.MovieEntry.buildTrailerMovie(TEST_TRAILER_MOVIE);
@@ -17,10 +17,10 @@ public class TestMovieContract extends AndroidTestCase {
                         "MovieContract.",
                 movieUri);
         assertEquals("Error: Trailer movie not properly appended to the end of the Uri",
-                TEST_TRAILER_MOVIE, movieUri.getPathSegments().get(1));
+                TEST_TRAILER_MOVIE.toString(), movieUri.getPathSegments().get(1));
         assertEquals("Error: Trailer movie Uri doesn't match our expected result",
                 movieUri.toString(),
-                "content://com.example.nitu.popularmovies/movie/135397/trailer");
+                "content://com.example.nitu.popularmovies/movie/"+TEST_TRAILER_MOVIE.toString()+"/trailer");
     }
 
     public void testBuildReviewMovie() {
@@ -29,10 +29,10 @@ public class TestMovieContract extends AndroidTestCase {
                         "MovieContract.",
                 movieUri);
         assertEquals("Error: Trailer movie not properly appended to the end of the Uri",
-                TEST_TRAILER_MOVIE, movieUri.getPathSegments().get(1));
+                TEST_TRAILER_MOVIE.toString(), movieUri.getPathSegments().get(1));
         assertEquals("Error: Review movie Uri doesn't match our expected result",
                 movieUri.toString(),
-                "content://com.example.nitu.popularmovies/movie/135397/review");
+                "content://com.example.nitu.popularmovies/movie/"+TEST_TRAILER_MOVIE.toString()+"/review");
     }
 
 }

@@ -14,13 +14,10 @@ public class AppConstants {
     public static final String RATING = "vote_average.desc";
     public static final String POPULAR_MOVIES_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key="+MOVIE_API_KEY;
     public static final String MOVIE_W185_URL="http://image.tmdb.org/t/p/w185";
-    public static final String MOVIE_URL="http://image.tmdb.org/t/p/w342";
-    public static final String MOVIE_DETAIL_URL="http://image.tmdb.org/t/p/w780";
+    public static final String MOVIE_W342_URL="http://image.tmdb.org/t/p/w342";
+    public static final String MOVIE_W780_URL="http://image.tmdb.org/t/p/w780";
     public static final String DETAIL_MOVIE_OBJECT="movie_detail";
-    public static final String MOVIE_LIST_FROM_BUNDLE_KEY="movie_list_from_bundle_key";
-    public static final String MOVIE_DTL_FROM_BUNDLE_KEY="movie_list_from_bundle_key";
-    public static final int FETCH_LIMIT=12;
-    public static final String MOVIE_YOUTUBE_URL="https://www.youtube.com/watch?v=";
+
     public static final String MOVIE_REVIEWS_TRAILER_BASE_URL="http://api.themoviedb.org/3/movie";
 
 }

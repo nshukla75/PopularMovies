@@ -10,12 +10,6 @@ import com.example.nitu.popularmovies.Utilities.AppConstants;
 import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.data.MovieContract;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,24 +32,6 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
     public FetchMovieTask(Context context) {
         mContext = context;
     }
-    private boolean DEBUG = true;
-
-   /* public static byte[] urlToImageBLOB(String url) throws IOException {
-        try {
-            HttpEntity entity = null;
-            DefaultHttpClient mHttpClient = new DefaultHttpClient();
-            HttpGet mHttpGet = new HttpGet(url);
-            HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
-            if (mHttpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                entity = mHttpResponse.getEntity();
-            }
-            if (entity == null) return null;
-            return EntityUtils.toByteArray(entity);
-        }catch(Exception e){
-            return null;
-        }
-
-    }*/
 
     /**
      * Take the String representing the complete forecast in JSON Format and
