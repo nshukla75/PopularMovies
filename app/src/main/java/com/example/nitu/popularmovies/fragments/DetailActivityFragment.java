@@ -149,6 +149,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     public ToggleButton btnToggle;
     private View rootView;
+    private View noTrailerView;
     private ListView listViewTrailer;
     private ListView listViewReview;
     private final List<TrailerData> mTrailerList = new ArrayList<>();
@@ -338,6 +339,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         });
 
         Log.e(LOG_TAG, "going to load view" + mMovieId.toString());
+        noTrailerView = (View)inflater.inflate(R.layout.no_trailer, container, false);
         View trailerView = (View)inflater.inflate(R.layout.trailer_movie, container, false);
         listViewTrailer = (ListView) trailerView.findViewById(R.id.listView_trailer);
         mTrailerListViewAdapter = new TrailerListViewAdapter(getActivity(), R.layout.list_item_trailer, mTrailerList);
@@ -572,7 +574,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         }
         mTrailerList.clear();
         mTrailerList.addAll(th);
-        showTrailerUIAsync(mTrailerList);
+        if (!trailerDataModified.get()) showTrailerUIAsync(mTrailerList);
         updateTrailerDataInternal(mTrailerList);
         trailerDataModified.set(true);
     }
@@ -580,12 +582,17 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private void showTrailerUIAsync(List<TrailerData> mTrailerList){
         if (!mTrailerList.isEmpty()) {
             mTrailerListViewAdapter.setData();
-            setFirstTrailer();
-            final int adapterCount = mTrailerListViewAdapter.getCount();
             LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.trailer_linear);
-            for (int i = 0; i < adapterCount; i++) {
-                View item = mTrailerListViewAdapter.getView(i, null, null);
-                ll.addView(item);
+            if (mTrailerListViewAdapter.getCount()>0 ){
+                setFirstTrailer();
+                final int adapterCount = mTrailerListViewAdapter.getCount();
+                for (int i = 0; i < adapterCount; i++) {
+                    View item = mTrailerListViewAdapter.getView(i, null, null);
+                    ll.addView(item);
+                }
+            }
+            else {
+                ll.addView(noTrailerView);
             }
             //setFirstTrailer();
            /* if (mMovieDetailsTrailerView.getVisibility() == View.GONE) {
