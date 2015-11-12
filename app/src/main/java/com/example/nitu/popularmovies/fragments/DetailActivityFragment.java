@@ -572,6 +572,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         }
         mTrailerList.clear();
         mTrailerList.addAll(th);
+        showTrailerUIAsync(mTrailerList);
         updateTrailerDataInternal(mTrailerList);
         trailerDataModified.set(true);
     }
