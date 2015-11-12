@@ -201,9 +201,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     mMovieId.notifyAll();
                 } catch (IllegalMonitorStateException x) {}
             }
-            getLoaderManager().restartLoader(MovieQuery.DETAIL_LOADER, null, this);
-            getLoaderManager().restartLoader(TrailerQuery.TRAILER_LOADER, null, this);
-            getLoaderManager().restartLoader(ReviewQuery.REVIEW_LOADER, null, this);
+            Bundle b = new Bundle();
+            b.putLong(sMovieIdKey, mMovieId);
+            getLoaderManager().restartLoader(MovieQuery.DETAIL_LOADER, b, this);
+            getLoaderManager().restartLoader(TrailerQuery.TRAILER_LOADER, b, this);
+            getLoaderManager().restartLoader(ReviewQuery.REVIEW_LOADER, b, this);
          }
         else {
             //runFragment();
