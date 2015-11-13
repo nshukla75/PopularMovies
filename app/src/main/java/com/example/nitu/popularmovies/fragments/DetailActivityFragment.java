@@ -580,20 +580,19 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     }
 
     private void showTrailerUIAsync(List<TrailerData> mTrailerList){
+        LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.trailer_linear);
         if (!mTrailerList.isEmpty()) {
             mTrailerListViewAdapter.setData();
-            LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.trailer_linear);
-            if (mTrailerListViewAdapter.getCount()>0 ){
-                setFirstTrailer();
-                final int adapterCount = mTrailerListViewAdapter.getCount();
-                for (int i = 0; i < adapterCount; i++) {
-                    View item = mTrailerListViewAdapter.getView(i, null, null);
-                    ll.addView(item);
-                }
+            setFirstTrailer();
+            final int adapterCount = mTrailerListViewAdapter.getCount();
+            for (int i = 0; i < adapterCount; i++) {
+                View item = mTrailerListViewAdapter.getView(i, null, null);
+                ll.addView(item);
             }
-            else {
-                ll.addView(noTrailerView);
-            }
+        }
+        else {
+            ll.addView(noTrailerView);
+
             //setFirstTrailer();
            /* if (mMovieDetailsTrailerView.getVisibility() == View.GONE) {
                 showMovieDetailsAsyncView(Section.TRAILER);
