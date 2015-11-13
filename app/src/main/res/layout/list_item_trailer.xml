@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="5dp">
+    android:background="@drawable/layout_border"
+    android:padding="5dp"
+    style="@style/movie_detail_list">
     <ImageView
         android:id="@+id/youtube_thumb"
         android:layout_width="wrap_content"

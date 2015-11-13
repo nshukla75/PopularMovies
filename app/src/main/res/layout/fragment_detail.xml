@@ -56,19 +56,19 @@
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/black"
                         android:text="2015"
-                        android:padding="1dp"/>
+                        android:padding="2dp"/>
                     <TextView
                         android:id="@+id/runtime_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="--- Minutes"
-                        android:padding="1dp"/>
+                        android:padding="2dp"/>
                     <TextView
                         android:id="@+id/voteaverage_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0.0/10"
-                        android:padding="1dp"/>
+                        android:padding="2dp"/>
                     <RatingBar
                         android:id="@+id/ratingBar"
                         android:layout_width="wrap_content"
@@ -77,7 +77,7 @@
                         android:stepSize="1.0"
                         android:rating="2.0"
                         style="?android:attr/ratingBarStyleSmall"
-                        android:padding="1dp"/>
+                        android:padding="2dp"/>
                     <ToggleButton
                         android:id="@+id/chkState"
                         android:layout_width="wrap_content"
@@ -86,7 +86,7 @@
                         android:textOff="Mark as Favourite"
                         android:textOn="Favourite"
                         android:clickable="true"
-                        android:padding="1dp"/>
+                        android:padding="2dp"/>
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -98,41 +98,41 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Overview"
-                    android:textStyle="bold"
-                    android:padding="16dp"/>
+                    android:padding ="16dp"/>
                 <TextView
                     android:id="@+id/trailer_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Trailers: "
-                    android:textStyle="bold"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"/>
+                    android:padding ="16dp"
+                    android:textSize="@dimen/abc_text_size_large_material" />
             </LinearLayout>
             <LinearLayout
                     android:id="@+id/trailer_linear"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="16dp">
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:textAlignment="center">
                 <TextView
                     android:id="@+id/review_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Reviews: "
-                    android:textStyle="bold"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"/>
+                    android:textSize="@dimen/abc_text_size_large_material"/>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/review_linear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="16dp">
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
