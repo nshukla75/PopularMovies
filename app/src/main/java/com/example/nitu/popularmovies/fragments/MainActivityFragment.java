@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.nitu.popularmovies.R;
@@ -54,8 +55,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private GridViewAdapter mMovieAdapter;
     private String msortBy;
     private MainActivityFragment mThis;
-    boolean mDualPane;
-    int mCurCheckPosition = 0;
+    private int mCurCheckPosition = GridView.INVALID_POSITION;
+
+    private static final String SELECTED_KEY = "selected_position";
+
     private static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry._ID,
             MovieContract.MovieEntry.COLUMN_MOVIE_KEY,
@@ -90,8 +93,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        if (mCurCheckPosition != ListView.INVALID_POSITION) {
+            outState.putInt(SELECTED_KEY, mCurCheckPosition);
+        }
         super.onSaveInstanceState(outState);
-        outState.putInt("curChoice", mCurCheckPosition);
+
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -147,7 +153,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
            listView.setAdapter(mMovieAdapter);
        //else Toast.makeText(getActivity(), "No Movies for " + Utility.getPreferences(getActivity()), Toast.LENGTH_LONG).show();
        createGridItemClickCallbacks();
-       mThis = this;
+       //mThis = this;
+       if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+           mCurCheckPosition = savedInstanceState.getInt(SELECTED_KEY);
+       }
        return rootView;
    }
 
@@ -272,9 +281,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             listView.setAdapter(mMovieAdapter);
         if (mMovieAdapter.getCursor() != cursor)
             mMovieAdapter.swapCursor(cursor);
-        int pos= cursor.getPosition();
-        if (pos != GridView.INVALID_POSITION)
-        listView.smoothScrollToPosition(pos);
+        //int pos= cursor.getPosition();
+        if (mCurCheckPosition != GridView.INVALID_POSITION)
+            listView.smoothScrollToPosition(mCurCheckPosition);
         if (!cursor.moveToFirst()) {
             if (sortBy.equals("favourite"))
                 Toast.makeText(getActivity(), "No Movie in your Favourite selection", Toast.LENGTH_LONG).show();
