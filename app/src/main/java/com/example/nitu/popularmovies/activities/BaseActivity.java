@@ -7,9 +7,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.nitu.popularmovies.R;
+import com.example.nitu.popularmovies.application.PopMovieApp;
 
 
 public class BaseActivity extends AppCompatActivity {
+    private static volatile PopMovieApp.State appState;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -24,20 +26,24 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_base, menu);
+
         // if mainactivity and not two pane then hide action share
         if(this instanceof DetailActivity) {
-            MenuItem item = menu.findItem(R.id.action_settings);
-            item.setVisible(false);
+            getMenuInflater().inflate(R.menu.menu_detail, menu);
         }
         if(this instanceof MainActivity) {
-            MenuItem item = menu.findItem(R.id.action_share);
-            item.setVisible(false);
+            if (appState.getTwoPane())
+                getMenuInflater().inflate(R.menu.menu_base, menu);
+            else {
+                getMenuInflater().inflate(R.menu.menu_main, menu);
+            }
         }
         return true;
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        appState = ((PopMovieApp) getApplication()).STATE;
     }
 }

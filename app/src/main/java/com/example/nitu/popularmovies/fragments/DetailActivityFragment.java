@@ -42,6 +42,7 @@ import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.adaptors.MovieAdapter;
 import com.example.nitu.popularmovies.adaptors.ReviewListViewAdapter;
 import com.example.nitu.popularmovies.adaptors.TrailerListViewAdapter;
+import com.example.nitu.popularmovies.application.PopMovieApp;
 import com.example.nitu.popularmovies.data.MovieContract;
 import com.example.nitu.popularmovies.data.MovieProvider;
 import com.example.nitu.popularmovies.model.ReviewData;
@@ -66,6 +67,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class DetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
+    private static volatile PopMovieApp.State appState;
     public static final String MOVIE_ID_KEY = "movie_id_key";
     private MovieAdapter mMovieAdapter;
 
@@ -204,6 +206,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private void intilizeStatic() {
         synchronized (DetailActivityFragment.class) {
             if (!isInit.get()) {
+                appState = ((PopMovieApp) getActivity().getApplication()).STATE;
                 sMovieIdKey = getString(R.string.movie_id_key);
                 sBaseUrl = getString(R.string.tmdb_api_base_movie_url);
                 sVideoUrl = getString(R.string.tmdb_api_movie_videos_url);
@@ -242,19 +245,22 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         mMenu = menu;
-        inflater.inflate(R.menu.menu_detail, menu);
+        if (appState.getTwoPane()){
+            inflater.inflate(R.menu.menu_base, menu);
+        }
+        else {
+            inflater.inflate(R.menu.menu_detail, menu);
+           /* Utility.makeMenuItemInvisible(mMenu, R.id.action_settings);
+            MenuItem item = menu.findItem(R.id.action_settings);
+            item.setVisible(false);*/
+            //for crate home button
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        }
         shareMenuItem = menu.findItem(R.id.action_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareMenuItem);
         shareMenuItem.setVisible(false);
-
-        MenuItem item = menu.findItem(R.id.action_settings);
-        item.setVisible(false);
-
-        Utility.makeMenuItemInvisible(mMenu, R.id.action_settings);
-        //for crate home button
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
     }
 
     @Override

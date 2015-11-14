@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
 import com.example.nitu.popularmovies.R;
+import com.example.nitu.popularmovies.application.PopMovieApp;
 import com.example.nitu.popularmovies.fragments.DetailActivityFragment;
 import com.example.nitu.popularmovies.fragments.MainActivityFragment;
 import com.example.nitu.popularmovies.model.MovieData;
@@ -19,52 +20,43 @@ public class MainActivity extends BaseActivity implements MainActivityFragment.C
     private final String DETAILFRAGMENT_TAG = "DFTAG";
     private boolean mTwoPane;
     private View mMovieDetailsContainer;
+    private PopMovieApp.State appState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        appState = ((PopMovieApp)getApplication()).STATE;
         if(findViewById(R.id.detail_fragment_container)!= null) {
             mTwoPane = true;
-            /*if (savedInstanceState == null) {
-                getSupportFragmentManager().beginTransaction()
-                    .add(R.id.detail_fragment_container, new DetailActivityFragment())
-                    .commit();
-            }
-            else
-            {
-                Long mMovieId = savedInstanceState.getLong(getString(R.string.movie_id_key));
-                Bundle args = new Bundle();
-                DetailActivityFragment fragment = new DetailActivityFragment();
-                args.putLong(DetailActivityFragment.MOVIE_ID_KEY, mMovieId);
-                fragment.setArguments(args);
-
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.detail_fragment_container, fragment, DETAILFRAGMENT_TAG)
-                        .addToBackStack(DETAILFRAGMENT_TAG)
-                        .commit();
-            }
-            */
+            appState.setTwoPane(true);
         }
         else{
             mTwoPane = false;
+            appState.setTwoPane(false);
         }
+
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        if (mMovieDetailsContainer != null)
+            appState.setDetailsPaneShown(false);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mTwoPane = (mMovieDetailsContainer = findViewById(R.id.detail_fragment_container)) != null;
+        appState.setTwoPane(mTwoPane);
     }
 
     @Override
     public void onItemSelected(MovieData item) {
         if (mTwoPane) {
+            appState.setTwoPane(true);
+            appState.setDetailsPaneShown(true);
             Bundle args = new Bundle();
             DetailActivityFragment fragment = new DetailActivityFragment();
             args.putLong(DetailActivityFragment.MOVIE_ID_KEY, item.id);
@@ -81,6 +73,8 @@ public class MainActivity extends BaseActivity implements MainActivityFragment.C
             }
             fragmentTransaction.commit();
         } else {
+            appState.setTwoPane(false);
+            appState.setDetailsPaneShown(false);
             Intent intent = new Intent(this, DetailActivity.class)
                     .putExtra(getString(R.string.movie_id_key), item.id.longValue());
             startActivity(intent);

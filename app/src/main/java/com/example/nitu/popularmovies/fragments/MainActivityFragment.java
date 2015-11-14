@@ -23,6 +23,7 @@ import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.Utilities.NetworkUtils;
 import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.adaptors.GridViewAdapter;
+import com.example.nitu.popularmovies.application.PopMovieApp;
 import com.example.nitu.popularmovies.data.MovieContract;
 import com.example.nitu.popularmovies.fetchtasks.FetchMovieTask;
 import com.example.nitu.popularmovies.model.MovieData;
@@ -41,6 +42,7 @@ import java.io.InputStreamReader;
  */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+    private static volatile PopMovieApp.State appState;
     final int MOVIE_LOADER=0;
     private GridViewAdapter mMovieAdapter;
     private String msortBy;
@@ -94,6 +96,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         msortBy= Utility.getPreferences(getActivity());
         Bundle b = new Bundle();
         b.putString("sort", msortBy);
+        appState = ((PopMovieApp) getActivity().getApplication()).STATE;
         super.onCreate(savedInstanceState);
         mMovieAdapter=new GridViewAdapter(getActivity(),null,0);
         if (savedInstanceState != null) {
@@ -111,6 +114,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -266,7 +270,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         //int pos= cursor.getPosition();
         if (mCurCheckPosition != GridView.INVALID_POSITION)
             listView.smoothScrollToPosition(mCurCheckPosition);
-        else
+        else if (appState.getTwoPane())
         {
             final int WHAT = 1;
             Handler handler = new Handler(){
