@@ -1,13 +1,11 @@
 package com.example.nitu.popularmovies.fragments;
 
-import android.app.ActionBar;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -23,7 +21,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,27 +38,19 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.Utilities.AppConstants;
-import com.example.nitu.popularmovies.Utilities.NetworkUtils;
 import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.adaptors.MovieAdapter;
-import com.example.nitu.popularmovies.adaptors.ReviewAdapter;
 import com.example.nitu.popularmovies.adaptors.ReviewListViewAdapter;
-import com.example.nitu.popularmovies.adaptors.TrailerAdapter;
 import com.example.nitu.popularmovies.adaptors.TrailerListViewAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
 import com.example.nitu.popularmovies.data.MovieProvider;
-import com.example.nitu.popularmovies.fetchtasks.FetchReviewTask;
-import com.example.nitu.popularmovies.fetchtasks.FetchTrailerTask;
-import com.example.nitu.popularmovies.model.MovieData;
 import com.example.nitu.popularmovies.model.ReviewData;
 import com.example.nitu.popularmovies.model.TrailerData;
 import com.google.gson.internal.LinkedTreeMap;
 import com.squareup.picasso.Picasso;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -698,13 +687,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
         // add to database
         getActivity().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateValues, MovieContract.MovieEntry.COLUMN_MOVIE_KEY + "= ?", new String[]{mMovieId.toString()});
-
-       /* String selection = MovieContract.MovieEntry.COLUMN_MOVIE_KEY + "=?";
-        String[] selectionArgs = new String[]{mMovieId.toString()};
-        ContentValues cv = new ContentValues();
-        cv.put(MovieContract.MovieEntry.COLUMN_MINUTE, Double.valueOf(minutes).intValue());
-        getActivity().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, cv, selection, selectionArgs);*/
-    }
+}
 
     private void updateTrailerDataInternal(List<TrailerData> mTrailerList) {
         Vector<ContentValues> cVVector = new Vector<ContentValues>(mTrailerList.size());

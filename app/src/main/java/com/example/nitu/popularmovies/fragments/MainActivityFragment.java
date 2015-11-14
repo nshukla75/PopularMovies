@@ -1,6 +1,5 @@
 package com.example.nitu.popularmovies.fragments;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -10,9 +9,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,26 +20,18 @@ import android.widget.Toast;
 import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.Utilities.NetworkUtils;
 import com.example.nitu.popularmovies.Utilities.Utility;
-import com.example.nitu.popularmovies.activities.DetailActivity;
 import com.example.nitu.popularmovies.adaptors.GridViewAdapter;
 import com.example.nitu.popularmovies.data.MovieContract;
-import com.example.nitu.popularmovies.fetchtasks.FetchMinuteTask;
 import com.example.nitu.popularmovies.fetchtasks.FetchMovieTask;
-import com.example.nitu.popularmovies.fetchtasks.FetchReviewTask;
-import com.example.nitu.popularmovies.fetchtasks.FetchTrailerTask;
 import com.example.nitu.popularmovies.model.MovieData;
 
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
-
-import javax.security.auth.callback.Callback;
 
 
 /**
@@ -190,15 +178,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     Toast.makeText(getActivity(), "No Movie Selected!", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void updateMovieMinute(String movieKey){
-        Log.e(LOG_TAG,"In update Review");
-        FetchMinuteTask fetchMinuteTask = new FetchMinuteTask(getActivity());
-        if (NetworkUtils.getInstance(getContext()).isOnline()) {
-            Log.v(LOG_TAG,"going to fetch minute data for "+ movieKey);
-            fetchMinuteTask.execute(movieKey);
-        }
     }
 
     private void updateMovie() {
