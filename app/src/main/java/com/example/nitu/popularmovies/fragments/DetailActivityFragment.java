@@ -282,7 +282,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.e("Create View", "in Create View...............");
-        rootView = (View)inflater.inflate(R.layout.fragment_detail, container, false);
+        rootView = (View) inflater.inflate(R.layout.fragment_detail, container, false);
 
         getActivity().setTitle(title);
         btnToggle = (ToggleButton) rootView.findViewById(R.id.chkState);
@@ -300,14 +300,14 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         });
 
         Log.e(LOG_TAG, "going to load view" + mMovieId.toString());
-        noTrailerView = (View)inflater.inflate(R.layout.no_trailer, container, false);
-        View trailerView = (View)inflater.inflate(R.layout.trailer_movie, container, false);
+        noTrailerView = (View) inflater.inflate(R.layout.no_trailer, container, false);
+        View trailerView = (View) inflater.inflate(R.layout.trailer_movie, container, false);
         listViewTrailer = (ListView) trailerView.findViewById(R.id.listView_trailer);
         mTrailerListViewAdapter = new TrailerListViewAdapter(getActivity(), R.layout.list_item_trailer, mTrailerList);
         listViewTrailer.setAdapter(mTrailerListViewAdapter);
 
-        Log.e(LOG_TAG,"going to load view" + mMovieId.toString());
-        noReviewView = (View)inflater.inflate(R.layout.no_review, container, false);
+        Log.e(LOG_TAG, "going to load view" + mMovieId.toString());
+        noReviewView = (View) inflater.inflate(R.layout.no_review, container, false);
         View reviewView = inflater.inflate(R.layout.review_movie, container, false);
         listViewReview = (ListView) reviewView.findViewById(R.id.listView_review);
         mReviewListViewAdapter = new ReviewListViewAdapter(getActivity(), R.layout.list_item_review, mReviewList);

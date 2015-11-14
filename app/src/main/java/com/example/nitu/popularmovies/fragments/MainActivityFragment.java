@@ -2,6 +2,8 @@ package com.example.nitu.popularmovies.fragments;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -145,6 +147,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
            mCurCheckPosition = savedInstanceState.getInt(SELECTED_KEY);
        }
+
        return rootView;
    }
 
@@ -263,6 +266,18 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         //int pos= cursor.getPosition();
         if (mCurCheckPosition != GridView.INVALID_POSITION)
             listView.smoothScrollToPosition(mCurCheckPosition);
+        else
+        {
+            final int WHAT = 1;
+            Handler handler = new Handler(){
+                @Override
+                public void handleMessage(Message msg) {
+                    if(msg.what == WHAT) listView.performItemClick(listView.getAdapter().getView(0, null, null), 0, listView.getItemIdAtPosition(0));
+                }
+            };
+            handler.sendEmptyMessage(WHAT);
+        }
+
         if (!cursor.moveToFirst()) {
             if (sortBy.equals("favourite"))
                 Toast.makeText(getActivity(), "No Movie in your Favourite selection", Toast.LENGTH_LONG).show();
