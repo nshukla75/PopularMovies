@@ -22,14 +22,18 @@
         <item>vote_average.desc</item>
         <item>favourite</item>
     </string-array>
+    <!-- app strings-->
     <string name="title_activity_base">BaseActivity</string>
     <string name="movie_id_key">movie_id_key</string>
-    <string name="tmdb_param_api">api_key</string>
+
     <string name="mark_as_favorite">Mark as Favorite!</string>
-    <string name="grid_image_size">w185</string>
     <string name="movie_grid_image_desc_generic">Movie Thumbnail</string>
-    <string name="tmdb_api_movie_review_url">http://api.themoviedb.org/3/movie/%1$d/reviews</string>
+    <string name="grid_image_size">w185</string>
+
+    <string name="tmdb_api_base_movie_url">http://api.themoviedb.org/3/movie/%1$d</string>
     <string name="tmdb_api_movie_videos_url">http://api.themoviedb.org/3/movie/%1$d/videos</string>
+    <string name="tmdb_api_movie_review_url">http://api.themoviedb.org/3/movie/%1$d/reviews</string>
+
     <string name="youtube_url">http://www.youtube.com/watch?v=%1$s</string>
     <string name="youtube_img">http://img.youtube.com/vi/%1$s/0.jpg</string>
 </resources>

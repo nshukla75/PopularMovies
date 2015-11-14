@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -140,12 +141,14 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private final AtomicBoolean trailerDataModified = new AtomicBoolean();
     private final AtomicBoolean reviewDataModified = new AtomicBoolean();
     private final AtomicBoolean movieDetailsModified = new AtomicBoolean();
+    private final AtomicBoolean movieMinutesModified = new AtomicBoolean();
 
     public Long mMovieId = Long.MIN_VALUE;
     public Long movieRowId;
     private String title;
     private TrailerData YouTubeFirstTrailerURL=null;
     private static String sMovieIdKey;
+    private static String sBaseUrl;
     private static String sVideoUrl;
     private static String sReviewKey;
     private static String sYoutubeUrl;
@@ -183,6 +186,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         mMovieAdapter=new MovieAdapter(getActivity(),null,0);
         trailerDataModified.set(false);
         reviewDataModified.set(false);
+        movieDetailsModified.set(false);
+        movieMinutesModified.set(false);
 
         if (savedInstanceState != null) {
             synchronized (mMovieId) {
@@ -211,6 +216,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         synchronized (DetailActivityFragment.class) {
             if (!isInit.get()) {
                 sMovieIdKey = getString(R.string.movie_id_key);
+                sBaseUrl = getString(R.string.tmdb_api_base_movie_url);
                 sVideoUrl = getString(R.string.tmdb_api_movie_videos_url);
                 sReviewKey = getString(R.string.tmdb_api_movie_review_url);
                 sYoutubeUrl= getString(R.string.youtube_url);
@@ -382,7 +388,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 Log.v(LOG_TAG, "In onLoadFinished Movie");
                 if (!movieDetailsModified.get()) {
                     if (data == null || !data.moveToFirst()) {
-                        Toast.makeText(getContext(), "No Data Loaded. Please go back and refresh", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "No Data Loaded. Please go back and select movie again", Toast.LENGTH_LONG).show();
                         getActivity().onBackPressed();
                         return;
                     }
@@ -399,8 +405,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                                     //.fit()
                             .into(imageView);
 
-                    ((TextView) rootView.findViewById(R.id.runtime_text))
-                            .setText(data.getString(MovieQuery.COL_MOVIE_RUNTIME) + "min");
+                    if (data.getInt(MovieQuery.COL_MOVIE_RUNTIME)<=0)
+                        movieMinutesModified.set(false);
+                    else {
+                        movieMinutesModified.set(true);
+                        ((TextView) rootView.findViewById(R.id.runtime_text))
+                                .setText(Integer.toString(data.getInt(MovieQuery.COL_MOVIE_RUNTIME)) + "min");
+                    }
 
                     String mMovieVoteAverage = data.getString(MovieQuery.COL_MOVIE_VOTE_AVERAGE);
 
@@ -422,6 +433,10 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                             .setText(data.getString(MovieQuery.COL_MOVIE_OVERVIEW));
 
                     movieDetailsModified.set(true);
+                    if(!movieMinutesModified.get())
+                    {
+                        updateMinutesDataOrAskServer(data);
+                    }
                     Log.v(LOG_TAG, "Out of Load Finish Movie");
                 }
                 break;
@@ -443,6 +458,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.v(LOG_TAG, "In onLoadReset");
+    }
+    private void updateMinutesDataOrAskServer(Cursor data) {
+        Integer minutes = data == null ? 0 : data.getInt(MovieQuery.COL_MOVIE_RUNTIME);
+        if (minutes <= 0) getMinutesDataAsync();
+        else handleMinutesResults(minutes.toString());
     }
 
     private void updateTrailerDataOrAskServer(Cursor data) {
@@ -485,6 +505,45 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             showReviewUIAsync(mReviewList);
             reviewDataModified.set(true);
         }
+    }
+
+    @NonNull
+    private void getMinutesDataAsync() {
+        blockUntilMovieIdSet();
+        Uri builtUri = Uri.parse(String.format(sBaseUrl, mMovieId)).buildUpon()
+                .appendQueryParameter(AppConstants.API_KEY, AppConstants.MOVIE_API_KEY)
+                .build();
+        String url = "";
+        try {
+            url = new URL(builtUri.toString()).toString();
+        } catch (MalformedURLException e) {
+            Log.e(getClass().getSimpleName(), e.getMessage(), e);
+            return;
+        }
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(LOG_TAG, "Minutes Response received.");
+                        Map<String, Object> map = Utility.getGson().fromJson(response.toString(), LinkedTreeMap.class);
+                        try {
+                            String rt = map.get("runtime").toString().trim();
+                            handleMinutesResults(rt);
+                        } catch (NumberFormatException | NullPointerException e) {
+                            Log.e(LOG_TAG, e.getMessage(), e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(getClass().getSimpleName(), error.getMessage(), error);
+                        ((TextView) rootView.findViewById(R.id.runtime_text)).setVisibility(View.GONE);
+                        Toast.makeText(getContext(), "Error connecting to server.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        mVolleyRequestQueue.add(jsObjRequest);
     }
 
     private void getVideoDataAsync() {
@@ -561,6 +620,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         mVolleyRequestQueue.add(jsObjRequest);
     }
 
+    private void handleMinutesResults(String rt) {
+        ((TextView) rootView.findViewById(R.id.runtime_text)).setText(Double.valueOf(rt).intValue() + " mins");
+        updateMinutesDataInternal(rt);
+        movieMinutesModified.set(true);
+    }
+
+
     private void handleTrailerResults(List<Map<String, String>> results) {
         Set<TrailerData> th = new LinkedHashSet<>();
         for (Map<String, String> r : results) {
@@ -623,6 +689,21 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         else {
             ll.addView(noReviewView);
         }
+    }
+
+    private void updateMinutesDataInternal(String minutes) {
+        ContentValues updateValues = new ContentValues();
+        updateValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_KEY, mMovieId);
+        updateValues.put(MovieContract.MovieEntry.COLUMN_MINUTE, Double.valueOf(minutes).intValue());
+
+        // add to database
+        getActivity().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateValues, MovieContract.MovieEntry.COLUMN_MOVIE_KEY + "= ?", new String[]{mMovieId.toString()});
+
+       /* String selection = MovieContract.MovieEntry.COLUMN_MOVIE_KEY + "=?";
+        String[] selectionArgs = new String[]{mMovieId.toString()};
+        ContentValues cv = new ContentValues();
+        cv.put(MovieContract.MovieEntry.COLUMN_MINUTE, Double.valueOf(minutes).intValue());
+        getActivity().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, cv, selection, selectionArgs);*/
     }
 
     private void updateTrailerDataInternal(List<TrailerData> mTrailerList) {
@@ -694,7 +775,4 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         shareIntent.putExtra(Intent.EXTRA_TEXT, text);
         return shareIntent;
     }
-
-
-
 }

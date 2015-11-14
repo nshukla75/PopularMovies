@@ -169,7 +169,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
 
-                    updateMovieMinute(cursor.getString(COL_MOVIE_KEY));
+                    //updateMovieMinute(cursor.getString(COL_MOVIE_KEY));
 
                     MovieData movieObj = new MovieData();
                     movieObj.id = cursor.getLong(COL_MOVIE_KEY);
