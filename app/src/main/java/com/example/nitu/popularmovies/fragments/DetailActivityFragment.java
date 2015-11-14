@@ -51,6 +51,7 @@ import com.example.nitu.popularmovies.data.MovieContract;
 import com.example.nitu.popularmovies.data.MovieProvider;
 import com.example.nitu.popularmovies.fetchtasks.FetchReviewTask;
 import com.example.nitu.popularmovies.fetchtasks.FetchTrailerTask;
+import com.example.nitu.popularmovies.model.MovieData;
 import com.example.nitu.popularmovies.model.ReviewData;
 import com.example.nitu.popularmovies.model.TrailerData;
 import com.google.gson.internal.LinkedTreeMap;
@@ -75,9 +76,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class DetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
+    public static final String MOVIE_ID_KEY = "movie_id_key";
     private MovieAdapter mMovieAdapter;
-    private TrailerAdapter mTrailerAdapter;
-    private ReviewAdapter mReviewAdapter;
 
     public interface MovieQuery {
         static final int DETAIL_LOADER = 0;
@@ -181,11 +181,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         mVolleyRequestQueue = Volley.newRequestQueue(getActivity());
         intilizeStatic();
         mMovieAdapter=new MovieAdapter(getActivity(),null,0);
-        mTrailerAdapter=new TrailerAdapter(getActivity(),null,0);
-        mReviewAdapter=new ReviewAdapter(getActivity(),null,0);
         trailerDataModified.set(false);
         reviewDataModified.set(false);
-        setHasOptionsMenu(true);
 
         if (savedInstanceState != null) {
             synchronized (mMovieId) {
@@ -227,7 +224,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             Bundle args = getArguments();
             mMovieId = args == null ?
                     getActivity().getIntent().getLongExtra(sMovieIdKey, Long.MIN_VALUE) :
-                    args.getLong(sMovieIdKey, Long.MIN_VALUE);
+                    args.getLong(DetailActivityFragment.MOVIE_ID_KEY);
             try {
                 mMovieId.notifyAll();
             } catch (IllegalMonitorStateException x) {
@@ -697,5 +694,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         shareIntent.putExtra(Intent.EXTRA_TEXT, text);
         return shareIntent;
     }
+
+
 
 }

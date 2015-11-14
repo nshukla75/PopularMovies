@@ -33,12 +33,16 @@ import com.example.nitu.popularmovies.fetchtasks.FetchTrailerTask;
 import com.example.nitu.popularmovies.model.MovieData;
 
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
+
+import javax.security.auth.callback.Callback;
 
 
 /**
@@ -49,6 +53,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     final int MOVIE_LOADER=0;
     private GridViewAdapter mMovieAdapter;
     private String msortBy;
+    private MainActivityFragment mThis;
     boolean mDualPane;
     int mCurCheckPosition = 0;
     private static final String[] MOVIE_COLUMNS = {
@@ -75,7 +80,12 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     static final int COL_MOVIE_POSTER_PATH = 8;
     static final int COL_MOVIE_MINUTE = 9;
     GridView listView;
-
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(MovieData movieData);
+    }
     public MainActivityFragment() {}
 
     @Override
@@ -94,12 +104,17 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             getLoaderManager().restartLoader(MOVIE_LOADER, b, this);
         }
         else {
-            updateMovie();
-            getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+           /* updateMovie();
+            getLoaderManager().initLoader(MOVIE_LOADER, null, this);*/
         }
         setHasOptionsMenu(true);
     }
-
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        updateMovie();
+        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
     @Override
     public void onResume() {
         super.onResume();
@@ -114,57 +129,58 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         super.onResume();
     }
 
-    @Override
+   /* @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
             // Restore last state for checked position.
             mCurCheckPosition = savedInstanceState.getInt("curChoice", 0);
         }
-    }
-    
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    }*/
+   @Override
+   public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                            Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        listView = (GridView) rootView.findViewById(R.id.gridview_movie);
-        if (mMovieAdapter.getCount()>0)
-            listView.setAdapter(mMovieAdapter);
-        //else Toast.makeText(getActivity(), "No Movies for " + Utility.getPreferences(getActivity()), Toast.LENGTH_LONG).show();
+       View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+       listView = (GridView) rootView.findViewById(R.id.gridview_movie);
+       if (mMovieAdapter.getCount()>0)
+           listView.setAdapter(mMovieAdapter);
+       //else Toast.makeText(getActivity(), "No Movies for " + Utility.getPreferences(getActivity()), Toast.LENGTH_LONG).show();
+       createGridItemClickCallbacks();
+       mThis = this;
+       return rootView;
+   }
+
+    private void createGridItemClickCallbacks() {
+        //Grid view click event
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 mCurCheckPosition = position;
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
-                    //updateReview(cursor.getString(COL_MOVIE_KEY));
-                    //updateTrailer(cursor.getString(COL_MOVIE_KEY));
+
                     updateMovieMinute(cursor.getString(COL_MOVIE_KEY));
 
- /*                   MovieData Movieobj = new MovieData();
-                    Movieobj.id = cursor.getLong(COL_MOVIEID);
-                    Movieobj.original_title = cursor.getString(COL_MOVIE_ORIGINAL_TITLE);
-                    Movieobj.overview = cursor.getString(COL_MOVIE_OVERVIEW);
-                    Movieobj.popularity = cursor.getDouble(COL_MOVIE_POPULARITY);
-                    Movieobj.vote_average = cursor.getDouble(COL_MOVIE_VOTE_AVERAGE);
-                    Movieobj.release_date = cursor.getString(COL_MOVIE_RELEASE_DATE);
-                    Movieobj.poster_path = cursor.getString(COL_MOVIE_POSTER_PATH);
-                    Movieobj.favourite = cursor.getInt(COL_MOVIE_FAVOURITE);
-                    Movieobj.minutes = cursor.getInt(COL_MOVIE_MINUTE);*/
+                    MovieData movieObj = new MovieData();
+                    movieObj.id = cursor.getLong(COL_MOVIE_KEY);
+                    movieObj.original_title = cursor.getString(COL_MOVIE_ORIGINAL_TITLE);
+                    movieObj.overview = cursor.getString(COL_MOVIE_OVERVIEW);
+                    movieObj.popularity = cursor.getDouble(COL_MOVIE_POPULARITY);
+                    movieObj.vote_average = cursor.getDouble(COL_MOVIE_VOTE_AVERAGE);
+                    movieObj.release_date = cursor.getString(COL_MOVIE_RELEASE_DATE);
+                    movieObj.poster_path = cursor.getString(COL_MOVIE_POSTER_PATH);
+                    movieObj.favourite = cursor.getInt(COL_MOVIE_FAVOURITE);
+                    movieObj.minutes = cursor.getInt(COL_MOVIE_MINUTE);
 
-                    Intent intent = new Intent(getActivity(), DetailActivity.class);
-                    //intent.setData(MovieContract.MovieEntry.buildMovie(cursor.getString(COL_MOVIE_KEY)));
                     Bundle bundle = new Bundle();
                     bundle.putLong("movie_id_key", cursor.getLong(COL_MOVIE_KEY));
 
-                    intent.putExtras(bundle);
-                    startActivity(intent);
+                    ((Callback) getActivity()).onItemSelected(movieObj);
                 } else
                     Toast.makeText(getActivity(), "No Movie Selected!", Toast.LENGTH_SHORT).show();
             }
         });
-        return rootView;
     }
 
     private void updateMovieMinute(String movieKey){
@@ -174,32 +190,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             Log.v(LOG_TAG,"going to fetch minute data for "+ movieKey);
             fetchMinuteTask.execute(movieKey);
         }
-    }
-
-    private void updateReview(String movieKey){
-        Log.e(LOG_TAG,"In update Review");
-        FetchReviewTask fetchReviewTask = new FetchReviewTask(getActivity());
-        if (NetworkUtils.getInstance(getContext()).isOnline()) {
-            Log.e("In update Review", "getting data for Review ");
-            Log.e(LOG_TAG,"going to fetch review data for "+ movieKey);
-            fetchReviewTask.execute(movieKey);
-        } else {
-            Toast.makeText(getActivity(),"Network is not Available",Toast.LENGTH_LONG).show();
-        }
-        Log.e(LOG_TAG, "OUT update Review");
-    }
-
-    private void updateTrailer(String movieKey){
-        Log.e(LOG_TAG, "In update Trailer");
-        FetchTrailerTask fetchTrailerTask = new FetchTrailerTask(getActivity());
-        if (NetworkUtils.getInstance(getContext()).isOnline()) {
-            Log.e("In update Trailer", "getting data for Trailer ");
-            Log.e(LOG_TAG,"going to fetch trailer data for "+ movieKey);
-            fetchTrailerTask.execute(movieKey);
-        } else {
-            Toast.makeText(getActivity(), "Network is not Available", Toast.LENGTH_LONG).show();
-        }
-        Log.e(LOG_TAG, "OUT update Trailer");
     }
 
     private void updateMovie() {
