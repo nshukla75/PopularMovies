@@ -13,6 +13,7 @@ public class PopMovieApp extends Application {
     public static class State {
         private final AtomicBoolean isTwoPane = new AtomicBoolean();
         private final AtomicBoolean detailsPaneShown = new AtomicBoolean();
+        private final AtomicBoolean isRefreshGrid = new AtomicBoolean();
 
         public void setTwoPane(boolean b) {
             isTwoPane.set(b);
@@ -35,6 +36,14 @@ public class PopMovieApp extends Application {
 
         public static State getInstance() {
             return SingletonHolder.INSTANCE;
+        }
+
+        public boolean getIsRefreshGrid() {
+            return isRefreshGrid.get();
+        }
+
+        public void setIsRefreshGrid(boolean b) {
+            isRefreshGrid.set(b);
         }
 
         private State() {

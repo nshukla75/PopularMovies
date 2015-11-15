@@ -102,6 +102,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         mMovieAdapter=new GridViewAdapter(getActivity(),null,0);
         if (savedInstanceState != null) {
             mCurCheckPosition = savedInstanceState.getInt(SELECTED_KEY,0);
+            appState.setIsRefreshGrid(false);
             getLoaderManager().restartLoader(MOVIE_LOADER, b, this);
             //if (appState.getTwoPane()) performListViewClick(mCurCheckPosition);
         }
@@ -114,6 +115,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         updateMovie();
+        appState.setIsRefreshGrid(false);
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
@@ -127,8 +129,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (sortBy != null && !sortBy.equals(msortBy)) {
             updateMovie();
             mCurCheckPosition = 0;
+            appState.setIsRefreshGrid(false);
             getLoaderManager().restartLoader(MOVIE_LOADER, b, this);
-
         }
         msortBy = sortBy;
         super.onResume();
@@ -280,7 +282,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             if (mCurCheckPosition != GridView.INVALID_POSITION)
                 listView.smoothScrollToPosition(mCurCheckPosition);
 
-            if ((appState.getTwoPane())&& (mCurCheckPosition==0)){
+            if ((appState.getTwoPane())&& (mCurCheckPosition==0)&&(!appState.getIsRefreshGrid())){
                 final int WHAT = 1;
                 Handler handler = new Handler() {
                     @Override
@@ -290,6 +292,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     }
                 };
                 handler.sendEmptyMessage(WHAT);
+                appState.setIsRefreshGrid(true);
             }
         }
     }
