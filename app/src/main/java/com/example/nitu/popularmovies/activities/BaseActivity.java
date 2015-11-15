@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.nitu.popularmovies.R;
+import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.application.PopMovieApp;
 
 
@@ -26,17 +27,10 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.menu_base, menu);
-        // if mainactivity and not two pane then hide action share
-        if(this instanceof DetailActivity) {
-            getMenuInflater().inflate(R.menu.menu_detail, menu);
-        }
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         if(this instanceof MainActivity) {
-            if (appState.getTwoPane())
-                getMenuInflater().inflate(R.menu.menu_main, menu);
-            else {
-                getMenuInflater().inflate(R.menu.menu_base, menu);
-            }
+            if (appState.getTwoPane()== false)
+                Utility.makeMenuItemInvisible(menu, R.id.action_share);
         }
         return true;
     }

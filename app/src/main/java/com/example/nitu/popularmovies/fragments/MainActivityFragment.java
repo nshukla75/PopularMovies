@@ -94,13 +94,16 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onCreate(Bundle savedInstanceState) {
         msortBy= Utility.getPreferences(getActivity());
+        mCurCheckPosition=0;
         Bundle b = new Bundle();
         b.putString("sort", msortBy);
         appState = ((PopMovieApp) getActivity().getApplication()).STATE;
         super.onCreate(savedInstanceState);
         mMovieAdapter=new GridViewAdapter(getActivity(),null,0);
         if (savedInstanceState != null) {
+            mCurCheckPosition = savedInstanceState.getInt(SELECTED_KEY,0);
             getLoaderManager().restartLoader(MOVIE_LOADER, b, this);
+            //if (appState.getTwoPane()) performListViewClick(mCurCheckPosition);
         }
         else {
            /* updateMovie();
@@ -123,7 +126,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         b.putString("sort", sortBy);
         if (sortBy != null && !sortBy.equals(msortBy)) {
             updateMovie();
+            mCurCheckPosition = 0;
             getLoaderManager().restartLoader(MOVIE_LOADER, b, this);
+
         }
         msortBy = sortBy;
         super.onResume();
@@ -262,15 +267,19 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (null == mMovieAdapter)
             mMovieAdapter = new GridViewAdapter(getActivity(), null, 0);
         //gv is a GridView
-        //listView = (GridView) getActivity().findViewById(R.id.gridview_movie);
         if (listView.getAdapter() != mMovieAdapter)
             listView.setAdapter(mMovieAdapter);
         if (mMovieAdapter.getCursor() != cursor)
             mMovieAdapter.swapCursor(cursor);
-        //int pos= cursor.getPosition();
+        if (!cursor.moveToFirst()) {
+            if (sortBy.equals("favourite"))
+                Toast.makeText(getActivity(), "No Movie in your Favourite selection", Toast.LENGTH_LONG).show();
+            else
+                getLiveDataAndCallLoader();
+        }
         if (mCurCheckPosition != GridView.INVALID_POSITION)
             listView.smoothScrollToPosition(mCurCheckPosition);
-        else if (appState.getTwoPane())
+        if (appState.getTwoPane())
         {
             final int WHAT = 1;
             Handler handler = new Handler(){
@@ -282,12 +291,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             handler.sendEmptyMessage(WHAT);
         }
 
-        if (!cursor.moveToFirst()) {
-            if (sortBy.equals("favourite"))
-                Toast.makeText(getActivity(), "No Movie in your Favourite selection", Toast.LENGTH_LONG).show();
-            else
-                getLiveDataAndCallLoader();
-        }
+
 
     }
 
@@ -295,4 +299,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         mMovieAdapter.swapCursor(null);
     }
+
+
 }

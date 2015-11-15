@@ -239,29 +239,21 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        YouTubeFirstTrailerURL=null;
+        YouTubeFirstTrailerURL = null;
         runFragment();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         mMenu = menu;
-        if (appState.getTwoPane()){
-            //inflater.inflate(R.menu.menu_main, menu);
-        }
-        else {
-            //inflater.inflate(R.menu.menu_detail, menu);
-            //Utility.makeMenuItemInvisible(mMenu, R.id.action_settings);
-            /*MenuItem item = menu.findItem(R.id.action_settings);
-            item.setVisible(false);*/
+        if (appState.getTwoPane()== false){
+            Utility.makeMenuItemInvisible(mMenu, R.id.action_settings);
             //for crate home button
             AppCompatActivity activity = (AppCompatActivity) getActivity();
             activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         shareMenuItem = menu.findItem(R.id.action_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareMenuItem);
-        if (YouTubeFirstTrailerURL == null) shareMenuItem.setVisible(false);
-        else shareMenuItem.setVisible(true);
     }
 
     @Override
@@ -275,11 +267,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 getActivity().onBackPressed();
                 return true;
             case R.id.action_share:
-               /* Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Trailer of Movie - "+ title);
-                shareIntent.putExtra(Intent.EXTRA_TEXT, YouTubeFirstTrilerURL);*/
-                startActivity(createShareYoutubeIntent());
+                Intent shareIntent = createShareYoutubeIntent();
+                if (shareIntent!=null)
+                    startActivity(createShareYoutubeIntent());
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -659,7 +649,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.trailer_linear);
         if (!mTrailerList.isEmpty()) {
             mTrailerListViewAdapter.setData();
-            setFirstTrailer();
+            YouTubeFirstTrailerURL = mTrailerList.get(0);
             final int adapterCount = mTrailerListViewAdapter.getCount();
             for (int i = 0; i < adapterCount; i++) {
                 View item = mTrailerListViewAdapter.getView(i, null, null);
@@ -668,6 +658,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         }
         else {
             ll.addView(noTrailerView);
+            YouTubeFirstTrailerURL = null;
         }
     }
 
@@ -675,7 +666,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.review_linear);
         if (!mReviewList.isEmpty()) {
             mReviewListViewAdapter.setData();
-            setFirstTrailer();
             final int adapterCount = mReviewListViewAdapter.getCount();
             for (int i = 0; i < adapterCount; i++) {
                 View item = mReviewListViewAdapter.getView(i, null, null);
@@ -745,29 +735,17 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             }
     }
 
-    private void setFirstTrailer() {
-        if (!mTrailerList.isEmpty()) YouTubeFirstTrailerURL = mTrailerList.get(0);
-        if (YouTubeFirstTrailerURL != null) {
-            MenuItem item=mMenu.findItem(R.id.action_share);
-            if (mShareActionProvider == null) {
-                mShareActionProvider = new ShareActionProvider(getContext());
-                MenuItemCompat.setActionProvider(item, mShareActionProvider);
-            }
-            if (mShareActionProvider != null) {
-                mShareActionProvider.setShareIntent(createShareYoutubeIntent());
-                mMenu.findItem(R.id.action_share).setVisible(true);
-            } else Log.v(LOG_TAG,"mShareActionProvider not set");
-        }
-    }
-
     private Intent createShareYoutubeIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-        shareIntent.setType("text/plain");
-        String text = (title + " - ")
-                + YouTubeFirstTrailerURL.trailer_title + " - "
-                + String.format(sYoutubeUrl, YouTubeFirstTrailerURL.youtube_key);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, text);
-        return shareIntent;
+        if (YouTubeFirstTrailerURL != null) {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+            shareIntent.setType("text/plain");
+            String text = (title + " - ")
+                    + YouTubeFirstTrailerURL.trailer_title + " - "
+                    + String.format(sYoutubeUrl, YouTubeFirstTrailerURL.youtube_key);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, text);
+            return shareIntent;
+        }
+        return null;
     }
 }
