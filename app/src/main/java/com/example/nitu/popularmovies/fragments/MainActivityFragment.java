@@ -280,7 +280,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             if (mCurCheckPosition != GridView.INVALID_POSITION)
                 listView.smoothScrollToPosition(mCurCheckPosition);
 
-            if (appState.getTwoPane()) {
+            if ((appState.getTwoPane())&& (mCurCheckPosition==0)){
                 final int WHAT = 1;
                 Handler handler = new Handler() {
                     @Override
