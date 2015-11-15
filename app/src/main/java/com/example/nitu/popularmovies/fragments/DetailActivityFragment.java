@@ -154,6 +154,12 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private final List<ReviewData> mReviewList = new ArrayList<>();
     private TrailerListViewAdapter mTrailerListViewAdapter;
     private ReviewListViewAdapter mReviewListViewAdapter;
+    /*private LinearLayout mMovieDetailsAsyncView;
+    private LinearLayout mMovieDetailsTrailerView;
+    private LinearLayout mMovieDetailsReviewView;
+    private LinearLayout.LayoutParams mMovieDetailsAsyncViewDefaultLayout;
+    private LinearLayout.LayoutParams mMovieDetailsReviewViewDefaultLayout;
+    private LinearLayout.LayoutParams mMovieDetailsTrailerViewDefaultLayout;*/
 
     private Menu mMenu;
     private MenuItem shareMenuItem;
@@ -239,6 +245,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        /*mMovieDetailsAsyncView.setVisibility(View.GONE);
+        mMovieDetailsTrailerView.setVisibility(View.GONE);
+        mMovieDetailsReviewView.setVisibility(View.GONE);*/
         YouTubeFirstTrailerURL = null;
         runFragment();
     }
@@ -309,6 +318,17 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         listViewReview = (ListView) reviewView.findViewById(R.id.listView_review);
         mReviewListViewAdapter = new ReviewListViewAdapter(getActivity(), R.layout.list_item_review, mReviewList);
         listViewReview.setAdapter(mReviewListViewAdapter);
+
+        /*listViewTrailer = (ListView) rootView.findViewById(R.id.list_trailers);
+        listViewReview = (ListView) rootView.findViewById(R.id.list_reviews);
+        mTrailerListViewAdapter = new TrailerListViewAdapter(getActivity(), R.layout.list_item_trailer, mTrailerList);
+        mReviewListViewAdapter = new ReviewListViewAdapter(getActivity(), R.layout.list_item_review, mReviewList);
+        listViewTrailer.setAdapter(mTrailerListViewAdapter);
+        listViewReview.setAdapter(mReviewListViewAdapter);
+
+        mMovieDetailsAsyncView = (LinearLayout) rootView.findViewById(R.id.movie_details_async_section);
+        mMovieDetailsReviewView = (LinearLayout) rootView.findViewById(R.id.movie_details_review_section);
+        mMovieDetailsTrailerView = (LinearLayout) rootView.findViewById(R.id.movie_details_trailer_section);*/
 
         return rootView;
     }
@@ -655,6 +675,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 View item = mTrailerListViewAdapter.getView(i, null, null);
                 ll.addView(item);
             }
+            /*if (mMovieDetailsTrailerView.getVisibility() == View.GONE)
+                showMovieDetailsAsyncView(Section.TRAILER);*/
         }
         else {
             ll.addView(noTrailerView);
@@ -674,6 +696,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         }
         else {
             ll.addView(noReviewView);
+           /* if (mMovieDetailsReviewView.getVisibility() == View.GONE)
+                showMovieDetailsAsyncView(Section.REVIEW);*/
         }
     }
 
@@ -748,4 +772,55 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         }
         return null;
     }
+
+    /*private enum Section {
+        REVIEW, TRAILER;
+    }
+
+    private synchronized void showMovieDetailsAsyncView(Section section) {
+        if (mMovieDetailsAsyncView.getVisibility() == View.GONE) {
+            mMovieDetailsAsyncView.setVisibility(View.VISIBLE);
+            *//*mMovieDetailsBodyView.setLayoutParams(mMovieDetailsBodyViewDefaultLayout);
+            mMovieDetailsTitleViewDefaultLayout = (LinearLayout.LayoutParams) mMovieDetailsTitleView.getLayoutParams();*//*
+            mMovieDetailsAsyncViewDefaultLayout = (LinearLayout.LayoutParams) mMovieDetailsAsyncView.getLayoutParams();
+            mMovieDetailsReviewViewDefaultLayout = (LinearLayout.LayoutParams) mMovieDetailsReviewView.getLayoutParams();
+            mMovieDetailsTrailerViewDefaultLayout = (LinearLayout.LayoutParams) mMovieDetailsTrailerView.getLayoutParams();
+        }
+
+        switch (section) {
+            case REVIEW:
+                mMovieDetailsReviewView.setVisibility(View.VISIBLE);
+                if (mMovieDetailsTrailerView.getVisibility() == View.GONE)
+                    setAsynFieldToFillWeight(mMovieDetailsReviewViewDefaultLayout, mMovieDetailsReviewView);
+                else
+                    setAsyncSectionToDefaults();
+                break;
+            case TRAILER:
+                mMovieDetailsTrailerView.setVisibility(View.VISIBLE);
+                if (mMovieDetailsReviewView.getVisibility() == View.GONE)
+                    setAsynFieldToFillWeight(mMovieDetailsTrailerViewDefaultLayout, mMovieDetailsTrailerView);
+                else
+                    setAsyncSectionToDefaults();
+                break;
+        }
+    }
+
+    private void setAsynFieldToFillWeight(LinearLayout.LayoutParams lp, LinearLayout l) {
+        l.setLayoutParams(new LinearLayout.LayoutParams(lp.width, lp.height, lp.weight * 2f));
+        mMovieDetailsAsyncView.setLayoutParams(new LinearLayout.LayoutParams(
+                mMovieDetailsAsyncViewDefaultLayout.width,
+                mMovieDetailsAsyncViewDefaultLayout.height,
+                mMovieDetailsAsyncViewDefaultLayout.weight / 2f));
+        *//*mMovieDetailsTitleView.setLayoutParams(new LinearLayout.LayoutParams(
+                mMovieDetailsTitleViewDefaultLayout.width,
+                mMovieDetailsTitleViewDefaultLayout.height,
+                mMovieDetailsTitleViewDefaultLayout.weight / 2f));*//*
+    }
+
+    private void setAsyncSectionToDefaults() {
+        mMovieDetailsReviewView.setLayoutParams(mMovieDetailsReviewViewDefaultLayout);
+        mMovieDetailsTrailerView.setLayoutParams(mMovieDetailsTrailerViewDefaultLayout);
+        mMovieDetailsAsyncView.setLayoutParams(mMovieDetailsAsyncViewDefaultLayout);
+    }
+*/
 }

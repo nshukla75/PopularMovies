@@ -276,23 +276,22 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 Toast.makeText(getActivity(), "No Movie in your Favourite selection", Toast.LENGTH_LONG).show();
             else
                 getLiveDataAndCallLoader();
+        } else {
+            if (mCurCheckPosition != GridView.INVALID_POSITION)
+                listView.smoothScrollToPosition(mCurCheckPosition);
+
+            if (appState.getTwoPane()) {
+                final int WHAT = 1;
+                Handler handler = new Handler() {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        if (msg.what == WHAT)
+                            listView.performItemClick(listView.getAdapter().getView(0, null, null), 0, listView.getItemIdAtPosition(0));
+                    }
+                };
+                handler.sendEmptyMessage(WHAT);
+            }
         }
-        if (mCurCheckPosition != GridView.INVALID_POSITION)
-            listView.smoothScrollToPosition(mCurCheckPosition);
-        if (appState.getTwoPane())
-        {
-            final int WHAT = 1;
-            Handler handler = new Handler(){
-                @Override
-                public void handleMessage(Message msg) {
-                    if(msg.what == WHAT) listView.performItemClick(listView.getAdapter().getView(0, null, null), 0, listView.getItemIdAtPosition(0));
-                }
-            };
-            handler.sendEmptyMessage(WHAT);
-        }
-
-
-
     }
 
     @Override
