@@ -239,6 +239,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        YouTubeFirstTrailerURL=null;
         runFragment();
     }
 
@@ -246,21 +247,21 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         mMenu = menu;
         if (appState.getTwoPane()){
-            inflater.inflate(R.menu.menu_base, menu);
+            //inflater.inflate(R.menu.menu_main, menu);
         }
         else {
-            inflater.inflate(R.menu.menu_detail, menu);
-           /* Utility.makeMenuItemInvisible(mMenu, R.id.action_settings);
-            MenuItem item = menu.findItem(R.id.action_settings);
+            //inflater.inflate(R.menu.menu_detail, menu);
+            //Utility.makeMenuItemInvisible(mMenu, R.id.action_settings);
+            /*MenuItem item = menu.findItem(R.id.action_settings);
             item.setVisible(false);*/
             //for crate home button
             AppCompatActivity activity = (AppCompatActivity) getActivity();
             activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         }
         shareMenuItem = menu.findItem(R.id.action_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareMenuItem);
-        shareMenuItem.setVisible(false);
+        if (YouTubeFirstTrailerURL == null) shareMenuItem.setVisible(false);
+        else shareMenuItem.setVisible(true);
     }
 
     @Override
@@ -454,6 +455,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.v(LOG_TAG, "In onLoadReset");
     }
+
     private void updateMinutesDataOrAskServer(Cursor data) {
         Integer minutes = data == null ? 0 : data.getInt(MovieQuery.COL_MOVIE_RUNTIME);
         if (minutes <= 0) getMinutesDataAsync();
@@ -621,7 +623,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         movieMinutesModified.set(true);
     }
 
-
     private void handleTrailerResults(List<Map<String, String>> results) {
         Set<TrailerData> th = new LinkedHashSet<>();
         for (Map<String, String> r : results) {
@@ -747,6 +748,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private void setFirstTrailer() {
         if (!mTrailerList.isEmpty()) YouTubeFirstTrailerURL = mTrailerList.get(0);
         if (YouTubeFirstTrailerURL != null) {
+            MenuItem item=mMenu.findItem(R.id.action_share);
+            if (mShareActionProvider == null) {
+                mShareActionProvider = new ShareActionProvider(getContext());
+                MenuItemCompat.setActionProvider(item, mShareActionProvider);
+            }
             if (mShareActionProvider != null) {
                 mShareActionProvider.setShareIntent(createShareYoutubeIntent());
                 mMenu.findItem(R.id.action_share).setVisible(true);

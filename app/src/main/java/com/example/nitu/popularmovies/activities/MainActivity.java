@@ -65,7 +65,7 @@ public class MainActivity extends BaseActivity implements MainActivityFragment.C
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             if (fragmentManager.findFragmentById(R.id.fragment)!= null) {
                 fragmentTransaction.replace(R.id.detail_fragment_container, fragment, DETAILFRAGMENT_TAG);
-                fragmentTransaction.addToBackStack(DETAILFRAGMENT_TAG);
+                //fragmentTransaction.addToBackStack(DETAILFRAGMENT_TAG);
 
             } else
             {

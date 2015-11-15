@@ -28,7 +28,7 @@ public class DetailActivity extends BaseActivity {
         }
     }
 
-    @Override
+   /* @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -39,7 +39,7 @@ public class DetailActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
