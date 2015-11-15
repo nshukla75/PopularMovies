@@ -39,7 +39,7 @@ public class ReviewAdapter extends CursorAdapter {
         final ViewHolder holder = (ViewHolder)view.getTag();
         holder.author.setText(cursor.getString(cursor.getColumnIndex(MovieContract.ReviewEntry.COLUMN_AUTHOR)));
         holder.content.setText(cursor.getString(cursor.getColumnIndex(MovieContract.ReviewEntry.COLUMN_CONTENT)));
-        Log.e("Review Adaptor",cursor.getString(cursor.getColumnIndex(MovieContract.ReviewEntry.COLUMN_AUTHOR)));
+        Log.v("Review Adaptor",cursor.getString(cursor.getColumnIndex(MovieContract.ReviewEntry.COLUMN_AUTHOR)));
     }
     static class ViewHolder {
         TextView author;

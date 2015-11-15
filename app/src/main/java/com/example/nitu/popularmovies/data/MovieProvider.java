@@ -497,7 +497,7 @@ public class MovieProvider extends ContentProvider {
                 } finally {
                     db.endTransaction();
                 }
-                Log.e("Movie Provider","Bulk Inserted in Movie");
+                Log.v("Movie Provider","Bulk Inserted in Movie");
                 context.getContentResolver().notifyChange(uri, null);
                 return returnCount;
             case TRAILER:

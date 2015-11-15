@@ -287,7 +287,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.e("Create View", "in Create View...............");
+        Log.v("Create View", "in Create View...............");
         rootView = (View) inflater.inflate(R.layout.fragment_detail, container, false);
 
         getActivity().setTitle(title);
@@ -305,14 +305,14 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             }
         });
 
-        Log.e(LOG_TAG, "going to load view" + mMovieId.toString());
+        Log.v(LOG_TAG, "going to load view" + mMovieId.toString());
         noTrailerView = (View) inflater.inflate(R.layout.no_trailer, container, false);
         View trailerView = (View) inflater.inflate(R.layout.trailer_movie, container, false);
         listViewTrailer = (ListView) trailerView.findViewById(R.id.listView_trailer);
         mTrailerListViewAdapter = new TrailerListViewAdapter(getActivity(), R.layout.list_item_trailer, mTrailerList);
         listViewTrailer.setAdapter(mTrailerListViewAdapter);
 
-        Log.e(LOG_TAG, "going to load view" + mMovieId.toString());
+        Log.v(LOG_TAG, "going to load view" + mMovieId.toString());
         noReviewView = (View) inflater.inflate(R.layout.no_review, container, false);
         View reviewView = inflater.inflate(R.layout.review_movie, container, false);
         listViewReview = (ListView) reviewView.findViewById(R.id.listView_review);
@@ -447,16 +447,16 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 }
                 break;
             case MovieProvider.TRAILER_WITH_MOVIE_KEY:
-                Log.e(LOG_TAG,"In Trailer load finish loader");
+                Log.v(LOG_TAG,"In Trailer load finish loader");
                 if (!trailerDataModified.get())
                     updateTrailerDataOrAskServer(data);
-                Log.e(LOG_TAG,"out Trailer load finish loader");
+                Log.v(LOG_TAG,"out Trailer load finish loader");
                 break;
             case MovieProvider.REVIEW_WITH_MOVIE_KEY:
-                Log.e(LOG_TAG,"In Review load finish loader");
+                Log.v(LOG_TAG,"In Review load finish loader");
                 if (!reviewDataModified.get())
                     updateReviewDataOrAskServer(data);
-                Log.e(LOG_TAG,"out Review load finish loader");
+                Log.v(LOG_TAG,"out Review load finish loader");
                 break;
         }
     }
