@@ -37,8 +37,7 @@
         <provider
             android:name=".data.MovieProvider"
             android:authorities="com.example.nitu.popularmovies"
-            android:enabled="true"
-            android:exported="true" />
+            android:enabled="true"/>
 
         <activity
             android:name=".activities.BaseActivity"

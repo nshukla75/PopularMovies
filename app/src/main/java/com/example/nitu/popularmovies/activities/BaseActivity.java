@@ -29,7 +29,7 @@ public class BaseActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         if(this instanceof MainActivity) {
-            if (appState.getTwoPane()== false)
+            if (!appState.getTwoPane())
                 Utility.makeMenuItemInvisible(menu, R.id.action_share);
         }
         return true;
