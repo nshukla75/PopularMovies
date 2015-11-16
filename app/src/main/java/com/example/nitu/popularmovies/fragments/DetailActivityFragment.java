@@ -36,6 +36,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.nitu.popularmovies.BuildConfig;
 import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.Utilities.AppConstants;
 import com.example.nitu.popularmovies.Utilities.Utility;
@@ -504,7 +505,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private void getMinutesDataAsync() {
         blockUntilMovieIdSet();
         Uri builtUri = Uri.parse(String.format(sBaseUrl, mMovieId)).buildUpon()
-                .appendQueryParameter(AppConstants.API_KEY, AppConstants.MOVIE_API_KEY)
+                .appendQueryParameter(AppConstants.API_KEY, BuildConfig.MOVIE_API_KEY)
                 .build();
         String url = "";
         try {
@@ -542,7 +543,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private void getVideoDataAsync() {
         blockUntilMovieIdSet();
         Uri builtUri = Uri.parse(String.format(sVideoUrl, mMovieId)).buildUpon()
-                .appendQueryParameter(AppConstants.API_KEY, AppConstants.MOVIE_API_KEY)
+                .appendQueryParameter(AppConstants.API_KEY, BuildConfig.MOVIE_API_KEY)
                 .build();
         String url = "";
         try {
@@ -579,7 +580,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private void getReviewDataAsync() {
         blockUntilMovieIdSet();
         Uri builtUri = Uri.parse(String.format(sReviewKey, mMovieId)).buildUpon()
-                .appendQueryParameter(AppConstants.API_KEY, AppConstants.MOVIE_API_KEY)
+                .appendQueryParameter(AppConstants.API_KEY, BuildConfig.MOVIE_API_KEY)
                 .build();
         String url = "";
         try {

@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.nitu.popularmovies.BuildConfig;
 import com.example.nitu.popularmovies.Utilities.AppConstants;
 import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.data.MovieContract;
@@ -146,7 +147,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         try {
             Uri builtUri = Uri.parse(AppConstants.BASE_URL).buildUpon()
                     .appendQueryParameter(AppConstants.SORT_BY, movieQuery)
-                    .appendQueryParameter(AppConstants.API_KEY, AppConstants.MOVIE_API_KEY)
+                    .appendQueryParameter(AppConstants.API_KEY, BuildConfig.MOVIE_API_KEY)
                     .build();
             URL url = new URL(builtUri.toString());
 
