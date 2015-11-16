@@ -197,7 +197,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private void updateMovie() {
         FetchMovieTask movieTask = new FetchMovieTask(getActivity());
         String sortBy=Utility.getPreferences(getActivity());
-        Toast.makeText(getActivity(), "Getting data for" + sortBy, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity(), "Getting data for " + sortBy, Toast.LENGTH_LONG).show();
 
         if (NetworkUtils.getInstance(getContext()).isOnline())
             movieTask.execute(sortBy);
@@ -253,7 +253,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             movieUri=MovieContract.MovieEntry.buildFavouriteMovie();
         else
             movieUri = MovieContract.MovieEntry.buildPopularMovie();
-        Toast.makeText(getActivity(), "Loading data for" + sortBy, Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "Loading data for " + sortBy, Toast.LENGTH_LONG).show();
         return new CursorLoader(getActivity(),
                 movieUri,
                 MOVIE_COLUMNS,
