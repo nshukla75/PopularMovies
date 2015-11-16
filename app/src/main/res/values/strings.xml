@@ -2,6 +2,7 @@
     <string name="app_name">Pop Movies</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_detail">Movie Details</string>
+
     <string name="title_activity_settings">Settings</string>
     <string name="action_share">Share</string>
     <string name="action_exit">Exit</string>
@@ -29,10 +30,15 @@
     <string name="mark_as_favorite">Mark as Favorite!</string>
     <string name="movie_grid_image_desc_generic">Movie Thumbnail</string>
     <string name="grid_image_size">w185</string>
+    <string name="tmdb_param_sortby">sort_by</string>
+    <string name="tmdb_param_api">api_key</string>
 
-    <string name="tmdb_api_base_movie_url">http://api.themoviedb.org/3/movie/%1$d</string>
+
+    <string name="tmdb_api_base_movie_url">http://api.themoviedb.org/3/discover/movie?</string>
+    <string name="tmdb_api_minute_movie_url">http://api.themoviedb.org/3/movie/%1$d</string>
     <string name="tmdb_api_movie_videos_url">http://api.themoviedb.org/3/movie/%1$d/videos</string>
     <string name="tmdb_api_movie_review_url">http://api.themoviedb.org/3/movie/%1$d/reviews</string>
+    <string name="tmdb_image_base_url">http://image.tmdb.org/t/p/%1$s/%2$s</string>
 
     <string name="youtube_url">http://www.youtube.com/watch?v=%1$s</string>
     <string name="youtube_img">http://img.youtube.com/vi/%1$s/0.jpg</string>

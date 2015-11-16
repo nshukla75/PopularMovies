@@ -140,7 +140,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private String title;
     private TrailerData YouTubeFirstTrailerURL=null;
     private static String sMovieIdKey;
-    private static String sBaseUrl;
+    private static String sParamApi;
+    private static String sMinuteUrl;
     private static String sVideoUrl;
     private static String sReviewKey;
     private static String sYoutubeUrl;
@@ -209,7 +210,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             if (!isInit.get()) {
                 appState = ((PopMovieApp) getActivity().getApplication()).STATE;
                 sMovieIdKey = getString(R.string.movie_id_key);
-                sBaseUrl = getString(R.string.tmdb_api_base_movie_url);
+                sParamApi = getString(R.string.tmdb_param_api);
+                sMinuteUrl = getString(R.string.tmdb_api_minute_movie_url);
                 sVideoUrl = getString(R.string.tmdb_api_movie_videos_url);
                 sReviewKey = getString(R.string.tmdb_api_movie_review_url);
                 sYoutubeUrl= getString(R.string.youtube_url);
@@ -504,8 +506,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @NonNull
     private void getMinutesDataAsync() {
         blockUntilMovieIdSet();
-        Uri builtUri = Uri.parse(String.format(sBaseUrl, mMovieId)).buildUpon()
-                .appendQueryParameter(AppConstants.API_KEY, BuildConfig.MOVIE_API_KEY)
+        Uri builtUri = Uri.parse(String.format(sMinuteUrl, mMovieId)).buildUpon()
+                .appendQueryParameter(sParamApi, BuildConfig.MOVIE_API_KEY)
                 .build();
         String url = "";
         try {
@@ -543,7 +545,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private void getVideoDataAsync() {
         blockUntilMovieIdSet();
         Uri builtUri = Uri.parse(String.format(sVideoUrl, mMovieId)).buildUpon()
-                .appendQueryParameter(AppConstants.API_KEY, BuildConfig.MOVIE_API_KEY)
+                .appendQueryParameter(sParamApi, BuildConfig.MOVIE_API_KEY)
                 .build();
         String url = "";
         try {
@@ -580,7 +582,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private void getReviewDataAsync() {
         blockUntilMovieIdSet();
         Uri builtUri = Uri.parse(String.format(sReviewKey, mMovieId)).buildUpon()
-                .appendQueryParameter(AppConstants.API_KEY, BuildConfig.MOVIE_API_KEY)
+                .appendQueryParameter(sParamApi, BuildConfig.MOVIE_API_KEY)
                 .build();
         String url = "";
         try {

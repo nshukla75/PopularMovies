@@ -122,7 +122,7 @@
                         android:id="@+id/trailer_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Trailers: "
+                        android:text="@string/label_trailer"
                         android:textSize="@dimen/abc_text_size_large_material" />
                     <LinearLayout
                         android:id="@+id/trailer_linear"
@@ -139,7 +139,7 @@
                         android:id="@+id/review_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Reviews: "
+                        android:text="@string/label_review"
                         android:textSize="@dimen/abc_text_size_large_material"/>
                     <LinearLayout
                         android:id="@+id/review_linear"
@@ -148,48 +148,6 @@
                         android:orientation="vertical"/>
                 </LinearLayout>
             </LinearLayout>
-            <!--<LinearLayout
-                android:id="@+id/movie_details_async_section"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="5"
-                android:baselineAligned="false"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:id="@+id/movie_details_trailer_section"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/movie_details_trailers_title"
-                        style="@style/movie_detail_segment_title"
-                        android:text="Trailers: " />
-
-                    <ListView
-                        android:id="@+id/list_trailers"
-                        style="@style/movie_detail_list" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/movie_details_review_section"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/movie_details_review_title"
-                        style="@style/movie_detail_segment_title"
-                        android:text="Reviews: " />
-
-                    <ListView
-                        android:id="@+id/list_reviews"
-                        style="@style/movie_detail_list" />
-                </LinearLayout>
-            </LinearLayout>-->
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
