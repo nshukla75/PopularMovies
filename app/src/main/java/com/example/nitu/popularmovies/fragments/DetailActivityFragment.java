@@ -21,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -146,7 +147,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private static String sReviewKey;
     private static String sYoutubeUrl;
 
-    public ToggleButton btnToggle;
+    public Button btnToggle;
     private View rootView;
     private View noTrailerView;
     private View noReviewView;
@@ -293,17 +294,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         rootView = (View) inflater.inflate(R.layout.fragment_detail, container, false);
 
         getActivity().setTitle(title);
-        btnToggle = (ToggleButton) rootView.findViewById(R.id.chkState);
-        btnToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        btnToggle = (Button) rootView.findViewById(R.id.chkState);
+        btnToggle.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    updateFavourite(1, mMovieId);
-                    Toast.makeText(getActivity(), title + "is added to your Favourite List", Toast.LENGTH_SHORT).show();
-                } else {
-                    updateFavourite(0, mMovieId);
-                    Toast.makeText(getActivity(), title + "is removed from your Favourite List", Toast.LENGTH_SHORT).show();
-                }
+            public void onClick(View v){
+                updateFavourite(v);
             }
         });
 
@@ -324,12 +319,33 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         return rootView;
     }
 
-    public void updateFavourite(int chkFavourite, Long movieKey){
-        Cursor movieCursor = getContext().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, null, null, null);
-        ContentValues updateValues = new ContentValues();
-        updateValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, chkFavourite);
-        updateValues.put(MovieContract.MovieEntry._ID, movieRowId);
-        int count = getContext().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateValues, MovieContract.MovieEntry._ID + "= ?", new String[]{Long.toString(movieRowId)});
+    public void updateFavourite(View v) {
+        if (movieDetailsModified.get()) {
+            Uri detailUri = MovieContract.MovieEntry.buildMovie(mMovieId);
+            Cursor movieCursor = getContext().getContentResolver().query(detailUri, null, null, null, null);
+            if (movieCursor.moveToFirst()) {
+                int chkFavourite;
+                if (movieCursor.getInt(MovieQuery.COL_MOVIE_FAVOURITE) == 0){
+                    chkFavourite = 1;}
+                else {
+                    chkFavourite = 0;}
+                ContentValues updateValues = new ContentValues();
+                updateValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, chkFavourite);
+                updateValues.put(MovieContract.MovieEntry._ID, movieRowId);
+                int count = getContext().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateValues, MovieContract.MovieEntry._ID + "= ?", new String[]{Long.toString(movieRowId)});
+                if (chkFavourite == 0){
+                    btnToggle.setText("Mark as Favorite");
+                    Toast.makeText(getActivity(), title+ " is removed from Favorites", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    btnToggle.setText("Favourite");
+                    Toast.makeText(getActivity(), title+ " is added to Favorites", Toast.LENGTH_SHORT).show();}
+            }
+            movieCursor.close();
+        }
+        else{
+            Toast.makeText(getActivity(), "Please Wait... still loading", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -420,11 +436,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     ((TextView) rootView.findViewById(R.id.release_text))
                             .setText(data.getString(MovieQuery.COL_MOVIE_RELEASE_DATE));
 
-                    btnToggle = (ToggleButton) rootView.findViewById(R.id.chkState);
+                    btnToggle = (Button) rootView.findViewById(R.id.chkState);
                     if (data.getInt(MovieQuery.COL_MOVIE_FAVOURITE) != 0)
-                        btnToggle.setChecked(true);
+                        btnToggle.setText("Favourite");
                     else
-                        btnToggle.setChecked(false);
+                        btnToggle.setText("Mark as Favourite");
 
                     ((TextView) rootView.findViewById(R.id.overview_text))
                             .setText(data.getString(MovieQuery.COL_MOVIE_OVERVIEW));

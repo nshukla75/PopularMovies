@@ -87,14 +87,13 @@
                     android:padding="1dp"
                     android:orientation="vertical"
                     android:layout_weight="1">
-                    <ToggleButton
+                    <Button
                         android:id="@+id/chkState"
+                        style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/toggle_selector"
-                        android:textOff="Mark as Favourite"
-                        android:textOn="Favourite"
-                        android:clickable="true"
+                        android:text="Mark as Favourite"
                         android:padding="2dp"/>
                 </LinearLayout>
             </LinearLayout>
