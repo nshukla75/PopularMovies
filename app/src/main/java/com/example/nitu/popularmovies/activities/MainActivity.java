@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
 import com.example.nitu.popularmovies.R;
+import com.example.nitu.popularmovies.animation.ShowAnimation;
 import com.example.nitu.popularmovies.application.PopMovieApp;
 import com.example.nitu.popularmovies.fragments.DetailActivityFragment;
 import com.example.nitu.popularmovies.fragments.MainActivityFragment;
@@ -56,22 +57,32 @@ public class MainActivity extends BaseActivity implements MainActivityFragment.C
     public void onItemSelected(MovieData item) {
         if (mTwoPane) {
             appState.setTwoPane(true);
-            appState.setDetailsPaneShown(true);
-            Bundle args = new Bundle();
-            DetailActivityFragment fragment = new DetailActivityFragment();
-            args.putLong(DetailActivityFragment.MOVIE_ID_KEY, item.id);
-            fragment.setArguments(args);
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            if (fragmentManager.findFragmentById(R.id.fragment)!= null) {
-                fragmentTransaction.replace(R.id.detail_fragment_container, fragment, DETAILFRAGMENT_TAG);
-                //fragmentTransaction.addToBackStack(DETAILFRAGMENT_TAG);
+            //appState.setDetailsPaneShown(true);
+            if (item.id == Long.MIN_VALUE){
+                if (appState.isDetailsPaneShown()){
+                    mMovieDetailsContainer.startAnimation(new ShowAnimation(mMovieDetailsContainer, 0f, 1000L));
+                    appState.setDetailsPaneShown(false);
+                }
+            }else {
+                if (!appState.isDetailsPaneShown()) {
+                    mMovieDetailsContainer.startAnimation(new ShowAnimation(mMovieDetailsContainer, 4f, 1000L));
+                    appState.setDetailsPaneShown(true);
+                }
+                Bundle args = new Bundle();
+                DetailActivityFragment fragment = new DetailActivityFragment();
+                args.putLong(DetailActivityFragment.MOVIE_ID_KEY, item.id);
+                fragment.setArguments(args);
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                if (fragmentManager.findFragmentById(R.id.fragment) != null) {
+                    fragmentTransaction.replace(R.id.detail_fragment_container, fragment, DETAILFRAGMENT_TAG);
+                    //fragmentTransaction.addToBackStack(DETAILFRAGMENT_TAG);
 
-            } else
-            {
-                fragmentTransaction.add(R.id.detail_fragment_container, fragment, DETAILFRAGMENT_TAG);
+                } else {
+                    fragmentTransaction.add(R.id.detail_fragment_container, fragment, DETAILFRAGMENT_TAG);
+                }
+                fragmentTransaction.commit();
             }
-            fragmentTransaction.commit();
         } else {
             appState.setTwoPane(false);
             appState.setDetailsPaneShown(false);

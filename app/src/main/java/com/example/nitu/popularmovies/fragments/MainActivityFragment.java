@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -75,12 +77,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     static final int COL_MOVIE_POSTER_PATH = 8;
     static final int COL_MOVIE_MINUTE = 9;
     GridView listView;
+
     public interface Callback {
         /**
          * DetailFragmentCallback for when an item has been selected.
          */
         public void onItemSelected(MovieData movieData);
     }
+
     public MainActivityFragment() {}
 
     @Override
@@ -91,6 +95,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         super.onSaveInstanceState(outState);
 
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         msortBy= Utility.getPreferences(getActivity());
@@ -112,6 +117,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         }
         setHasOptionsMenu(true);
     }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         updateMovie();
@@ -136,30 +142,22 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         super.onResume();
     }
 
-   /* @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            // Restore last state for checked position.
-            mCurCheckPosition = savedInstanceState.getInt("curChoice", 0);
-        }
-    }*/
-   @Override
-   public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                             Bundle savedInstanceState) {
 
-       View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-       listView = (GridView) rootView.findViewById(R.id.gridview_movie);
-       if (mMovieAdapter.getCount()>0)
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        listView = (GridView) rootView.findViewById(R.id.gridview_movie);
+        if (mMovieAdapter.getCount()>0)
            listView.setAdapter(mMovieAdapter);
        //else Toast.makeText(getActivity(), "No Movies for " + Utility.getPreferences(getActivity()), Toast.LENGTH_LONG).show();
-       createGridItemClickCallbacks();
+        createGridItemClickCallbacks();
        //mThis = this;
-       if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
            mCurCheckPosition = savedInstanceState.getInt(SELECTED_KEY);
-       }
+        }
 
-       return rootView;
+        return rootView;
    }
 
     private void createGridItemClickCallbacks() {
@@ -274,6 +272,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (mMovieAdapter.getCursor() != cursor)
             mMovieAdapter.swapCursor(cursor);
         if (!cursor.moveToFirst()) {
+            if (appState.getTwoPane()) {
+                ResetSecondPane();
+            }
             if (sortBy.equals("favourite"))
                 Toast.makeText(getActivity(), "No Movie in your Favourite selection", Toast.LENGTH_LONG).show();
             else
@@ -300,6 +301,16 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         mMovieAdapter.swapCursor(null);
+    }
+
+    public void ResetSecondPane() {
+        MovieData movieObj = new MovieData();
+        movieObj.id = Long.MIN_VALUE;
+
+        Bundle bundle = new Bundle();
+        bundle.putLong("movie_id_key", Long.MIN_VALUE);
+
+        ((Callback) getActivity()).onItemSelected(movieObj);
     }
 
 
