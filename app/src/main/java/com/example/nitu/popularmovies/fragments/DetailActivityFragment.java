@@ -277,8 +277,10 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 return true;
             case R.id.action_share:
                 Intent shareIntent = createShareYoutubeIntent();
-                if (shareIntent!=null)
+                if (shareIntent != null)
                     startActivity(createShareYoutubeIntent());
+                else
+                    Toast.makeText(getActivity(), "No Trailer to share", Toast.LENGTH_SHORT).show();
                 return true;
         }
         return super.onOptionsItemSelected(item);
