@@ -353,16 +353,6 @@ public class MovieProvider extends ContentProvider {
                 retCursor = getReviewByMovieSetting(uri, projection, sortOrder);
                 break;
             }
-           /* // "movie/comingsoon"
-            case MOVIE_BY_COMINGSOON: {
-                retCursor =  getComingSoonMovie(uri, projection, sortOrder);
-                break;
-            }
-            // "movie/playingnow"
-            case MOVIE_BY_PLAYINGNOW: {
-                retCursor =  getPlayingNowMovie(uri, projection, sortOrder);
-                break;
-            }*/
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }

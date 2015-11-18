@@ -297,7 +297,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         btnToggle = (Button) rootView.findViewById(R.id.chkState);
         btnToggle.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 updateFavourite(v);
             }
         });
@@ -674,6 +674,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     private void showTrailerUIAsync(List<TrailerData> mTrailerList){
         LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.trailer_linear);
+        ll.removeAllViews();
         if (!mTrailerList.isEmpty()) {
             mTrailerListViewAdapter.setData();
             YouTubeFirstTrailerURL = mTrailerList.get(0);
@@ -692,6 +693,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     private void showReviewUIAsync(List<ReviewData> mReviewList){
         LinearLayout ll = (LinearLayout) rootView.findViewById(R.id.review_linear);
+        ll.removeAllViews();
         if (!mReviewList.isEmpty()) {
             mReviewListViewAdapter.setData();
             final int adapterCount = mReviewListViewAdapter.getCount();
