@@ -8,86 +8,219 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.support.annotation.NonNull;
 import android.test.AndroidTestCase;
 
+import com.example.nitu.popularmovies.R;
+import com.example.nitu.popularmovies.Utilities.Utility;
+import com.example.nitu.popularmovies.model.MovieData;
 import com.example.nitu.popularmovies.utils.PollingCheck;
+import com.google.gson.internal.LinkedTreeMap;
 
+import org.apache.commons.lang3.SerializationUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by nitus on 10/15/2015.
  */
 public class TestUtilities extends AndroidTestCase {
-    static final String TEST_MOVIE = "135397";
-    static final long TEST_DATE = 1419033600L;  // December 20th, 2014
+    static void validateRecordsToDatabase(String error, Cursor valueCursor, Map<Long, ContentValues> expectedValues) {
+        while (valueCursor.moveToNext()) {
+            long _id = valueCursor.getLong(0);
+            Long movie_id = valueCursor.getLong(1);
+            byte[] bMovieObj = valueCursor.getBlob(2);
+            MovieData movieData = (MovieData) SerializationUtils.deserialize(bMovieObj);
 
-    static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
-        assertTrue("Empty cursor returned. " + error, valueCursor.moveToFirst());
-        validateCurrentRecord(error, valueCursor, expectedValues);
-        valueCursor.close();
-    }
+            ContentValues cv = expectedValues.get(_id);
+            Long expectedId = (Long) cv.get(MovieContract.MovieEntry.COLUMN_MOVIE_ID);
+            byte[] expectedBMovieObject = (byte[]) cv.get(MovieContract.MovieEntry.COLUMN_MOVIE_BLOB);
+            MovieData expectedMovieData = (MovieData) SerializationUtils.deserialize(expectedBMovieObject);
 
-    static void validateCurrentRecord(String error, Cursor valueCursor, ContentValues expectedValues) {
-        Set<Map.Entry<String, Object>> valueSet = expectedValues.valueSet();
-        for (Map.Entry<String, Object> entry : valueSet) {
-            String columnName = entry.getKey();
-            int idx = valueCursor.getColumnIndex(columnName);
-            assertFalse("Column '" + columnName + "' not found. " + error, idx == -1);
-            String expectedValue = entry.getValue()== null ? null:entry.getValue().toString();
-            assertEquals("Value '" + expectedValue +
-                    "' did not match the expected value '" +
-                    expectedValue + "'. " + error, expectedValue, valueCursor.getString(idx));
+            assertEquals("movied id's don't match", expectedId, movie_id);
+            // assumes I didn't screw up the equals()/hashCode() functions!
+            assertEquals("movie objects don't match", expectedMovieData, movieData);
+            // paranoid sanity check:
+            assertTrue("binary movie objects don't match", Arrays.equals(expectedBMovieObject, bMovieObj));
         }
     }
-
-    static ContentValues createReviewValues(String movieKey) {
-        ContentValues reviewValues = new ContentValues();
-        reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOV_KEY, movieKey);
-        reviewValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_KEY, "55910381c3a36807f900065d");
-        reviewValues.put(MovieContract.ReviewEntry.COLUMN_AUTHOR, "jonlikesmoviesthatdontsuck");
-        reviewValues.put(MovieContract.ReviewEntry.COLUMN_CONTENT, "Overall action packed movie... But there should be more puzzles in the climax... But I really love the movie....Excellent...");
-        return reviewValues;
+    static void validateMovieCursor(Cursor valueCursor, Map<Long, ContentValues> expectedValues) {
+        assertTrue("Empty cursor returned. ", valueCursor.moveToFirst());
+        validateMovieCurrentRecord(valueCursor, expectedValues);
+        valueCursor.close();
     }
+    static void validateMovieCurrentRecord(Cursor valueCursor, Map<Long, ContentValues> expectedValue) {
+        while (valueCursor.moveToNext()) {
+            long _id = valueCursor.getLong(0);
+            Long movie_id = valueCursor.getLong(1);
+            byte[] blob = valueCursor.getBlob(2);
 
-    static ContentValues createTrailerValues(String movieKey) {
-        ContentValues trailerValues = new ContentValues();
-        trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOV_KEY, movieKey);
-        trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_KEY, "5576eac192514111e4001b03");
-        trailerValues.put(MovieContract.TrailerEntry.COLUMN_KEY, "lP-sUUUfamw");
-        trailerValues.put(MovieContract.TrailerEntry.COLUMN_SIZE, 720);
-        return trailerValues;
+            ContentValues expect = expectedValue.get(movie_id);
+
+            assertEquals("movied ids don't match", expect.getAsLong(MovieContract.MovieEntry.COLUMN_MOVIE_ID), movie_id);
+            assertTrue("Binaries don't match", Arrays.equals(expect.getAsByteArray(MovieContract.MovieEntry.COLUMN_MOVIE_BLOB), blob));
+        }
     }
-
-    static ContentValues createMovieValues(byte[] image) {
+    static Map<Long, ContentValues> createSortedMovieValues(Context c, String sort) {
         // Create a new map of values, where column names are the keys
-        ContentValues testValues = new ContentValues();
-        testValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_KEY, "135397");
-        testValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY, 46.6);
-        testValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, 7.1);
-        testValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, 0);
-        testValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,"Jurassic World");
-        testValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW,"Twenty-two years after the events of Jurassic Park, Isla Nublar now features a fully functioning dinosaur theme park, Jurassic World, as originally envisioned by John Hammond.");
-        testValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE,TEST_DATE);
-        testValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH,"http://image.tmdb.org/t/p/w185/jjBgi2r5cRt36xF6iNUEhzscEcb.jpg");
-        //testValues.put(MovieContract.MovieEntry.COLUMN_POSTER, image);
+        Map<Long, ContentValues> testValues = new HashMap<>();
+        LinkedTreeMap<String, Serializable> map = getDataAsMap(c, sort);
+        List<MovieData> lMovies = Utility.covertMapToMovieDataList(map);
+        long dbRowId = 0;
+        for (MovieData m : lMovies) {
+            ContentValues cv = createMovieContentValue(dbRowId++, m);
+            testValues.put(cv.getAsLong(MovieContract.MovieEntry.COLUMN_MOVIE_ID), cv);
+        }
 
         return testValues;
     }
+    public static LinkedTreeMap<String, Serializable> getDataAsMap(Context c, String sort) {
+        InputStream in = null;
 
-    static long insertMovieValues(Context context) {
+        switch (sort) {
+            case "popular":
+                in = c.getResources().openRawResource(R.raw.popular);
+                break;
+            case "rating":
+                in = c.getResources().openRawResource(R.raw.rating);
+                break;
+            case "minute":
+                in = c.getResources().openRawResource(R.raw.minute);
+                break;
+            case "trailer":
+                in = c.getResources().openRawResource(R.raw.videos);
+                break;
+            case "review":
+                in = c.getResources().openRawResource(R.raw.review);
+                break;
+            default:
+                throw new RuntimeException("Invalid sort: " + sort);
+        }
+        String json = Utility.readStreamToString(in);
+        try {
+            in.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return Utility.getGson().fromJson(json, LinkedTreeMap.class);
+    }
+    @NonNull
+    public static ContentValues createMovieContentValue(long dbRowId, MovieData m) {
+        ContentValues cv = new ContentValues();
+        cv.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, m.id.longValue());
+        cv.put(MovieContract.MovieEntry.COLUMN_MOVIE_BLOB, SerializationUtils.serialize(m));
+        return cv;
+    }
+    public static Map<Long, Long> insertMovieRow(Context context, Map<Long, ContentValues> cvs) {
         // insert our test records into the database
         MovieDbHelper dbHelper = new MovieDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues testValues = TestUtilities.createMovieValues(null);
+        Map<Long, Long> rowIds = new HashMap<>();
+        try {
+            for (Map.Entry<Long, ContentValues> cv : cvs.entrySet()) {
+                long locationRowId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, cv.getValue());
 
-        long movieRowId;
-        movieRowId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, testValues);
+                // Verify we got a row back.
+                assertTrue("Error: Failure to insert value", locationRowId != -1L);
+                rowIds.put(locationRowId, cv.getKey());
+            }
+        } finally {
+            db.close();
+        }
+        return rowIds;
+    }
+    public static void verifyPopularValuesInDatabase(Map<Long, ContentValues> listContentValues, Context mContext) {
+        Cursor c = mContext.getContentResolver().query(MovieContract.PopularEntry.CONTENT_URI, null, null, null, null);
+        assertTrue("Nothing returned from Popular Table", c.moveToFirst());
+        assertEquals("Size of list content values = number of rows returned", listContentValues.size(), c.getCount());
+        int count = 1;
+        while (c.moveToNext()) {
+            long _id = c.getLong(0);
+            byte[] bMovieObj = c.getBlob(1);
+            MovieData movieData = (MovieData) SerializationUtils.deserialize(bMovieObj);
+            bMovieObj = null; // force GC.
+            long movie_id = movieData.id;
 
-        // Verify we got a row back.
-        assertTrue("Error: Failure to insert Movie Values", movieRowId != -1);
+            assertNotNull("list of content values contains movie_id = " + movie_id, listContentValues.get(movie_id));
+            assertTrue("count went too high", count < listContentValues.size());
+            count++;
+        }
+        assertEquals("count exact", count, listContentValues.size());
+        c.close();
+    }
+    public static void verifyRatingValuesInDatabase(Map<Long, ContentValues> listContentValues, Context mContext) {
+        Cursor c = mContext.getContentResolver().query(MovieContract.RatingEntry.CONTENT_URI, null, null, null, null);
+        assertTrue("Nothing returned from Rating Table", c.moveToFirst());
+        assertEquals("Size of list content values = number of rows returned", listContentValues.size(), c.getCount());
+        int count = 1;
+        while (c.moveToNext()) {
+            long _id = c.getLong(0);
+            byte[] bMovieObj = c.getBlob(1);
+            MovieData movieData = (MovieData) SerializationUtils.deserialize(bMovieObj);
+            bMovieObj = null; // force GC.
+            long movie_id = movieData.id;
 
-        return movieRowId;
+            assertNotNull("list of content values contains movie_id = " + movie_id, listContentValues.get(movie_id));
+            assertTrue("count went too high", count < listContentValues.size());
+            count++;
+        }
+        assertEquals("count exact", count, listContentValues.size());
+        c.close();
+    }
+    public static Map<Long, ContentValues> insertMovies(TestDb testDb, Context mContext) {
+        // First step: Get reference to writable database
+        // If there's an error in those massive SQL table creation Strings,
+        // errors will be thrown here when you try to get a writable database.
+        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        // Second Step: Create ContentValues of what you want to insert
+        // (you can use the createSortedMovieValues if you wish)
+
+        Map<Long, ContentValues> testValues = createSortedMovieValues(mContext, "popular");
+        List<ContentValues> lTestValues = Arrays.asList(testValues.values().toArray(new ContentValues[0]));
+        Map<Long, ContentValues> insertOrderedTestValues = new HashMap<>();
+        // Third Step: Insert ContentValues into database and get a row ID back
+
+        testDb.insertMovieValues(db, lTestValues, insertOrderedTestValues, "popular");
+
+        // Fourth Step: Query the database and receive a Cursor back
+        // A cursor is your primary interface to the query results.
+        Cursor cursor = db.query(
+                MovieContract.MovieEntry.TABLE_NAME,  // Table to Query
+                null, // all columns
+                null, // Columns for the "where" clause
+                null, // Values for the "where" clause
+                null, // columns to group by
+                null, // columns to filter by row groups
+                null // sort order
+        );
+
+        // Move the cursor to a valid database row and check to see if we got any records back
+        // from the query
+        assertTrue("Error: No Records returned from movie query", cursor.moveToFirst());
+
+        // Fifth Step: Validate data in resulting Cursor with the original ContentValues
+        // (you can use the validateRecordsToDatabase function in TestUtilities to validate the
+        // query if you like)
+        validateRecordsToDatabase("Error: Location Query Validation Failed",
+                cursor, insertOrderedTestValues);
+
+        // Move the cursor to demonstrate that there is only one record in the database
+//        assertFalse("Error: More than one record returned from location query",
+//                cursor.moveToNext());
+
+        // Sixth Step: Close Cursor and Database
+        cursor.close();
+        db.close();
+        return insertOrderedTestValues;
     }
 
     static class TestContentObserver extends ContentObserver {
@@ -130,7 +263,6 @@ public class TestUtilities extends AndroidTestCase {
             mHT.quit();
         }
     }
-
     static TestContentObserver getTestContentObserver() {
         return TestContentObserver.getTestContentObserver();
     }

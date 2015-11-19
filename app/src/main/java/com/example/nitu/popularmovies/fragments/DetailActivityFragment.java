@@ -22,14 +22,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -39,7 +37,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.nitu.popularmovies.BuildConfig;
 import com.example.nitu.popularmovies.R;
-import com.example.nitu.popularmovies.Utilities.AppConstants;
 import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.adaptors.MovieAdapter;
 import com.example.nitu.popularmovies.adaptors.ReviewListViewAdapter;
@@ -47,13 +44,16 @@ import com.example.nitu.popularmovies.adaptors.TrailerListViewAdapter;
 import com.example.nitu.popularmovies.application.PopMovieApp;
 import com.example.nitu.popularmovies.data.MovieContract;
 import com.example.nitu.popularmovies.data.MovieProvider;
+import com.example.nitu.popularmovies.model.MovieData;
 import com.example.nitu.popularmovies.model.ReviewData;
 import com.example.nitu.popularmovies.model.TrailerData;
 import com.google.gson.internal.LinkedTreeMap;
 import com.squareup.picasso.Picasso;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -77,35 +77,29 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         static final int DETAIL_LOADER = 0;
         static final String[] MOVIE_COLUMNS = {
                 MovieContract.MovieEntry._ID,
-                MovieContract.MovieEntry.COLUMN_MOVIE_KEY,
+                /*MovieContract.MovieEntry.COLUMN_MOVIE_KEY,
                 MovieContract.MovieEntry.COLUMN_POPULARITY,
-                MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+                MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,*/
                 MovieContract.MovieEntry.COLUMN_FAVOURITE,
-                MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
+               /* MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
                 MovieContract.MovieEntry.COLUMN_OVERVIEW,
                 MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
-                MovieContract.MovieEntry.COLUMN_POSTER_PATH,
-                MovieContract.MovieEntry.COLUMN_MINUTE
+                MovieContract.MovieEntry.COLUMN_POSTER_PATH,*/
+                MovieContract.MovieEntry.COLUMN_MOVIE_MINUTES
         };
         static final int COL_MOVIEID = 0;
         static final int COL_MOVIE_KEY = 1;
-        static final int COL_MOVIE_POPULARITY = 2;
-        static final int COL_MOVIE_VOTE_AVERAGE = 3;
-        static final int COL_MOVIE_FAVOURITE = 4;
-        static final int COL_MOVIE_ORIGINAL_TITLE = 5;
-        static final int COL_MOVIE_OVERVIEW = 6;
-        static final int COL_MOVIE_RELEASE_DATE = 7;
-        static final int COL_MOVIE_POSTERPATH = 8;
-        static final int COL_MOVIE_RUNTIME = 9;
+        static final int COL_MOVIE_FAVOURITE = 2;
+        static final int COL_MOVIE_RUNTIME = 3;
     }
     public interface TrailerQuery {
         static final int TRAILER_LOADER = 1;
         static final String[] TRAILER_COLUMNS = {
-                MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry._ID,
+              /*  MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry._ID,
                 MovieContract.TrailerEntry.COLUMN_MOV_KEY,
                 MovieContract.TrailerEntry.COLUMN_TRAILER_KEY,
                 MovieContract.TrailerEntry.COLUMN_KEY,
-                MovieContract.TrailerEntry.COLUMN_SIZE
+                MovieContract.TrailerEntry.COLUMN_SIZE*/
         };
         static final int COL_TRAILERID = 0;
         static final int COL_MOVIE_ID = 1;
@@ -116,11 +110,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public interface ReviewQuery {
         static final int REVIEW_LOADER = 2;
         static final String[] REVIEW_COLUMNS = {
-                MovieContract.ReviewEntry.TABLE_NAME + "." + MovieContract.ReviewEntry._ID,
+              /*  MovieContract.ReviewEntry.TABLE_NAME + "." + MovieContract.ReviewEntry._ID,
                 MovieContract.ReviewEntry.COLUMN_MOV_KEY,
                 MovieContract.ReviewEntry.COLUMN_REVIEW_KEY,
                 MovieContract.ReviewEntry.COLUMN_AUTHOR,
-                MovieContract.ReviewEntry.COLUMN_CONTENT
+                MovieContract.ReviewEntry.COLUMN_CONTENT*/
         };
         static final int COL_REVIEWID = 0;
         static final int COL_MOVIE_ID = 1;
@@ -139,13 +133,16 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public Long mMovieId = Long.MIN_VALUE;
     public Long movieRowId;
     private String title;
-    private TrailerData YouTubeFirstTrailerURL=null;
+    private TrailerData YouTubeFirstTrailerURL = null;
+    private MovieData mMovieData = null;
     private static String sMovieIdKey;
     private static String sParamApi;
     private static String sMinuteUrl;
     private static String sVideoUrl;
     private static String sReviewKey;
     private static String sYoutubeUrl;
+    private static String sImgSize;
+    private static String sImgUrl;
 
     public Button btnToggle;
     private View rootView;
@@ -216,6 +213,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 sVideoUrl = getString(R.string.tmdb_api_movie_videos_url);
                 sReviewKey = getString(R.string.tmdb_api_movie_review_url);
                 sYoutubeUrl= getString(R.string.youtube_url);
+                sImgUrl = getString(R.string.tmdb_image_base_url);
+                sImgSize = "w185";
                 isInit.set(true);
             }
         }
@@ -321,7 +320,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     public void updateFavourite(View v) {
         if (movieDetailsModified.get()) {
-            Uri detailUri = MovieContract.MovieEntry.buildMovie(mMovieId);
+            Uri detailUri = MovieContract.MovieEntry.buildUri(mMovieId);
             Cursor movieCursor = getContext().getContentResolver().query(detailUri, null, null, null, null);
             if (movieCursor.moveToFirst()) {
                 int chkFavourite;
@@ -329,10 +328,12 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     chkFavourite = 1;}
                 else {
                     chkFavourite = 0;}
-                ContentValues updateValues = new ContentValues();
-                updateValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, chkFavourite);
-                updateValues.put(MovieContract.MovieEntry._ID, movieRowId);
-                int count = getContext().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateValues, MovieContract.MovieEntry._ID + "= ?", new String[]{Long.toString(movieRowId)});
+                String selection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?";
+                String[] selectionArgs = new String[]{mMovieId.toString()};
+                ContentValues cv = new ContentValues();
+                cv.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, chkFavourite);
+                getActivity().getContentResolver().update(MovieContract.MovieEntry.buildUri(mMovieId), cv, selection, selectionArgs);
+
                 if (chkFavourite == 0){
                     btnToggle.setText("Mark as Favorite");
                     Toast.makeText(getActivity(), title+ " is removed from Favorites", Toast.LENGTH_SHORT).show();
@@ -354,37 +355,15 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         long mid = args.getLong(sMovieIdKey);
         if (mid > 0L)
             switch (id) {
-                case 0:
-                    Uri detailUri = MovieContract.MovieEntry.buildMovie(mid);
-                    return new CursorLoader(
-                            getActivity(),
-                            detailUri,
-                            MovieQuery.MOVIE_COLUMNS,
-                            null,
-                            null,
-                            null
-                    );
-
+            case 0:
+                return new CursorLoader(getActivity(), MovieContract.MovieEntry.buildUri(mid),
+                        null, null, null, null);
             case 1:
-                Uri trailerUri = MovieContract.MovieEntry.buildTrailerMovie(mid);
-                return new CursorLoader(
-                        getActivity(),
-                        trailerUri,
-                        TrailerQuery.TRAILER_COLUMNS,
-                        null,
-                        null,
-                        null
-                );
-
+                return new CursorLoader(getActivity(), MovieContract.MovieEntry.buildUriTrailers(mid),
+                    null, null, null, null);
             case 2:
-                Uri reviewUri = MovieContract.MovieEntry.buildReviewMovie(mid);
-                return new CursorLoader(getActivity(),
-                        reviewUri,
-                        ReviewQuery.REVIEW_COLUMNS,
-                        null,
-                        null,
-                        null
-                );
+                return new CursorLoader(getActivity(), MovieContract.MovieEntry.buildUriReviews(mid),
+                        null, null, null, null);
             default: return null;
         }
         else return null;
@@ -396,7 +375,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         if (!data.moveToFirst()) data = null;
         int match = sUriMatcher.match(uri);
         switch (match){
-            case MovieProvider.MOVIE_WITH_KEY:
+            case MovieProvider.MOVIE_WITH_ID:
                 mMovieAdapter.swapCursor(data);
                 Log.v(LOG_TAG, "In onLoadFinished Movie");
                 if (!movieDetailsModified.get()) {
@@ -405,20 +384,20 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                         getActivity().onBackPressed();
                         return;
                     }
-
+                    mMovieData = SerializationUtils.deserialize(data.getBlob(1));
                     movieRowId=data.getLong(MovieQuery.COL_MOVIEID);
-                    mMovieId = data.getLong(MovieQuery.COL_MOVIE_KEY);
-                    title = data.getString(MovieQuery.COL_MOVIE_ORIGINAL_TITLE);
+                    mMovieId = mMovieData.id;
+                    title = mMovieData.original_title;
                     ((TextView) rootView.findViewById(R.id.title_text)).setText(title);
 
                     ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
                     Picasso.with(getContext())
-                            .load(data.getString(data.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)))
+                            .load(String.format(sImgUrl, sImgSize, mMovieData.poster_path))
                             .error(R.drawable.abc_btn_rating_star_off_mtrl_alpha)
                                     //.fit()
                             .into(imageView);
 
-                    if (data.getInt(MovieQuery.COL_MOVIE_RUNTIME)<=0)
+                    if (data.getInt(3)<=0)
                         movieMinutesModified.set(false);
                     else {
                         movieMinutesModified.set(true);
@@ -426,7 +405,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                                 .setText(Integer.toString(data.getInt(MovieQuery.COL_MOVIE_RUNTIME)) + "min");
                     }
 
-                    String mMovieVoteAverage = data.getString(MovieQuery.COL_MOVIE_VOTE_AVERAGE);
+                    String mMovieVoteAverage =  Double.toString(mMovieData.vote_average);
 
                     ((TextView) rootView.findViewById(R.id.voteaverage_text))
                             .setText(mMovieVoteAverage + "/10");
@@ -434,16 +413,17 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     ((RatingBar) rootView.findViewById(R.id.ratingBar)).setRating(f);
 
                     ((TextView) rootView.findViewById(R.id.release_text))
-                            .setText(data.getString(MovieQuery.COL_MOVIE_RELEASE_DATE));
+                            .setText(mMovieData.release_date);
 
                     btnToggle = (Button) rootView.findViewById(R.id.chkState);
-                    if (data.getInt(MovieQuery.COL_MOVIE_FAVOURITE) != 0)
-                        btnToggle.setText("Favourite");
-                    else
+                    if (data.getInt(data.getInt(MovieQuery.COL_MOVIE_FAVOURITE)) != 0)
                         btnToggle.setText("Mark as Favourite");
+                    else
+                        btnToggle.setText("Favourite");
+
 
                     ((TextView) rootView.findViewById(R.id.overview_text))
-                            .setText(data.getString(MovieQuery.COL_MOVIE_OVERVIEW));
+                            .setText(mMovieData.overview);
 
                     movieDetailsModified.set(true);
                     if(!movieMinutesModified.get())
@@ -453,13 +433,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     Log.v(LOG_TAG, "Out of Load Finish Movie");
                 }
                 break;
-            case MovieProvider.TRAILER_WITH_MOVIE_KEY:
+            case MovieProvider.MOVIE_TRAILERS:
                 Log.v(LOG_TAG,"In Trailer load finish loader");
                 if (!trailerDataModified.get())
                     updateTrailerDataOrAskServer(data);
                 Log.v(LOG_TAG,"out Trailer load finish loader");
                 break;
-            case MovieProvider.REVIEW_WITH_MOVIE_KEY:
+            case MovieProvider.MOVIE_REVIEWS:
                 Log.v(LOG_TAG,"In Review load finish loader");
                 if (!reviewDataModified.get())
                     updateReviewDataOrAskServer(data);
@@ -480,45 +460,17 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     }
 
     private void updateTrailerDataOrAskServer(Cursor data) {
-        if (data == null || data.getCount() == 0) getVideoDataAsync();
+        byte[] bTrailer = data == null ? null : data.getBlob(1);
+        if (bTrailer == null || bTrailer.length == 0) getVideoDataAsync();
         else
-        {
-            data.moveToFirst();
-            Set<TrailerData> th = new LinkedHashSet<>();
-            while(!data.isAfterLast()) {
-                String trailer_title =data.getString(data.getColumnIndex(MovieContract.TrailerEntry.COLUMN_SIZE));
-                String youtube_key = data.getString(data.getColumnIndex(MovieContract.TrailerEntry.COLUMN_KEY));
-                Long movie_key = mMovieId;
-                String trailer_key = data.getString(data.getColumnIndex(MovieContract.TrailerEntry.COLUMN_TRAILER_KEY));;
-                th.add(new TrailerData(youtube_key, trailer_title, movie_key,trailer_key));
-                data.moveToNext();
-            }
-            mTrailerList.clear();
-            mTrailerList.addAll(th);
-            showTrailerUIAsync(mTrailerList);
-            trailerDataModified.set(true);
-        }
+            handleTrailerResults((List<Map<String, String>>) SerializationUtils.deserialize(bTrailer));
     }
 
     private void updateReviewDataOrAskServer(Cursor data) {
-        if (data == null || data.getCount() == 0) getReviewDataAsync();
+        byte[] bReview = data == null ? null : data.getBlob(1);
+        if (bReview == null || bReview.length == 0) getReviewDataAsync();
         else
-        {
-            data.moveToFirst();
-            Set<ReviewData> rev = new LinkedHashSet<>();
-            while(!data.isAfterLast()) {
-                String content =data.getString(data.getColumnIndex(MovieContract.ReviewEntry.COLUMN_CONTENT));
-                String author = data.getString(data.getColumnIndex(MovieContract.ReviewEntry.COLUMN_AUTHOR));
-                Long movie_key = mMovieId;
-                String url = "";
-                rev.add(new ReviewData(content, author, movie_key, url));
-                data.moveToNext();
-            }
-            mReviewList.clear();
-            mReviewList.addAll(rev);
-            showReviewUIAsync(mReviewList);
-            reviewDataModified.set(true);
-        }
+            handleReviewResults((List<Map<String, String>>) SerializationUtils.deserialize(bReview));
     }
 
     @NonNull
@@ -645,14 +597,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         for (Map<String, String> r : results) {
             String trailer_title = r.get("name");
             String youtube_key = r.get("key");
-            Long movie_key = mMovieId;
-            String trailer_key = r.get("id");
-            th.add(new TrailerData(youtube_key, trailer_title, movie_key,trailer_key));
+            String movie_title = mMovieData != null ? mMovieData.original_title : null;
+            th.add(new TrailerData(youtube_key, trailer_title,movie_title));
         }
         mTrailerList.clear();
         mTrailerList.addAll(th);
         if (!trailerDataModified.get()) showTrailerUIAsync(mTrailerList);
-        updateTrailerDataInternal(mTrailerList);
+        updateTrailerDataInternal((Serializable) results);
         trailerDataModified.set(true);
     }
 
@@ -661,14 +612,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         for (Map<String, String> r : results) {
             String content = r.get("content");
             String author = r.get("author");
-            Long movie_key = mMovieId;
             String url = r.get("url");
-            rev.add(new ReviewData(content, author, movie_key, url));
+            rev.add(new ReviewData(content, author, url));
         }
         mReviewList.clear();
         mReviewList.addAll(rev);
         if (!reviewDataModified.get()) showReviewUIAsync(mReviewList);
-        updateReviewDataInternal(mReviewList);
+        updateReviewDataInternal((Serializable) results);
         reviewDataModified.set(true);
     }
 
@@ -709,51 +659,27 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     }
 
     private void updateMinutesDataInternal(String minutes) {
-        ContentValues updateValues = new ContentValues();
-        updateValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_KEY, mMovieId);
-        updateValues.put(MovieContract.MovieEntry.COLUMN_MINUTE, Double.valueOf(minutes).intValue());
-
-        // add to database
-        getActivity().getContentResolver().update(MovieContract.MovieEntry.CONTENT_URI, updateValues, MovieContract.MovieEntry.COLUMN_MOVIE_KEY + "= ?", new String[]{mMovieId.toString()});
+        String selection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?";
+        String[] selectionArgs = new String[]{mMovieId.toString()};
+        ContentValues cv = new ContentValues();
+        cv.put(MovieContract.MovieEntry.COLUMN_MOVIE_MINUTES, Double.valueOf(minutes).intValue());
+        getActivity().getContentResolver().update(MovieContract.MovieEntry.buildUri(mMovieId), cv, selection, selectionArgs);
 }
 
-    private void updateTrailerDataInternal(List<TrailerData> mTrailerList) {
-        Vector<ContentValues> cVVector = new Vector<ContentValues>(mTrailerList.size());
-        for (int i = 0; i < mTrailerList.size(); i++) {
-            ContentValues trailerValues = new ContentValues();
-            trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOV_KEY, mTrailerList.get(i).movie_key);
-            trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_KEY, mTrailerList.get(i).trailer_key);
-            trailerValues.put(MovieContract.TrailerEntry.COLUMN_KEY, mTrailerList.get(i).youtube_key);
-            trailerValues.put(MovieContract.TrailerEntry.COLUMN_SIZE, mTrailerList.get(i).trailer_title);
-            cVVector.add(trailerValues);
-        }
-
-        int inserted = 0;
-        // add to database
-        if(cVVector.size()>0) {
-            ContentValues[] cvArray = new ContentValues[cVVector.size()];
-            cVVector.toArray(cvArray);
-            inserted = getActivity().getContentResolver().bulkInsert(MovieContract.TrailerEntry.CONTENT_URI,cvArray);
-        }
+    private void updateTrailerDataInternal(Serializable results) {
+        String selection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?";
+        String[] selectionArgs = new String[]{mMovieId.toString()};
+        ContentValues cv = new ContentValues();
+        cv.put(MovieContract.MovieEntry.COLUMN_MOVIE_TRAILERS, SerializationUtils.serialize(results));
+        getActivity().getContentResolver().update(MovieContract.MovieEntry.buildUriTrailers(mMovieId), cv, selection, selectionArgs);
     }
 
-    private void updateReviewDataInternal(List<ReviewData> mReviewList) {
-        Vector<ContentValues> cVVector = new Vector<ContentValues>(mReviewList.size());
-        for (int i = 0; i < mReviewList.size(); i++) {
-            ContentValues reviewValues = new ContentValues();
-            reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOV_KEY, mReviewList.get(i).movie_key);
-            reviewValues.put(MovieContract.ReviewEntry.COLUMN_CONTENT, mReviewList.get(i).content);
-            reviewValues.put(MovieContract.ReviewEntry.COLUMN_AUTHOR, mReviewList.get(i).author);
-            cVVector.add(reviewValues);
-        }
-
-        int inserted = 0;
-        // add to database
-        if(cVVector.size()>0) {
-            ContentValues[] cvArray = new ContentValues[cVVector.size()];
-            cVVector.toArray(cvArray);
-            inserted = getActivity().getContentResolver().bulkInsert(MovieContract.ReviewEntry.CONTENT_URI,cvArray);
-        }
+    private void updateReviewDataInternal(Serializable results) {
+        String selection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?";
+        String[] selectionArgs = new String[]{mMovieId.toString()};
+        ContentValues cv = new ContentValues();
+        cv.put(MovieContract.MovieEntry.COLUMN_MOVIE_REVIEWS, SerializationUtils.serialize(results));
+        getActivity().getContentResolver().update(MovieContract.MovieEntry.buildUriReviews(mMovieId), cv, selection, selectionArgs);
     }
 
     private void blockUntilMovieIdSet() {

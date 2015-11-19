@@ -13,7 +13,10 @@ import android.widget.ImageView;
 import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.data.MovieContract;
+import com.example.nitu.popularmovies.model.MovieData;
 import com.squareup.picasso.Picasso;
+
+import org.apache.commons.lang3.SerializationUtils;
 
 /**
  * Created by nitus on 10/9/2015.
@@ -40,19 +43,12 @@ public class MovieAdapter extends CursorAdapter {
      @Override
     public void bindView(View view, Context context, Cursor cursor) {
          final ViewHolder holder = (ViewHolder)view.getTag();
-
-
-
-         /*byte[] bb= Utility.getImage(cursor);
-         if (bb!=null) {
-             holder.imgMovie.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
-             Log.e("image to grid", "Length-----" + bb.length);
-         }
-         else*/
-             Picasso.with(context)
-                 .load(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)))
-                 .error(R.drawable.abc_btn_rating_star_off_mtrl_alpha)
-                 .into(holder.imgMovie);
+         byte[] bMovieObj = cursor.getBlob(1);
+         MovieData movie = SerializationUtils.deserialize(bMovieObj);
+         Picasso.with(context)
+                 .load(movie.poster_path)
+             .error(R.drawable.abc_btn_rating_star_off_mtrl_alpha)
+             .into(holder.imgMovie);
      }
 
     static class ViewHolder {

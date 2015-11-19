@@ -14,7 +14,10 @@ import android.widget.TextView;
 import com.example.nitu.popularmovies.R;
 import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.data.MovieContract;
+import com.example.nitu.popularmovies.model.MovieData;
 import com.squareup.picasso.Picasso;
+
+import org.apache.commons.lang3.SerializationUtils;
 
 /**
  * Created by nitus on 10/9/2015.
@@ -22,12 +25,14 @@ import com.squareup.picasso.Picasso;
 public class GridViewAdapter extends CursorAdapter {
     private final String LOG_TAG = MovieAdapter.class.getSimpleName();
     private final String sImgSize;
+    private final String sImgUrl;
 
     private final Context mContext;
 
     public GridViewAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
         mContext = context;
+        sImgUrl = context.getString(R.string.tmdb_image_base_url);
         sImgSize = context.getString(R.string.grid_image_size);
     }
 
@@ -42,26 +47,20 @@ public class GridViewAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         final ViewHolder holder = (ViewHolder)view.getTag();
-       /* byte[] bb= Utility.getImage(cursor);
-        if (bb!=null) {
-            holder.imgMovie.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
-            Log.e("image to grid", "Length-----" + bb.length);
-        }
-        else*/
+        byte[] bMovieObj = cursor.getBlob(1);
+        MovieData movie = SerializationUtils.deserialize(bMovieObj);
+        String load = String.format(sImgUrl, sImgSize, movie.poster_path);
             Picasso.with(context)
-                    .load(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH)))
+                    .load(load)
                     .error(R.drawable.abc_btn_rating_star_off_mtrl_alpha)
                     .resize(550,775)
                     .into(holder.imgMovie);
-        //holder.txtMovie.setText(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE)));
     }
 
     static class ViewHolder {
         ImageView imgMovie;
-        TextView txtMovie;
         public ViewHolder(View view) {
             imgMovie = (ImageView) view.findViewById(R.id.grid_item_movie_imageview);
-            //txtMovie = (TextView) view.findViewById(R.id.txt_title);
         }
 
     }

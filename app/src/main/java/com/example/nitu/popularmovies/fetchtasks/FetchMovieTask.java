@@ -10,7 +10,10 @@ import com.example.nitu.popularmovies.BuildConfig;
 import com.example.nitu.popularmovies.Utilities.AppConstants;
 import com.example.nitu.popularmovies.Utilities.Utility;
 import com.example.nitu.popularmovies.data.MovieContract;
+import com.example.nitu.popularmovies.model.MovieData;
+import com.google.gson.internal.LinkedTreeMap;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,8 +22,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -41,89 +49,40 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
-    public void getMovieDataFromJson(String movieJsonStr)
+    public void getMovieDataFromJson(String movieJsonStr,String sort)
             throws JSONException {
+        List<MovieData> mMovieList = new ArrayList<>();
+        Map<String, Serializable> map = Utility.getGson().fromJson(movieJsonStr, LinkedTreeMap.class);
+        mMovieList = Utility.covertMapToMovieDataList(map);
+        ContentValues[] movie_ids = new ContentValues[mMovieList.size()];
+        ContentValues[] cvs = new ContentValues[mMovieList.size()];
+        int i = 0;
 
-        // Now we have a String representing the complete forecast in JSON Format.
-        // Fortunately parsing is easy:  constructor takes the JSON string and converts it
-        // into an Object hierarchy for us.
-
-        // These are the names of the JSON objects that need to be extracted.
-
-        // Weather information.  Each day's forecast info is an element of the "list" array.
-        final String OWM_RESULTS = "results";
-
-        final String OWM_ID = "id";
-        final String OWM_ORIGINAL_TITLE = "original_title";
-        final String OWM_OVERVIEW = "overview";
-        final String OWM_RELEASE_DATE = "release_date";
-        final String OWM_POSTER_PATH = "poster_path";
-        final String OWM_POPULARITY = "popularity";
-        final String OWM_VOTE_AVERAGE = "vote_average";
-
-        try {
-            JSONObject forecastJson = new JSONObject(movieJsonStr);
-            JSONArray movieArray = forecastJson.getJSONArray(OWM_RESULTS);
-
-            Vector<ContentValues> cVVector = new Vector<ContentValues>(movieArray.length());
-
-            for (int i = 0; i < movieArray.length(); i++) {
-                JSONObject movie = movieArray.getJSONObject(i);
-                String moviePoster = movie.getString("poster_path");
-                String movieReleaseDate = Utility.getYear(movie.getString("release_date"));
-                //String moviePosterPath = null;
-                if ((moviePoster != null) &&(movieReleaseDate!= null)) {
-                    //String moviePosterPath = "http://image.tmdb.org/t/p/w185" + moviePoster;
-                    String moviePosterPath = AppConstants.MOVIE_W185_URL + moviePoster;
-                   /* byte[] movieImage = null;
-                    try {
-                        movieImage = urlToImageBLOB(moviePosterPath);
-                    } catch (java.io.IOException e) {
-                        movieImage = null;
-                    }*/
-                    Log.v("trying to get image--", moviePosterPath + i);
-                    //if (movieImage != null) {
-                        String movieId = movie.getString("id");
-                        String movieTitle = movie.getString("original_title");
-                        String movieOverview = movie.getString("overview");
-                        String movieVoteAverage = movie.getString("vote_average");
-                        String movieVoteCount = movie.getString("vote_count");
-                        String moviePopularity = movie.getString("popularity");
-                        float f = Float.parseFloat(moviePopularity);
-                        int d = (int) Math.ceil(f);
-                        moviePopularity = Float.toString(d);
-
-                        ContentValues movieValues = new ContentValues();
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_KEY, movieId);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY, moviePopularity);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movieVoteAverage);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_FAVOURITE, 0);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, movieTitle);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movieOverview);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movieReleaseDate);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, moviePosterPath);
-                        //movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER, movieImage);
-                        movieValues.put(MovieContract.MovieEntry.COLUMN_MINUTE, "--");
-                        cVVector.add(movieValues);
-                    //}
-                }
-            }
-            Log.v("Moive JSON","Total Data into Content Values.."+ cVVector.size());
-            //int deleted = mContext.getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI, MovieContract.MovieEntry.COLUMN_POSTER + "= ?", new String[] { null});
-            int inserted = 0;
-            // add to database
-            if(cVVector.size()>0) {
-                ContentValues[] cvArray = new ContentValues[cVVector.size()];
-                cVVector.toArray(cvArray);
-                inserted = mContext.getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,cvArray);
-            }
-
-            Log.v(LOG_TAG, "FetchMovieTask Complete. " + inserted + " Inserted");
-
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
+        for (MovieData obj : mMovieList) {
+            long movie_id = obj.id;
+            byte[] blob = SerializationUtils.serialize(obj);
+            ContentValues movieCv = new ContentValues();
+            ContentValues idCv = new ContentValues();
+            movieCv.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie_id);
+            movieCv.put(MovieContract.MovieEntry.COLUMN_MOVIE_BLOB, blob);
+            idCv.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie_id);
+            cvs[i] = movieCv;
+            movie_ids[i++] = idCv;
         }
+        int inserted = 0;
+        // add Movie to database
+        if(cvs.length>0) {
+            inserted = mContext.getContentResolver().bulkInsert(MovieContract.MovieEntry.buildUri(), cvs);
+            Log.v(LOG_TAG, "Insert Movie Complete. " + inserted + " Inserted");
+        }
+        if (("vote_average.desc").equals(sort) ||
+                ("popularity.desc").equals(sort)) {
+            Uri uri = Utility.determineUri(sort);
+            mContext.getContentResolver().delete(uri, null, null);
+            mContext.getContentResolver().bulkInsert(uri, movie_ids);
+        }
+            Log.d(LOG_TAG, String.format("Just inserted movies %s", Arrays.toString(cvs)));
+
     }
 
     @Override
@@ -133,7 +92,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         if (params.length == 0) {
             return null;
         }
-        String movieQuery = params[0];
+        String sort = params[0];
 
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
@@ -146,7 +105,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         String format = "json";
         try {
             Uri builtUri = Uri.parse(AppConstants.BASE_URL).buildUpon()
-                    .appendQueryParameter(AppConstants.SORT_BY, movieQuery)
+                    .appendQueryParameter(AppConstants.SORT_BY, sort)
                     .appendQueryParameter(AppConstants.API_KEY, BuildConfig.MOVIE_API_KEY)
                     .build();
             URL url = new URL(builtUri.toString());
@@ -177,7 +136,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             }
             movieJsonStr = buffer.toString();
             Log.v("Do In Background","GOT JSON Here .........");
-            getMovieDataFromJson(movieJsonStr);
+            getMovieDataFromJson(movieJsonStr,sort);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attemping

@@ -6,8 +6,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -31,6 +29,7 @@ import com.example.nitu.popularmovies.fetchtasks.FetchMovieTask;
 import com.example.nitu.popularmovies.model.MovieData;
 
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.json.JSONException;
 
 import java.io.BufferedReader;
@@ -55,15 +54,15 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     private static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry._ID,
-            MovieContract.MovieEntry.COLUMN_MOVIE_KEY,
+           /* MovieContract.MovieEntry.COLUMN_MOVIE_KEY,
             MovieContract.MovieEntry.COLUMN_POPULARITY,
-            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,*/
             MovieContract.MovieEntry.COLUMN_FAVOURITE,
-            MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
+            /*MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
             MovieContract.MovieEntry.COLUMN_OVERVIEW,
             MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
-            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
-            MovieContract.MovieEntry.COLUMN_MINUTE
+            MovieContract.MovieEntry.COLUMN_POSTER_PATH,*/
+            MovieContract.MovieEntry.COLUMN_MOVIE_MINUTES
     };
 
     static final int COL_MOVIEID = 0;
@@ -152,7 +151,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
            listView.setAdapter(mMovieAdapter);
        //else Toast.makeText(getActivity(), "No Movies for " + Utility.getPreferences(getActivity()), Toast.LENGTH_LONG).show();
         createGridItemClickCallbacks();
-       //mThis = this;
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
            mCurCheckPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
@@ -168,24 +166,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 mCurCheckPosition = position;
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
-
-                    //updateMovieMinute(cursor.getString(COL_MOVIE_KEY));
-
-                    MovieData movieObj = new MovieData();
-                    movieObj.id = cursor.getLong(COL_MOVIE_KEY);
-                    movieObj.original_title = cursor.getString(COL_MOVIE_ORIGINAL_TITLE);
-                    movieObj.overview = cursor.getString(COL_MOVIE_OVERVIEW);
-                    movieObj.popularity = cursor.getDouble(COL_MOVIE_POPULARITY);
-                    movieObj.vote_average = cursor.getDouble(COL_MOVIE_VOTE_AVERAGE);
-                    movieObj.release_date = cursor.getString(COL_MOVIE_RELEASE_DATE);
-                    movieObj.poster_path = cursor.getString(COL_MOVIE_POSTER_PATH);
-                    movieObj.favourite = cursor.getInt(COL_MOVIE_FAVOURITE);
-                    movieObj.minutes = cursor.getInt(COL_MOVIE_MINUTE);
-
-                    Bundle bundle = new Bundle();
-                    bundle.putLong("movie_id_key", cursor.getLong(COL_MOVIE_KEY));
-
-                    ((Callback) getActivity()).onItemSelected(movieObj);
+                    byte[] b = cursor.getBlob(1);
+                    ((Callback) getActivity()).onItemSelected((MovieData) SerializationUtils.deserialize(b));
                 } else
                     Toast.makeText(getActivity(), "No Movie Selected!", Toast.LENGTH_SHORT).show();
             }
@@ -195,14 +177,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private void updateMovie() {
         FetchMovieTask movieTask = new FetchMovieTask(getActivity());
         String sortBy=Utility.getPreferences(getActivity());
-        //Toast.makeText(getActivity(), "Getting data for " + sortBy, Toast.LENGTH_LONG).show();
-
         if (NetworkUtils.getInstance(getContext()).isOnline())
             movieTask.execute(sortBy);
-       /* else {
-            Toast.makeText(getActivity(), "No Network connection ", Toast.LENGTH_LONG).show();
-        }*/
-
     }
 
     private void getLiveDataAndCallLoader() {
@@ -211,7 +187,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             FetchMovieTask movieTask = new FetchMovieTask(getActivity());
             BufferedReader reader = null;
             try {
-                InputStream inputStream = getResources().openRawResource(R.raw.popularmovie);
+                InputStream inputStream = getResources().openRawResource(R.raw.popular);
                 StringBuffer buffer = new StringBuffer();
                 if (inputStream != null) {
                     reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -221,7 +197,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     }
                     if (buffer.length() != 0) {
                         String movieJsonStr = buffer.toString();
-                        movieTask.getMovieDataFromJson(movieJsonStr);
+                        movieTask.getMovieDataFromJson(movieJsonStr,Utility.getPreferences(getActivity()));
                     }
                 }
             } catch (IOException e) {
@@ -244,17 +220,17 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle args) {
         String sortBy = Utility.getPreferences(getActivity());
-        Uri movieUri;
-        if (sortBy.equals("vote_average.desc"))
-            movieUri = MovieContract.MovieEntry.buildTopratedMovie();
+        Uri movieUri = Utility.determineUri(sortBy);
+       /* if (sortBy.equals("vote_average.desc"))
+            movieUri = MovieContract.RatingEntry.buildUri();
         else if (sortBy.equals("favourite"))
-            movieUri=MovieContract.MovieEntry.buildFavouriteMovie();
+            movieUri=MovieContract.MovieEntry.buildUriUnionFavorite();
         else
-            movieUri = MovieContract.MovieEntry.buildPopularMovie();
+            movieUri = MovieContract.PopularEntry.buildUri();*/
         Toast.makeText(getActivity(), "Loading data for " + sortBy, Toast.LENGTH_LONG).show();
         return new CursorLoader(getActivity(),
                 movieUri,
-                MOVIE_COLUMNS,
+                null,
                 null,
                 null,
                 null);

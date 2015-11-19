@@ -13,121 +13,89 @@ import java.sql.Blob;
  */
 public class MovieContract {
     public static final String CONTENT_AUTHORITY = "com.example.nitu.popularmovies";
-    public static final Uri BASE_CONTENT_URI= Uri.parse("content://"+CONTENT_AUTHORITY);
+    public static final Uri BASE_CONTENT_URI= Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    public static final String PATH_REVIEW = "review";
-    public static final String PATH_TRAILER = "trailer";
+    public static final String PATH_POPULAR = "popular";
+    public static final String PATH_RATING = "rating";
     public static final String PATH_MOVIE = "movie";
-
-
-    // To make it easy to query for the exact date, we normalize all dates that go into
-    // the database to the start of the the Julian day at UTC.
-    public static long normalizeDate(long startDate) {
-        // normalize the start date to the beginning of the (UTC) day
-        Time time = new Time();
-        time.set(startDate);
-        int julianDay = Time.getJulianDay(startDate, time.gmtoff);
-        return time.setJulianDay(julianDay);
-    }
 
     public static final class MovieEntry implements BaseColumns {
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIE).build();
+
         public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE+"/"+CONTENT_AUTHORITY+"/"+PATH_MOVIE;
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
         public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE +"/"+CONTENT_AUTHORITY+"/"+PATH_MOVIE;
-        public static final String TABLE_NAME = "movie";
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
+
+        public static final String TABLE_NAME = PATH_MOVIE;
 
         // _ID - Integer
-        public static final String COLUMN_MOVIE_KEY = "moviekey";
-        public static final String COLUMN_POPULARITY="popularity";
-        public static final String COLUMN_VOTE_AVERAGE="vote_average";
-        public static final String COLUMN_FAVOURITE="favourite";
-        public static final String COLUMN_ORIGINAL_TITLE = "original_title" ;
-        public static final String COLUMN_OVERVIEW = "overview";
-        public static final String COLUMN_RELEASE_DATE = "release_date";
-        public static final String COLUMN_POSTER_PATH = "poster_path";
-        //public static final String COLUMN_POSTER = "poster";
-        public static final String COLUMN_MINUTE = "runtime";
+        public static final String COLUMN_MOVIE_ID = "movie_id";
+        public static final String COLUMN_MOVIE_BLOB = "details_serializedParseableJson";
+        public static final String COLUMN_MOVIE_TRAILERS = "trailers_serializedParseableJson";
+        public static final String COLUMN_MOVIE_REVIEWS = "reviews_serializedParseableJson";
+        public static final String COLUMN_MOVIE_MINUTES = "runtime";
+        public static final String COLUMN_FAVOURITE="favorite";
 
+        public static Uri buildUri() {
+            return CONTENT_URI;
+        }
 
-        public static Uri buildMovieUri(Long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+        public static Uri buildUri(Long movie_id) {
+            return CONTENT_URI.buildUpon().appendPath(movie_id.toString()).build();
         }
-        public static Uri buildMovie(Long movieKey) {
-            return CONTENT_URI.buildUpon().appendPath(movieKey.toString()).build();
+
+        public static Uri buildUriReviews(Long movie_id) {
+            return CONTENT_URI.buildUpon().appendPath("review").appendPath(movie_id.toString()).build();
         }
-        public static String getMovieSettingFromUri(Uri uri) {
+
+        public static Uri buildUriTrailers(Long movie_id) {
+            return CONTENT_URI.buildUpon().appendPath("trailer").appendPath(movie_id.toString()).build();
+        }
+
+        public static Uri buildUriUnionFavorite() {
+            return CONTENT_URI.buildUpon().appendPath("favorite").build();
+        }
+
+        public static Uri buildUriMinutes(Long movie_id) {
+            return CONTENT_URI.buildUpon().appendPath("minute").appendPath(movie_id.toString()).build();
+        }
+    }
+
+    public static final class PopularEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_POPULAR).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_POPULAR;
+
+        public static final String TABLE_NAME = PATH_POPULAR;
+        public static final String COLUMN_MOVIE_ID = MovieEntry.COLUMN_MOVIE_ID;
+
+        public static Uri buildUri() {
+            return CONTENT_URI;
+        }
+    }
+
+    public static final class RatingEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_RATING).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_RATING;
+
+        public static final String TABLE_NAME = PATH_RATING;
+        public static final String COLUMN_MOVIE_ID = MovieEntry.COLUMN_MOVIE_ID;
+
+        public static Uri buildUri() {
+            return CONTENT_URI;
+        }
+
+        public static String getMovieListFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
-        }
-        public static Uri buildPopularMovie() {
-            return CONTENT_URI.buildUpon().appendPath("popularity").build();
-        }
-        public static Uri buildTopratedMovie() {
-            return CONTENT_URI.buildUpon().appendPath("rating").build();
-        }
-        public static Uri buildFavouriteMovie() {
-            return CONTENT_URI.buildUpon().appendPath("favourite").build();
-        }
-        public static Uri buildTrailerMovie(Long movieKey) {
-            final String trailerUri= CONTENT_URI +"/"+ movieKey.toString() +"/trailer";
-            Uri returnUri = Uri.parse(trailerUri);
-            return returnUri;
-        }
-        public static Uri buildReviewMovie(Long movieKey) {
-            final String reviewUri= CONTENT_URI +"/"+ movieKey.toString() +"/review";
-            return Uri.parse(reviewUri).buildUpon().build();
-        }
-    }
-
-    /* Inner class that defines the table contents of the Trailer table */
-    public static final class TrailerEntry implements BaseColumns {
-        public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRAILER).build();
-        public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILER;
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILER;
-
-
-        public static final String TABLE_NAME = "trailer";
-        // Column with the foreign key into the movie table.
-        public static final String COLUMN_MOV_KEY = "movieId";
-        //id from API
-        public static final String COLUMN_TRAILER_KEY = "trailerid";
-
-        public static final String COLUMN_KEY = "key";
-
-        public static final String COLUMN_SIZE = "size";
-
-        public static Uri buildTrailerUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
-
-        }
-    }
-
-    /* Inner class that defines the table contents of the Review table */
-    public static final class ReviewEntry implements BaseColumns {
-        public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_REVIEW).build();
-        public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW ;
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
-
-        public static final String TABLE_NAME = "review";
-
-        // Column with the foreign key into the Movie table.
-        public static final String COLUMN_MOV_KEY = "movieId";
-        public static final String COLUMN_REVIEW_KEY = "reviewid";
-        public static final String COLUMN_AUTHOR = "author";
-
-        public static final String COLUMN_CONTENT = "content";
-
-
-        public static Uri buildReviewUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
         }
     }
 }

@@ -5,13 +5,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by nitus on 10/15/2015.
  */
 public class TestDb extends AndroidTestCase {
-
     public static final String LOG_TAG = TestDb.class.getSimpleName();
 
     // Since we want each test to start with a clean slate
@@ -19,25 +22,23 @@ public class TestDb extends AndroidTestCase {
         mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
     }
 
-    /*
-        This function gets called before each test is executed to delete the database.  This makes
-        sure that we always have a clean test.
-     */
     public void setUp() {
         deleteTheDatabase();
     }
 
     public void testCreateDb() throws Throwable {
-        final HashSet<String> tableNameHashSet = new HashSet<String>();
+        // build a HashSet of all of the table names we wish to look for
+        // Note that there will be another table in the DB that stores the
+        // Android metadata (db version information)
+        final HashSet<String> tableNameHashSet = new HashSet<>();
         tableNameHashSet.add(MovieContract.MovieEntry.TABLE_NAME);
-        tableNameHashSet.add(MovieContract.TrailerEntry.TABLE_NAME);
-        tableNameHashSet.add(MovieContract.ReviewEntry.TABLE_NAME);
+        tableNameHashSet.add(MovieContract.RatingEntry.TABLE_NAME);
+        tableNameHashSet.add(MovieContract.PopularEntry.TABLE_NAME);
 
         mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
-
         SQLiteDatabase db = new MovieDbHelper(
                 this.mContext).getWritableDatabase();
-        assertEquals(true, db.isOpen());
+        assertTrue("Database should be open.", db.isOpen());
 
         // have we created the tables we want?
         Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
@@ -48,10 +49,13 @@ public class TestDb extends AndroidTestCase {
         // verify that the tables have been created
         do {
             tableNameHashSet.remove(c.getString(0));
-        } while( c.moveToNext() );
+        } while (c.moveToNext());
 
-        assertTrue("Error: Your database was created without tables",tableNameHashSet.isEmpty());
-
+        // if this fails, it means that your database doesn't contain both the location entry
+        // and weather entry tables
+        assertTrue("Error: Your database was created without all required tables.",
+                tableNameHashSet.isEmpty());
+        c.close();
         // now, do our tables contain the correct columns?
         c = db.rawQuery("PRAGMA table_info(" + MovieContract.MovieEntry.TABLE_NAME + ")",
                 null);
@@ -60,129 +64,47 @@ public class TestDb extends AndroidTestCase {
                 c.moveToFirst());
 
         // Build a HashSet of all of the column names we want to look for
-        final HashSet<String> movieColumnHashSet = new HashSet<String>();
+        final HashSet<String> movieColumnHashSet = new HashSet<>();
         movieColumnHashSet.add(MovieContract.MovieEntry._ID);
-        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_MOVIE_KEY);
-        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_POPULARITY);
-        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE);
-        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_FAVOURITE);
-        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE);
-        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_OVERVIEW);
-        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_RELEASE_DATE);
-        //movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_POSTER);
+        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_MOVIE_BLOB);
+        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_MOVIE_ID);
+
         int columnNameIndex = c.getColumnIndex("name");
         do {
             String columnName = c.getString(columnNameIndex);
             movieColumnHashSet.remove(columnName);
-        } while(c.moveToNext());
+        } while (c.moveToNext());
 
         // if this fails, it means that your database doesn't contain all of the required location
         // entry columns
         assertTrue("Error: The database doesn't contain all of the required location entry columns",
                 movieColumnHashSet.isEmpty());
         db.close();
-    }
-
-
-    public long testMovieTable() {
-
-        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        ContentValues testValues = TestUtilities.createMovieValues(null);
-
-        long movieRowId = db.insert(MovieContract.MovieEntry.TABLE_NAME,null,testValues);
-        assertTrue(movieRowId != -1);
-        // Query the database and receive a Cursor back
-        Cursor c = db.query(
-                MovieContract.MovieEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        // Move the cursor to a valid database row
-        assertTrue("Error: No Records returned from movie query", c.moveToFirst());
-        // Validate data in resulting Cursor with the original ContentValues
-        // (you can use the validateCurrentRecord function in TestUtilities to validate the
-        TestUtilities.validateCurrentRecord("Error: Movie Query Validation Failed", c, testValues);
-        // query if you like)
-        assertFalse("Error: More than one record returned from movie query", c.moveToNext());
-        // Finally, close the cursor and database
         c.close();
-        db.close();
-        return movieRowId;
     }
 
-
-    public void testTrailerTable() {
-        long movieRowId = testMovieTable();
-        // First step: Get reference to writable database
-        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        // Create ContentValues of what you want to insert
-        ContentValues testValues = TestUtilities.createTrailerValues(TestUtilities.TEST_MOVIE);
-        // Insert ContentValues into database and get a row ID back
-        long trailerRowId = db.insert(MovieContract.TrailerEntry.TABLE_NAME,null,testValues);
-        assertTrue(trailerRowId != -1);
-        // Query the database and receive a Cursor back
-        Cursor c = db.query(
-                MovieContract.TrailerEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        // Move the cursor to a valid database row
-        assertTrue("Error: No Records returned from trailer query", c.moveToFirst());
-        // Validate data in resulting Cursor with the original ContentValues
-        TestUtilities.validateCurrentRecord("Error: trailer Query Validation Failed", c, testValues);
-        assertFalse("Error: More than one record returned from trailer query", c.moveToNext());
-        // Finally, close the cursor and database
-        c.close();
-        db.close();
+    public void testMovieTable() {
+        TestUtilities.insertMovies(this, mContext);
     }
 
-    public void testReviewTable() {
-        long movieRowId = testMovieTable();
-        // First step: Get reference to writable database
-        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        // Create ContentValues of what you want to insert
-        ContentValues testValues = TestUtilities.createReviewValues(TestUtilities.TEST_MOVIE);
-        // Insert ContentValues into database and get a row ID back
-        long reviewRowId = db.insert(MovieContract.ReviewEntry.TABLE_NAME,null,testValues);
-        assertTrue(reviewRowId != -1);
-        // Query the database and receive a Cursor back
-        Cursor c = db.query(
-                MovieContract.ReviewEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        // Move the cursor to a valid database row
-        assertTrue("Error: No Records returned from review query", c.moveToFirst());
-        // Validate data in resulting Cursor with the original ContentValues
-        TestUtilities.validateCurrentRecord("Error: review Query Validation Failed", c, testValues);
-        assertFalse("Error: More than one record returned from review query", c.moveToNext());
-        // Finally, close the cursor and database
-        c.close();
-        db.close();
-    }
-
-
-
-    public long insertMovie() {
-        return -1L;
+    void insertMovieValues(SQLiteDatabase db, List<ContentValues> lTestValues, Map<Long, ContentValues> insertOrderedTestValues, String sort) {
+        int insertCount = 0;
+        db.beginTransaction();
+        try {
+            for (ContentValues cv : lTestValues) {
+                long movieRowId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, cv);
+                ContentValues cv0 = new ContentValues();
+                cv0.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, cv.getAsLong(MovieContract.MovieEntry.COLUMN_MOVIE_ID));
+                String subTable = StringUtils.containsIgnoreCase("popular", sort) ? MovieContract.PopularEntry.TABLE_NAME : MovieContract.RatingEntry.TABLE_NAME;
+                db.insert(subTable, null, cv0);
+                // Verify we got a row back.
+                assertFalse("Insert failed!", -1L == movieRowId);
+                insertOrderedTestValues.put(movieRowId, cv);
+                assertEquals("InsertCount match RowId", ++insertCount, movieRowId);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 }

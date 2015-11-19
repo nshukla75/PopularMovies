@@ -12,7 +12,6 @@ public class ReviewData implements Parcelable, Serializable {
 
     public final String content;
     public final String author;
-    public final Long movie_key;// movie_Key Long
     public final String url;
 
 
@@ -25,8 +24,6 @@ public class ReviewData implements Parcelable, Serializable {
 
         if (content != null ? !content.equals(that.content) : that.content != null) return false;
         if (author != null ? !author.equals(that.author) : that.author != null) return false;
-        if (movie_key != null ? !movie_key.equals(that.movie_key) : that.movie_key != null)
-            return false;
         return !(url != null ? !url.equals(that.url) : that.url != null);
 
     }
@@ -35,22 +32,19 @@ public class ReviewData implements Parcelable, Serializable {
     public int hashCode() {
         int result = content != null ? content.hashCode() : 0;
         result = 31 * result + (author != null ? author.hashCode() : 0);
-        result = 31 * result + (movie_key != null ? movie_key.hashCode() : 0);
         result = 31 * result + (url != null ? url.hashCode() : 0);
         return result;
     }
 
-    public ReviewData(String review, String author, Long movie_key, String url) {
+    public ReviewData(String review, String author, String url) {
         this.content = review;
         this.author = author;
-        this.movie_key = movie_key;
         this.url = url;
     }
 
     protected ReviewData(Parcel in) {
         content = in.readString();
         author = in.readString();
-        movie_key = in.readLong();
         url = in.readString();
     }
 
@@ -75,7 +69,6 @@ public class ReviewData implements Parcelable, Serializable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(content);
         dest.writeString(author);
-        dest.writeLong(movie_key);
         dest.writeString(url);
     }
 }
