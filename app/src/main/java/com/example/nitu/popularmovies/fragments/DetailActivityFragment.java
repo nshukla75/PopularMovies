@@ -414,7 +414,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     ((RatingBar) rootView.findViewById(R.id.ratingBar)).setRating(f);
 
                     ((TextView) rootView.findViewById(R.id.release_text))
-                            .setText(mMovieData.release_date);
+                            .setText(Utility.getYear(mMovieData.release_date));
 
                     btnToggle = (Button) rootView.findViewById(R.id.chkState);
                     if (data.getInt(MovieQuery.COL_MOVIE_FAVOURITE) != 0)

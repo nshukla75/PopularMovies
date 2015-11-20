@@ -221,13 +221,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public Loader<Cursor> onCreateLoader(int i, Bundle args) {
         String sortBy = Utility.getPreferences(getActivity());
         Uri movieUri = Utility.determineUri(sortBy);
-       /* if (sortBy.equals("vote_average.desc"))
-            movieUri = MovieContract.RatingEntry.buildUri();
-        else if (sortBy.equals("favourite"))
-            movieUri=MovieContract.MovieEntry.buildUriUnionFavorite();
-        else
-            movieUri = MovieContract.PopularEntry.buildUri();*/
-        Toast.makeText(getActivity(), "Loading data for " + sortBy, Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "Please Wait.... still Loading", Toast.LENGTH_LONG).show();
         return new CursorLoader(getActivity(),
                 movieUri,
                 null,
