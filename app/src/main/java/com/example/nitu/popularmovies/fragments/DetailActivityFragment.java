@@ -377,7 +377,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         switch (match){
             case MovieProvider.MOVIE_WITH_ID:
                 mMovieAdapter.swapCursor(data);
-                Log.v(LOG_TAG, "In onLoadFinished Movie");
+                Log.v(LOG_TAG, "In onLoadFinished Movie ");
                 if (!movieDetailsModified.get()) {
                     if (data == null || !data.moveToFirst()) {
                         Toast.makeText(getContext(), "No Data Loaded. Please go back and select movie again", Toast.LENGTH_LONG).show();
@@ -388,6 +388,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     movieRowId=data.getLong(MovieQuery.COL_MOVIEID);
                     mMovieId = mMovieData.id;
                     title = mMovieData.original_title;
+                    Log.v(LOG_TAG, "Movie Title = "+ title);
                     ((TextView) rootView.findViewById(R.id.title_text)).setText(title);
 
                     ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
@@ -416,7 +417,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                             .setText(mMovieData.release_date);
 
                     btnToggle = (Button) rootView.findViewById(R.id.chkState);
-                    if (data.getInt(data.getInt(MovieQuery.COL_MOVIE_FAVOURITE)) != 0)
+                    if (data.getInt(MovieQuery.COL_MOVIE_FAVOURITE) != 0)
                         btnToggle.setText("Mark as Favourite");
                     else
                         btnToggle.setText("Favourite");

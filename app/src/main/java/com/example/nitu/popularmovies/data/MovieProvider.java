@@ -255,7 +255,7 @@ public class MovieProvider extends ContentProvider {
         } catch (SQLiteConstraintException e) {
             return -2L;
         } catch (SQLException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return -1L;
         }
     }
