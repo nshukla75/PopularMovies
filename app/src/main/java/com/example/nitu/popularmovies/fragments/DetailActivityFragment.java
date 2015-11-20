@@ -388,7 +388,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     movieRowId=data.getLong(MovieQuery.COL_MOVIEID);
                     mMovieId = mMovieData.id;
                     title = mMovieData.original_title;
-                    Log.v(LOG_TAG, "Movie Title = "+ title);
+                    Log.v(LOG_TAG, "Movie Title = " + title);
                     ((TextView) rootView.findViewById(R.id.title_text)).setText(title);
 
                     ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
@@ -418,9 +418,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
                     btnToggle = (Button) rootView.findViewById(R.id.chkState);
                     if (data.getInt(MovieQuery.COL_MOVIE_FAVOURITE) != 0)
-                        btnToggle.setText("Mark as Favourite");
-                    else
                         btnToggle.setText("Favourite");
+                    else
+                        btnToggle.setText("Mark as Favourite");
 
 
                     ((TextView) rootView.findViewById(R.id.overview_text))
