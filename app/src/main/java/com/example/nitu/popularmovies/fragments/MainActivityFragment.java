@@ -221,7 +221,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public Loader<Cursor> onCreateLoader(int i, Bundle args) {
         String sortBy = Utility.getPreferences(getActivity());
         Uri movieUri = Utility.determineUri(sortBy);
-        Toast.makeText(getActivity(), "Please Wait.... still Loading", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "Please Wait....Loading", Toast.LENGTH_LONG).show();
         return new CursorLoader(getActivity(),
                 movieUri,
                 null,
