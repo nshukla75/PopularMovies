@@ -1,12 +1,9 @@
 package com.example.nitu.popularmovies.data;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.text.format.Time;
 
-import java.sql.Blob;
 
 /**
  * Created by nitus on 10/15/2015.
@@ -57,10 +54,6 @@ public class MovieContract {
         public static Uri buildUriUnionFavorite() {
             return CONTENT_URI.buildUpon().appendPath("favorite").build();
         }
-
-        public static Uri buildUriMinutes(Long movie_id) {
-            return CONTENT_URI.buildUpon().appendPath("minute").appendPath(movie_id.toString()).build();
-        }
     }
 
     public static final class PopularEntry implements BaseColumns {
@@ -94,8 +87,5 @@ public class MovieContract {
             return CONTENT_URI;
         }
 
-        public static String getMovieListFromUri(Uri uri) {
-            return uri.getPathSegments().get(1);
-        }
     }
 }

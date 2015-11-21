@@ -61,7 +61,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -77,50 +76,18 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         static final int DETAIL_LOADER = 0;
         static final String[] MOVIE_COLUMNS = {
                 MovieContract.MovieEntry._ID,
-                /*MovieContract.MovieEntry.COLUMN_MOVIE_KEY,
-                MovieContract.MovieEntry.COLUMN_POPULARITY,
-                MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,*/
                 MovieContract.MovieEntry.COLUMN_FAVOURITE,
-               /* MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
-                MovieContract.MovieEntry.COLUMN_OVERVIEW,
-                MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
-                MovieContract.MovieEntry.COLUMN_POSTER_PATH,*/
                 MovieContract.MovieEntry.COLUMN_MOVIE_MINUTES
         };
         static final int COL_MOVIEID = 0;
-        static final int COL_MOVIE_KEY = 1;
         static final int COL_MOVIE_FAVOURITE = 2;
         static final int COL_MOVIE_RUNTIME = 3;
     }
     public interface TrailerQuery {
         static final int TRAILER_LOADER = 1;
-        static final String[] TRAILER_COLUMNS = {
-              /*  MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry._ID,
-                MovieContract.TrailerEntry.COLUMN_MOV_KEY,
-                MovieContract.TrailerEntry.COLUMN_TRAILER_KEY,
-                MovieContract.TrailerEntry.COLUMN_KEY,
-                MovieContract.TrailerEntry.COLUMN_SIZE*/
-        };
-        static final int COL_TRAILERID = 0;
-        static final int COL_MOVIE_ID = 1;
-        static final int COL_TRAILER_ID = 2;
-        static final int COL_TRAILER_KEY = 3;
-        static final int COL_TRAILER_SIZE=4;
     }
     public interface ReviewQuery {
         static final int REVIEW_LOADER = 2;
-        static final String[] REVIEW_COLUMNS = {
-              /*  MovieContract.ReviewEntry.TABLE_NAME + "." + MovieContract.ReviewEntry._ID,
-                MovieContract.ReviewEntry.COLUMN_MOV_KEY,
-                MovieContract.ReviewEntry.COLUMN_REVIEW_KEY,
-                MovieContract.ReviewEntry.COLUMN_AUTHOR,
-                MovieContract.ReviewEntry.COLUMN_CONTENT*/
-        };
-        static final int COL_REVIEWID = 0;
-        static final int COL_MOVIE_ID = 1;
-        static final int COL_REVIEW_KEY = 2;
-        static final int COL_REVIEW_AUTHOR = 3;
-        static final int COL_REVIEW_CONTENT=4;
     }
 
     private static final UriMatcher sUriMatcher = MovieProvider.buildUriMatcher();
@@ -198,9 +165,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             getLoaderManager().restartLoader(TrailerQuery.TRAILER_LOADER, b, this);
             getLoaderManager().restartLoader(ReviewQuery.REVIEW_LOADER, b, this);
          }
-        else {
-            //runFragment();
-        }
     }
 
     private void intilizeStatic() {
@@ -270,7 +234,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
         switch(item.getItemId()){
             case android.R.id.home:
                 getActivity().onBackPressed();
@@ -507,7 +470,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     public void onErrorResponse(VolleyError error) {
                         Log.e(getClass().getSimpleName(), error.getMessage(), error);
                         ((TextView) rootView.findViewById(R.id.runtime_text)).setVisibility(View.GONE);
-                        Toast.makeText(getContext(), "Error connecting to server.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Network is not Available", Toast.LENGTH_SHORT).show();
                     }
                 });
         mVolleyRequestQueue.add(jsObjRequest);
@@ -544,7 +507,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(getClass().getSimpleName(), error.getMessage(), error);
-                        Toast.makeText(getContext(), "Error connecting to server.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Network is not Available", Toast.LENGTH_SHORT).show();
                     }
                 });
         mVolleyRequestQueue.add(jsObjRequest);
@@ -581,7 +544,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(getClass().getSimpleName(), error.getMessage(), error);
-                        Toast.makeText(getContext(), "Error connecting to server.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Network is not Available", Toast.LENGTH_SHORT).show();
                     }
                 });
         mVolleyRequestQueue.add(jsObjRequest);

@@ -2,21 +2,14 @@ package com.example.nitu.popularmovies.adaptors;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.example.nitu.popularmovies.R;
-import com.example.nitu.popularmovies.Utilities.Utility;
-import com.example.nitu.popularmovies.data.MovieContract;
 import com.example.nitu.popularmovies.model.MovieData;
 import com.squareup.picasso.Picasso;
-
 import org.apache.commons.lang3.SerializationUtils;
 
 /**

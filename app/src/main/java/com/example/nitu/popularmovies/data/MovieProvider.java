@@ -27,12 +27,9 @@ public class MovieProvider extends ContentProvider {
 
     public static final int MOVIE = 100;
     public static final int MOVIE_WITH_ID = 101;
-   // public static final int MOVIE_WITH_ID_AND_MAYBE_FAVORITE = 102;
-    //public static final int MOVIE_MINUTES = 103;
     public static final int MOVIE_REVIEWS = 104;
     public static final int MOVIE_TRAILERS = 105;
     public static final int MOVIE_FAVORITE = 200;
-    //public static final int MOVIE_FAVORITE_WITH_ID = 201;
     public static final int MOVIE_RATING = 300;
     public static final int MOVIE_POPULAR = 400;
 
@@ -146,8 +143,6 @@ public class MovieProvider extends ContentProvider {
         matcher.addURI(authority, MovieContract.PATH_MOVIE + "/trailer/#", MOVIE_TRAILERS);
        // Get all movies marked favorite (should not be limited)
         matcher.addURI(authority, MovieContract.PATH_MOVIE + "/favorite", MOVIE_FAVORITE);
-        // Get a favorite movie
-        //matcher.addURI(authority, MovieContract.PATH_MOVIE + "/favorite/#", MOVIE_FAVORITE_WITH_ID);
         // Get all movies marked as highest rated (should be limited to 20)
         matcher.addURI(authority, MovieContract.PATH_RATING, MOVIE_RATING);
         // Get all movies marked as most popular (should be limited to 20)
@@ -170,10 +165,8 @@ public class MovieProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case MOVIE_WITH_ID:
-            //case MOVIE_MINUTES:
             case MOVIE_TRAILERS:
             case MOVIE_REVIEWS:
-            //case MOVIE_FAVORITE_WITH_ID:
                 return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
             case MOVIE:
                 return MovieContract.MovieEntry.CONTENT_TYPE;
@@ -199,9 +192,6 @@ public class MovieProvider extends ContentProvider {
             case MOVIE_WITH_ID:
                 retCursor = getMovieById(uri.getLastPathSegment());
                 break;
-            /*case MOVIE_MINUTES:
-                retCursor = getMovieMinutes(uri.getLastPathSegment());
-                break;*/
             case MOVIE_REVIEWS:
                 retCursor = getMovieReviews(uri.getLastPathSegment());
                 break;
@@ -214,9 +204,6 @@ public class MovieProvider extends ContentProvider {
             case MOVIE_FAVORITE:
                 retCursor = getFavoriteMovies();
                 break;
-           /* case MOVIE_FAVORITE_WITH_ID:
-                retCursor = getFavoriteMovieId(uri.getLastPathSegment());
-                break;*/
             case MOVIE_POPULAR:
                 retCursor = getPopularMovies();
                 break;
@@ -255,7 +242,7 @@ public class MovieProvider extends ContentProvider {
         } catch (SQLiteConstraintException e) {
             return -2L;
         } catch (SQLException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return -1L;
         }
     }
@@ -344,8 +331,6 @@ public class MovieProvider extends ContentProvider {
             case MOVIE_REVIEWS:
             case MOVIE_TRAILERS:
             case MOVIE_WITH_ID:
-            /*case MOVIE_MINUTES:
-            case MOVIE_FAVORITE_WITH_ID:*/
                 rows = mOpenHelper.getWritableDatabase().update(MovieContract.MovieEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:

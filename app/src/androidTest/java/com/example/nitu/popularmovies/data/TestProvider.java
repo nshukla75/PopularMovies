@@ -94,25 +94,25 @@ public class TestProvider extends AndroidTestCase {
        the correct type for each type of URI that it can handle.
     */
     public void testGetType() {
-        // content://com.example.android.sunshine.app/movie/
+        // content://com.example.nitu.popularmoviesmovie/movie
         String type = mContext.getContentResolver().getType(MovieContract.MovieEntry.CONTENT_URI);
-        // vnd.android.cursor.dir/com.example.android.sunshine.app/weather
+        // vnd.android.cursor.dir/com.example.nitu.popularmovies/movie
         assertEquals("Content Type",
                 MovieContract.MovieEntry.CONTENT_TYPE, type);
 
         Map<Long, ContentValues> raw = TestUtilities.createSortedMovieValues(getContext(), "popular");
         Long movie_id = (Long) raw.values().toArray(new ContentValues[0])[0].get(MovieContract.MovieEntry.COLUMN_MOVIE_ID);
-        // content://com.example.android.sunshine.app/movie/#
+        // content://com.example.nitu.popularmovies/movie/#
         type = mContext.getContentResolver().getType(
                 MovieContract.MovieEntry.buildUri(movie_id));
-        // vnd.android.cursor.dir/com.example.android.sunshine.app/weather
+        // vnd.android.cursor.dir/com.example.nitu.popularmovies/movie/#
         assertEquals("Content Type", MovieContract.MovieEntry.CONTENT_ITEM_TYPE, type);
 
-        // content://com.example.android.sunshine.app/movie/favorite
+        // content://com.example.nitu.popularmovies/movie
         type = mContext.getContentResolver().getType(
                 MovieContract.MovieEntry.buildUri());
-        // vnd.android.cursor.item/com.example.android.sunshine.app/weather/1419120000
-        assertEquals("Error: the MovieContract.MovieEntry CONTENT_URI with location and date should return MovieContract.MovieEntry.CONTENT_ITEM_TYPE",
+        // vnd.android.cursor.dir/com.example.nitu.popularmovies/movie
+        assertEquals("Error: the MovieContract.MovieEntry CONTENT_URI for all movie should return MovieContract.MovieEntry.CONTENT_TYPE",
                 MovieContract.MovieEntry.CONTENT_TYPE, type);
 
     }

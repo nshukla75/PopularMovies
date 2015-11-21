@@ -1,9 +1,3 @@
-<!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/fragment"
-    android:name="com.example.nitu.popularmovies.fragments.DetailActivityFragment"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    tools:layout="@layout/fragment_detail" />-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/detail_fragment_container"

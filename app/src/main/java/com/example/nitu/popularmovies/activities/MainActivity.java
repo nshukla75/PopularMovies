@@ -1,7 +1,6 @@
 package com.example.nitu.popularmovies.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,8 +15,6 @@ import com.example.nitu.popularmovies.model.MovieData;
 
 
 public class MainActivity extends BaseActivity implements MainActivityFragment.Callback {
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    private final String MAINFRAGMENT_TAG = "MFTAG";
     private final String DETAILFRAGMENT_TAG = "DFTAG";
     private boolean mTwoPane;
     private View mMovieDetailsContainer;
@@ -57,7 +54,6 @@ public class MainActivity extends BaseActivity implements MainActivityFragment.C
     public void onItemSelected(MovieData item) {
         if (mTwoPane) {
             appState.setTwoPane(true);
-            //appState.setDetailsPaneShown(true);
             if (item.id == Long.MIN_VALUE){
                 if (appState.isDetailsPaneShown()){
                     mMovieDetailsContainer.startAnimation(new ShowAnimation(mMovieDetailsContainer, 0f, 1000L));
@@ -76,8 +72,6 @@ public class MainActivity extends BaseActivity implements MainActivityFragment.C
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 if (fragmentManager.findFragmentById(R.id.fragment) != null) {
                     fragmentTransaction.replace(R.id.detail_fragment_container, fragment, DETAILFRAGMENT_TAG);
-                    //fragmentTransaction.addToBackStack(DETAILFRAGMENT_TAG);
-
                 } else {
                     fragmentTransaction.add(R.id.detail_fragment_container, fragment, DETAILFRAGMENT_TAG);
                 }

@@ -24,9 +24,6 @@ public class MovieData implements Parcelable, Serializable {
     public Boolean video;
     public Double vote_average;
     public Integer vote_count;
-    /*public Integer runtime;
-    public Integer favourite;*/
-
 
     public MovieData() {
     }
@@ -46,8 +43,6 @@ public class MovieData implements Parcelable, Serializable {
         video = Boolean.valueOf(in.readByte() == (byte) 1);
         vote_average = in.readDouble();
         vote_count = in.readInt();
-        /*runtime = in.readInt();
-        favourite = in.readInt();*/
     }
 
 
@@ -67,9 +62,6 @@ public class MovieData implements Parcelable, Serializable {
         dest.writeByte((byte) (video ? 1 : 0));
         dest.writeDouble(vote_average);
         dest.writeInt(vote_count);
-        /*dest.writeInt(runtime);
-        dest.writeInt(favourite);*/
-
     }
 
     public static final Parcelable.Creator<MovieData> CREATOR = new Parcelable.Creator<MovieData>() {

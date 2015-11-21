@@ -2,8 +2,6 @@ package com.example.nitu.popularmovies.adaptors;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -55,12 +53,6 @@ public class ReviewListViewAdapter extends ArrayAdapter<ReviewData> {
             holder.contentText.setText(rev.content);
             holder.authorText.setText(rev.author);
             holder.position = position;
-            /*holder.authorText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(rev.url)));
-                }
-            });*/
             row.setTag(holder);
         }
         return row;
@@ -75,7 +67,6 @@ public class ReviewListViewAdapter extends ArrayAdapter<ReviewData> {
     }
 
     public void setData() {
-       // mRowObjs = data;
         notifyDataSetChanged();
     }
 

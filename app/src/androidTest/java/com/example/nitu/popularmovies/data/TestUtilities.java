@@ -44,9 +44,7 @@ public class TestUtilities extends AndroidTestCase {
             MovieData expectedMovieData = (MovieData) SerializationUtils.deserialize(expectedBMovieObject);
 
             assertEquals("movied id's don't match", expectedId, movie_id);
-            // assumes I didn't screw up the equals()/hashCode() functions!
             assertEquals("movie objects don't match", expectedMovieData, movieData);
-            // paranoid sanity check:
             assertTrue("binary movie objects don't match", Arrays.equals(expectedBMovieObject, bMovieObj));
         }
     }
@@ -212,10 +210,6 @@ public class TestUtilities extends AndroidTestCase {
         // query if you like)
         validateRecordsToDatabase("Error: Location Query Validation Failed",
                 cursor, insertOrderedTestValues);
-
-        // Move the cursor to demonstrate that there is only one record in the database
-//        assertFalse("Error: More than one record returned from location query",
-//                cursor.moveToNext());
 
         // Sixth Step: Close Cursor and Database
         cursor.close();

@@ -54,27 +54,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     private static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry._ID,
-           /* MovieContract.MovieEntry.COLUMN_MOVIE_KEY,
-            MovieContract.MovieEntry.COLUMN_POPULARITY,
-            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,*/
             MovieContract.MovieEntry.COLUMN_FAVOURITE,
-            /*MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
-            MovieContract.MovieEntry.COLUMN_OVERVIEW,
-            MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
-            MovieContract.MovieEntry.COLUMN_POSTER_PATH,*/
             MovieContract.MovieEntry.COLUMN_MOVIE_MINUTES
     };
-
-    static final int COL_MOVIEID = 0;
-    static final int COL_MOVIE_KEY = 1;//135397
-    static final int COL_MOVIE_POPULARITY = 2;
-    static final int COL_MOVIE_VOTE_AVERAGE = 3;
-    static final int COL_MOVIE_FAVOURITE = 4;
-    static final int COL_MOVIE_ORIGINAL_TITLE = 5;
-    static final int COL_MOVIE_OVERVIEW = 6;
-    static final int COL_MOVIE_RELEASE_DATE = 7;
-    static final int COL_MOVIE_POSTER_PATH = 8;
-    static final int COL_MOVIE_MINUTE = 9;
     GridView listView;
 
     public interface Callback {
@@ -108,11 +90,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             mCurCheckPosition = savedInstanceState.getInt(SELECTED_KEY,0);
             appState.setIsRefreshGrid(false);
             getLoaderManager().restartLoader(MOVIE_LOADER, b, this);
-            //if (appState.getTwoPane()) performListViewClick(mCurCheckPosition);
-        }
-        else {
-           /* updateMovie();
-            getLoaderManager().initLoader(MOVIE_LOADER, null, this);*/
         }
         setHasOptionsMenu(true);
     }
@@ -149,7 +126,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         listView = (GridView) rootView.findViewById(R.id.gridview_movie);
         if (mMovieAdapter.getCount()>0)
            listView.setAdapter(mMovieAdapter);
-       //else Toast.makeText(getActivity(), "No Movies for " + Utility.getPreferences(getActivity()), Toast.LENGTH_LONG).show();
         createGridItemClickCallbacks();
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
            mCurCheckPosition = savedInstanceState.getInt(SELECTED_KEY);

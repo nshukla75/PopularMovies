@@ -18,7 +18,6 @@ import java.util.List;
 
 public class TrailerListViewAdapter extends ArrayAdapter<TrailerData> {
 
-    private static final String LOG_TAG = TrailerListViewAdapter.class.getSimpleName();
     private final Context mContext;
     private final int mTrailerCellRes;
     private final List<TrailerData> mRowObjs;
@@ -35,7 +34,6 @@ public class TrailerListViewAdapter extends ArrayAdapter<TrailerData> {
     }
 
     public void setData() {
-        //this.mRowObjs = data;
         notifyDataSetChanged();
     }
 
@@ -46,7 +44,6 @@ public class TrailerListViewAdapter extends ArrayAdapter<TrailerData> {
 
     @Override
     public View getView(int position, View row, ViewGroup parent) {
-        //Utils.log(getClass().getSimpleName());
         if (checkRowAndObj(row, position)) {
             final TrailerData trailer = getItem(position);
             row = ((Activity) mContext).getLayoutInflater().inflate(mTrailerCellRes, parent, false);
