@@ -30,7 +30,6 @@ When a movie poster thumbnail is selected, the movie details screen is launched
 
 In a background thread, app queries the /discover/movies API with the query parameter for the sort criteria specified in the settings menu. (Note: Each sorting criteria is a different API call.)
 This query can also be used to fetch the related metadata needed for the detail view.
-Common Project Requirements
 
 3. General Project Guidelines
 
