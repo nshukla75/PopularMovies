@@ -41,12 +41,13 @@ To fetch popular movies, project is using the API from themoviedb.org.If you don
 
 ####Optional Components
   `To receive “exceeds specifications”, your app must fully implement all the criteria listed in this section of the rubric.`
-    - App persists favorite movie details using a database
-    - App displays favorite movie details even when offline
-    - App uses a ContentProvider* to populate favorite movie details  *Student may use a library to generate a content provider rather       than build one by hand
-    - Sharing Functionality
-    - Movie Details View includes an Action Bar item that allows the user to share the first trailer video URL from the list of              trailers
-    - App uses a share Intent to expose the external youtube URL for the trailer
+  
+  - App persists favorite movie details using a database
+  - App displays favorite movie details even when offline
+  - App uses a ContentProvider* to populate favorite movie details  *Student may use a library to generate a content provider rather       than build one by hand
+  - Sharing Functionality
+  - Movie Details View includes an Action Bar item that allows the user to share the first trailer video URL from the list of              trailers
+  - App uses a share Intent to expose the external youtube URL for the trailer
 
 
 
