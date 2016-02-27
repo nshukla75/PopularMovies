@@ -49,7 +49,7 @@ To fetch popular movies, project is using the API from themoviedb.org.If you don
   - Movie Details View includes an Action Bar item that allows the user to share the first trailer video URL from the list of              trailers
   - App uses a share Intent to expose the external youtube URL for the trailer
 
-#Execution Instruction
+#Execution Instructions
 Requires: Android Studio v1.5.0+
 
 Dependencies:
@@ -103,8 +103,3 @@ If the project won't build, here are a few steps to try:
 1.  Shelve any changes:  VCS -> Shelve Changes
 2.  Sync the gradle files:  Tools -> Android -> Sync Project with Gradle Files
 3.  Clean the project build:  Build -> Clean project
-
-
-
-
-
